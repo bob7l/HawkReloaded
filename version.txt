@@ -1,3 +1,6 @@
-1.0.7b
+1.0.6.1
 2060
-Fixed tool showing incorrect results
+Block Place / Block break filter
+Updated to latest RB
+New Async chat added - 
+removed old permissions plugin support
