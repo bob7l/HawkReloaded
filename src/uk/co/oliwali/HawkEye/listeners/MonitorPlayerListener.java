@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye.listeners;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -41,7 +42,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		DataManager.addEntry(new DataEntry(player, DataType.CHAT, player.getLocation(), event.getMessage()));
 	}
 	@HawkEvent(dataType = DataType.COMMAND)
-	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event, Location loc1, Location loc2) {
 		Player player = event.getPlayer();
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
@@ -95,6 +96,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
 
+	    
 		if (block != null) {
 
 			Location loc = block.getLocation();
@@ -163,6 +165,16 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		else
 			data = stack.getAmount() + "x " + stack.getTypeId();
 		DataManager.addEntry(new DataEntry(player, DataType.ITEM_PICKUP, player.getLocation(), data));
+	}
+	@HawkEvent(dataType = DataType.SPAWNMOB_EGG)
+	  public void onPlayerSpawnmob(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        Location loc = block.getLocation();
+	    if (((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) && (event.getItem().getType() == Material.MONSTER_EGG)) {
+	    	
+			DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, loc, ""));
+	    }
 	}
 
 }
