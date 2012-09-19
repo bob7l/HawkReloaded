@@ -145,5 +145,4 @@ public class MonitorEntityListener extends HawkEyeListener {
 			DataManager.addEntry(new BlockChangeEntry("Environment", DataType.ENDERMAN_PLACE, block.getLocation(), block.getState(), newState));
 		}
 	}
-
 }

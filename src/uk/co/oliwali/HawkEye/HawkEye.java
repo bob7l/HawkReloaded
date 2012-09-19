@@ -137,7 +137,7 @@ public class HawkEye extends JavaPlugin {
         	String info;
 
         	//Get version file
-        	URLConnection yc = new URL("https://raw.github.com/oliverw92/HawkEye/master/version.txt").openConnection();
+        	URLConnection yc = new URL("https://raw.github.com/bob7l/HawkReloaded/master/version.txt").openConnection();
     		BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
 
     		//Get version number

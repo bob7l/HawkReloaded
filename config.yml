@@ -1,22 +1,22 @@
 log:
-    lava-bucket: true
-    water-bucket: true
-    painting-place: true
-    pvp-death: true
-    mob-death: true
-    other-death: true
-    command: true
-    chat: true
-    join: true
-    quit: true
-    door-interact: true
-    open-container: true
-    container-transaction: true
-    item-pickup: true
-    item-drop: true
-    button: true
-    teleport: true
-    lever: true
+    lava-bucket: false
+    water-bucket: false
+    painting-place: false
+    pvp-death: false
+    mob-death: false
+    other-death: false
+    command: false
+    chat: false
+    join: false
+    quit: false
+    door-interact: false
+    open-container: false
+    container-transaction: false
+    item-pickup: false
+    item-drop: false
+    button: false
+    teleport: false
+    lever: false
     sign-place: true
     sign-break: true
     painting-break: true
@@ -24,18 +24,19 @@ log:
     block-place: true
     block-break: true
     block-burn: true
-    block-fade: true
-    block-form: true
-    leaf-decay: true
-    mushroom-grow: true
+    block-fade: false
+    block-form: false
+    leaf-decay: false
+    mushroom-grow: false
     tree-grow: true
     water-flow: false
     lava-flow: false
     explosion: true
     enderman-pickup: true
     enderman-place: true
-    entity-kill: true
+    entity-kill: false
     other: true
+    spawnmob-egg: true
 general:
     max-lines: 0
     log-item-drops-on-death: false
@@ -65,7 +66,7 @@ mysql:
 ignore-worlds:
 - thisworldisignored
 - soisthisone
-version: 1.0.5b
+version: 1.0.6.1
 command-filter:
 - /login
 - /restartsrv
