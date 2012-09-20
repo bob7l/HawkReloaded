@@ -1,7 +1,6 @@
 package uk.co.oliwali.HawkEye.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -88,7 +87,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	 * OPEN_CHEST, DOOR_INTERACT, LEVER, STONE_BUTTON, FLINT_AND_STEEL, LAVA_BUCKET, WATER_BUCKET
 	 */
 	@SuppressWarnings("incomplete-switch")
-	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.LAVA_BUCKET, DataType.WATER_BUCKET})
+	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.LAVA_BUCKET, DataType.WATER_BUCKET, DataType.SPAWNMOB_EGG})
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
@@ -127,6 +126,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				loc = block.getRelative(event.getBlockFace()).getLocation();
+		        Location locs = block.getLocation();
 				switch (player.getItemInHand().getType()) {
 					case FLINT_AND_STEEL:
 						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.FLINT_AND_STEEL, loc, ""));
@@ -137,11 +137,12 @@ public class MonitorPlayerListener extends HawkEyeListener {
 					case WATER_BUCKET:
 						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.WATER_BUCKET, loc, ""));
 						break;
+					case MONSTER_EGG:
+						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
+						break;
 				}
 			}
-
 		}
-
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_DROP)
@@ -167,15 +168,4 @@ public class MonitorPlayerListener extends HawkEyeListener {
 			data = stack.getAmount() + "x " + stack.getTypeId();
 		DataManager.addEntry(new DataEntry(player, DataType.ITEM_PICKUP, player.getLocation(), data));
 	}
-	@HawkEvent(dataType = DataType.SPAWNMOB_EGG)
-	  public void onPlayerSpawnmob(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-        Block block = event.getClickedBlock();
-        Location loc = block.getLocation();
-	    if (((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) && (event.getItem().getType() == Material.MONSTER_EGG)) {
-	    	
-			DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, loc, ""));
-	    }
-	}
-
 }
