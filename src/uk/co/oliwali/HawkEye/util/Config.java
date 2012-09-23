@@ -10,7 +10,7 @@ import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
  * Configuration manager for HawkEye.
- * Any field with the first letter capitalised is a config option
+ * Any field with the first letter capitalized is a config option
  * @author oliverw92
  */
 public class Config {
