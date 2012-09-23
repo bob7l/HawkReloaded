@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -43,6 +41,8 @@ import uk.co.oliwali.HawkEye.listeners.ToolListener;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class HawkEye extends JavaPlugin {
 
@@ -95,8 +95,6 @@ public class HawkEye extends JavaPlugin {
 			new DataManager(this);
 		} catch (Exception e) {
 			Util.severe("Error initiating HawkEye database connection, disabling plugin");
-			pm.disablePlugin(this);
-			return;
 		}
 
 		checkDependencies(pm);
