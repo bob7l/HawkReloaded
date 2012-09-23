@@ -54,14 +54,15 @@ public enum DataType {
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
     MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
 	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false),
-	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true);
+	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
+	HEROCHAT(38, DataEntry.class, "herochat", true, true);
 
 	private int id;
 	private boolean canHere;
 	private String configName;
 	private boolean canRollback;
 	private Class<?> entryClass;
-
+	
 	private static final Map<String, DataType> nameMapping = new HashMap<String, DataType>();
 	private static final Map<Integer, DataType> idMapping = new HashMap<Integer, DataType>();
 
