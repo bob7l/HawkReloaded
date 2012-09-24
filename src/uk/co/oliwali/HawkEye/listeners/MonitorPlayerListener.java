@@ -14,8 +14,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.dthielke.herochat.ChannelChatEvent;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -41,13 +39,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		DataManager.addEntry(new DataEntry(player, DataType.CHAT, player.getLocation(), event.getMessage()));
-	}
-	
-	@HawkEvent(dataType = DataType.HEROCHAT)
-	 public void onChannelChatEvent(ChannelChatEvent event) {
-		final Player player = event.getSender().getPlayer();
-		Location loc  = player.getLocation();
-		DataManager.addEntry(new DataEntry(player, DataType.HEROCHAT, loc, event.getMessage()));
 	}
 	
 	@HawkEvent(dataType = DataType.COMMAND)

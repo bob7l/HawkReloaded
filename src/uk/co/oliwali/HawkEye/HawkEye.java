@@ -35,6 +35,7 @@ import uk.co.oliwali.HawkEye.commands.UndoCommand;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorEntityListener;
+import uk.co.oliwali.HawkEye.listeners.MonitorHeroChatListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorPlayerListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorWorldListener;
 import uk.co.oliwali.HawkEye.listeners.ToolListener;
@@ -42,6 +43,7 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
+import com.dthielke.herochat.Herochat;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class HawkEye extends JavaPlugin {
@@ -55,8 +57,10 @@ public class HawkEye extends JavaPlugin {
 	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
 	public ToolListener toolListener = new ToolListener();
+	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
 	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
 	public static WorldEditPlugin worldEdit = null;
+	public static Herochat herochat = null;
 	public static ContainerAccessManager containerManager;
 
 	/**
@@ -100,6 +104,7 @@ public class HawkEye extends JavaPlugin {
 		}
 
 		checkDependencies(pm);
+		HeroChatPlug(pm);
 
 		containerManager = new ContainerAccessManager();
 
@@ -199,6 +204,21 @@ public class HawkEye extends JavaPlugin {
         else Util.info("WARNING! WorldEdit not found, WorldEdit selection rollbacks disabled until WorldEdit is available");
 
 	}
+	/** 
+	 * Gonna add some more onto this later
+	 * @param pm PluginManager
+	 */
+	private void HeroChatPlug(PluginManager pm) {
+
+        //Check if WorldEdit is loaded
+        Plugin hc = pm.getPlugin("Herochat");
+        if (hc != null) {
+        	herochat = (Herochat)hc;
+        	Util.info("HeroChat found!");
+        }
+        else Util.info("HeroChat not found! Disabling herochat chatchannel logging!");
+
+	}
 
 	/**
 	 * Registers event listeners
@@ -211,6 +231,9 @@ public class HawkEye extends JavaPlugin {
 		monitorEntityListener.registerEvents();
 		monitorWorldListener.registerEvents();
 		pm.registerEvents(toolListener, this);
+		if (herochat != null) {
+		monitorHeroChatListener.registerEvents();
+		}
 
 	}
 
