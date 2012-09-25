@@ -50,7 +50,7 @@
       <artifactId>Vault</artifactId>
       <version>1.2.13</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/Vault.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
     </dependency>
   
       <dependency>
@@ -58,7 +58,7 @@
       <artifactId>Herochat</artifactId>
       <version>5.6.5</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/Herochat.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Herochat.jar</systemPath>
     </dependency>
   </dependencies>
   
