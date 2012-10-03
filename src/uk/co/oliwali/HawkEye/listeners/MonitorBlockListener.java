@@ -32,7 +32,6 @@ import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
  * Block listener class for HawkEye
  * @author oliverw92
  */
-@SuppressWarnings("unused")
 public class MonitorBlockListener extends HawkEyeListener {
 
 	public MonitorBlockListener(HawkEye HawkEye) {
