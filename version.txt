@@ -1,6 +1,4 @@
-1.0.6.1
+1.0.6.4
 2060
-Block Place / Block break filter
-Updated to latest RB
-New Async chat added - 
-removed old permissions plugin support
+HeroChat support
+Fixed stair rebuild direction issue
