@@ -17,26 +17,26 @@ log:
     button: false
     teleport: false
     lever: false
-    sign-place: true
-    sign-break: true
-    painting-break: true
-    flint-steel: true
-    block-place: true
-    block-break: true
-    block-burn: true
+    sign-place: false
+    sign-break: false
+    painting-break: false
+    flint-steel: false
+    block-place: false
+    block-break: false
+    block-burn: false
     block-fade: false
     block-form: false
     leaf-decay: false
     mushroom-grow: false
-    tree-grow: true
+    tree-grow: false
     water-flow: false
     lava-flow: false
-    explosion: true
-    enderman-pickup: true
-    enderman-place: true
+    explosion: false
+    enderman-pickup: false
+    enderman-place: false
     entity-kill: false
-    other: true
-    spawnmob-egg: true
+    other: false
+    spawnmob-egg: false
     herochat: false
 general:
     max-lines: 0
@@ -67,10 +67,11 @@ mysql:
 ignore-worlds:
 - thisworldisignored
 - soisthisone
-version: 1.0.6.1
+version: 1.0.6.4
 command-filter:
 - /login
 - /restartsrv
 - /register
+- /spawn
 block-filter:
 - NONE
