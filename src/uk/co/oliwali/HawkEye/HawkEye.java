@@ -52,6 +52,7 @@ public class HawkEye extends JavaPlugin {
 	public String version;
 	public Config config;
 	public static Server server;
+	public static HawkEye instance;
 	public MonitorBlockListener monitorBlockListener = new MonitorBlockListener(this);
 	public MonitorEntityListener monitorEntityListener = new MonitorEntityListener(this);
 	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
@@ -80,6 +81,7 @@ public class HawkEye extends JavaPlugin {
 
 		//Set up config and permissions
         PluginManager pm = getServer().getPluginManager();
+        instance = this;
 		server = getServer();
 		name = this.getDescription().getName();
         version = this.getDescription().getVersion();
