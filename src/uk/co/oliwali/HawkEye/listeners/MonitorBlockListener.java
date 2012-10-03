@@ -9,7 +9,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -18,19 +17,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.material.MaterialData;
-import org.bukkit.plugin.PluginManager;
-
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
@@ -38,7 +25,6 @@ import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
-import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 
@@ -69,6 +55,20 @@ public class MonitorBlockListener extends HawkEyeListener {
 		Block block = event.getBlock();
 		Configuration config = this.plugin.getConfig();
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || config.getStringList("block-filter").contains(block.getType().toString())) return;
+		
+		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
+		final BlockPlaceEvent finalEvent = event;
+		if(block.getType() == Material.WOOD_STAIRS || block.getType() == Material.COBBLESTONE_STAIRS || block.getType() == Material.BRICK_STAIRS || block.getType() == Material.SMOOTH_STAIRS || block.getType() == Material.NETHER_BRICK_STAIRS || block.getType() == Material.SANDSTONE_STAIRS) {
+			HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
+				@Override
+				public void run() {
+					DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), finalEvent.getBlockReplacedState(), finalEvent.getBlock().getState()));
+				}
+			}, 1L);
+			return;
+		}
+		// End Stair Fix
+		
 		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), DataType.BLOCK_PLACE, block.getLocation(), event.getBlockReplacedState(), block.getState()));
 	}
 	
