@@ -104,6 +104,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				case FURNACE:
 				case DISPENSER:
 				case CHEST:
+				case BREWING_STAND:
 				case ENDER_CHEST:
 					if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						//Call container manager for inventory open
