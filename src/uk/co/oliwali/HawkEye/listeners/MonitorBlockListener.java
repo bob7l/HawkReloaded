@@ -57,7 +57,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 		
 		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
 		final BlockPlaceEvent finalEvent = event;
-		if(block.getType() == Material.WOOD_STAIRS || block.getType() == Material.COBBLESTONE_STAIRS || block.getType() == Material.BRICK_STAIRS || block.getType() == Material.SMOOTH_STAIRS || block.getType() == Material.NETHER_BRICK_STAIRS || block.getType() == Material.SANDSTONE_STAIRS) {
+		if ((block.getTypeId() == 53) || (block.getTypeId() == 67) || (block.getTypeId() == 108) || (block.getTypeId() == 109) || (block.getTypeId() == 114) || (block.getTypeId() == 128) || (block.getTypeId() == 134) || (block.getTypeId() == 135) || (block.getTypeId() == 136)) {
 			HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
 				@Override
 				public void run() {
@@ -146,7 +146,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 			}
 
 		}
-
+		
 	}
 
 }
