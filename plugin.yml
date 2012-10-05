@@ -1,7 +1,7 @@
 name: HawkEye
 main: uk.co.oliwali.HawkEye.HawkEye
 authors: [oliverw92, GoalieGuy6]
-version: 1.0.6.1
+version: 1.0.6.4
 description: Track those griefers like a bird of prey!
 dev-url: http://dev.bukkit.org/server-mods/hawkeye-reload/
 softdepend: [WorldEdit,PermissionsEx,Permissions,GroupManager,bPermissions,Vault]
