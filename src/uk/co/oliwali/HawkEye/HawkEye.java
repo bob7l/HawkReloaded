@@ -1,13 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -57,6 +51,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorEntityListener monitorEntityListener = new MonitorEntityListener(this);
 	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
+	private static boolean update = false;
 	public ToolListener toolListener = new ToolListener();
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
 	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
@@ -92,7 +87,7 @@ public class HawkEye extends JavaPlugin {
         config = new Config(this);
         new Permission(this);
 
-        versionCheck();
+        setupUpdater();
 
         new SessionManager();
 
@@ -119,79 +114,6 @@ public class HawkEye extends JavaPlugin {
 	}
 
 	/**
-	 * Checks if any updates are available for HawkEye
-	 * Outputs console warning if updates are needed
-	 */
-	private void versionCheck() {
-
-		//Check if update checking enabled
-		if (!Config.CheckUpdates) {
-			Util.info("Update checking is disabled, this is not recommended!");
-			return;
-		}
-
-        //Perform version check
-        Util.info("Performing update check...");
-        try {
-
-        	//Values
-        	int updateVer;
-        	int curVer;
-        	int updateHot = 0;
-        	int curHot = 0;
-        	int updateBuild;
-        	int curBuild;
-        	String info;
-
-        	//Get version file
-        	URLConnection yc = new URL("https://raw.github.com/bob7l/HawkReloaded/master/version.txt").openConnection();
-    		BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-
-    		//Get version number
-    		String updateVersion = in.readLine().replace(".", "");
-
-    		//Check for hot fixes on new version
-    		if (Character.isLetter(updateVersion.charAt(updateVersion.length() - 1))) {
-    			updateHot = Character.getNumericValue(updateVersion.charAt(updateVersion.length() - 1));
-    			updateVer = Integer.parseInt(updateVersion.substring(0, updateVersion.length() - 1));
-    		}
-    		else updateVer = Integer.parseInt(updateVersion);
-
-    		//Check for hot fixes on current version
-    		if (Character.isLetter(version.charAt(version.length() - 1))) {
-    			String tversion = version.replace(".", "");
-    			curHot = Character.getNumericValue(tversion.charAt(tversion.length() - 1));
-    			curVer = Integer.parseInt(tversion.substring(0, tversion.length() - 1));
-    		}
-    		else curVer = Integer.parseInt(version.replace(".", ""));
-
-    		//Extract Bukkit build from server versions
-    		Pattern pattern = Pattern.compile("-b(\\d*?)jnks", Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(server.getVersion());
-			if (!matcher.find() || matcher.group(1) == null) throw new Exception();
-			curBuild = Integer.parseInt(matcher.group(1));
-    		updateBuild = Integer.parseInt(in.readLine());
-
-    		//Get custom info string
-    		info = in.readLine();
-
-    		//Check versions
-    		if (updateVer > curVer || updateVer == curVer && updateHot > curHot) {
-				Util.warning("New version of HawkEye available: " + updateVersion);
-    			if (updateBuild > curBuild)	Util.warning("Update recommended of CraftBukkit from build " + curBuild + " to " + updateBuild + " to ensure compatibility");
-    			else Util.warning("Compatible with your current version of CraftBukkit");
-    			Util.warning("New version info: " + info);
-    		}
-    		else Util.info("No updates available for HawkEye");
-    		in.close();
-
-		} catch (Exception e) {
-			Util.warning("Unable to perform update check!");
-			if (Config.Debug) e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Checks if required plugins are loaded
 	 * @param pm PluginManager
 	 */
@@ -212,13 +134,12 @@ public class HawkEye extends JavaPlugin {
 	 */
 	private void HeroChatPlug(PluginManager pm) {
 
-        //Check if WorldEdit is loaded
+        //A bit better now
         Plugin hc = pm.getPlugin("Herochat");
         if (hc != null) {
         	herochat = (Herochat)hc;
-        	Util.info("HeroChat found!");
         }
-        else Util.info("HeroChat not found! Disabling herochat chatchannel logging!");
+        else Util.info("HeroChat not found, Disabling chatchannel logging!");
 
 	}
 
@@ -289,5 +210,22 @@ public class HawkEye extends JavaPlugin {
 		return false;
 
 	}
+	  private void setupUpdater() {
+	    if (getConfig().getBoolean("general.check-for-updates")) {
+	      {
+	    	  Util.info("Checking for a new update...");
+	      }
+	      Updater updater = new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
+	      update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
+	      name = updater.getLatestVersionString();
+	      update = updater.getResult() != Updater.UpdateResult.NO_UPDATE;
+	      if (update) {
+		  Util.info("Update found! Downloading...");
+	      Util.info(name + " will be enabled on reload!");
 
+	      } else {
+	      Util.info("No update for HawkEye found!");
+	      }
+	    }
+}
 }
