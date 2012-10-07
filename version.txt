@@ -1,4 +1,0 @@
-1.0.6.4
-2060
-HeroChat support
-Fixed stair rebuild direction issue
