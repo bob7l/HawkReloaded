@@ -1,4 +1,4 @@
-1.0.6.4
+1.0.6.3
 2060
 HeroChat support
 Fixed stair rebuild direction issue
