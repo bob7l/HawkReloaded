@@ -198,34 +198,36 @@ public class HawkEye extends JavaPlugin {
 			if (args.length == 0)
 				args = new String[]{"help"};
 			outer:
-			for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
-				String[] cmds = command.name.split(" ");
-				for (int i = 0; i < cmds.length; i++)
-					if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) continue outer;
-				return command.run(this, sender, args, commandLabel);
-			}
+				for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
+					String[] cmds = command.name.split(" ");
+					for (int i = 0; i < cmds.length; i++)
+						if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) continue outer;
+					return command.run(this, sender, args, commandLabel);
+				}
 			new HelpCommand().run(this, sender, args, commandLabel);
 			return true;
 		}
 		return false;
 
 	}
-	  private void setupUpdater() {
-	    if (getConfig().getBoolean("general.check-for-updates")) {
-	      {
-	    	  Util.info("Checking for a new update...");
-	      }
-	      Updater updater = new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
-	      update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
-	      name = updater.getLatestVersionString();
-	      update = updater.getResult() != Updater.UpdateResult.NO_UPDATE;
-	      if (update) {
-		  Util.info("Update found! Downloading...");
-	      Util.info(name + " will be enabled on reload!");
+	private void setupUpdater() {
+		if (getConfig().getBoolean("general.check-for-updates")) {
 
-	      } else {
-	      Util.info("No update for HawkEye found!");
-	      }
-	    }
-}
+			{
+				Util.info("Checking for a new update...");
+			}
+			Updater updater = new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
+			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
+			name = updater.getLatestVersionString();
+			update = updater.getResult() != Updater.UpdateResult.NO_UPDATE;
+
+			if (update) {
+				Util.info("Update found! Downloading...");
+				Util.info(name + " will be enabled on reload!");
+
+			} else {
+				Util.info("No update for HawkEye found!");
+			}
+		}
+	}
 }
