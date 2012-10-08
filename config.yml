@@ -67,7 +67,7 @@ mysql:
 ignore-worlds:
 - thisworldisignored
 - soisthisone
-version: 1.0.6.4
+version: 1.0.6.3
 command-filter:
 - /login
 - /restartsrv
