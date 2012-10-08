@@ -7,6 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import de.bananaco.bpermissions.api.ApiLayer;
+import de.bananaco.bpermissions.api.util.CalculableType;
+
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -45,17 +48,21 @@ public class Permission {
 		}
 
 		if (pm.isPluginEnabled("PermissionsEx")) {
-        	handler = PermissionPlugin.PERMISSIONSEX;
-        	permissionsEx = PermissionsEx.getPermissionManager();
-        	Util.info("Using PermissionsEx for user permissions");
+			handler = PermissionPlugin.PERMISSIONSEX;
+			permissionsEx = PermissionsEx.getPermissionManager();
+			Util.info("Using PermissionsEx for user permissions");
 		}
-        else if (pm.isPluginEnabled("Permissions")) {
-        	handler = PermissionPlugin.PERMISSIONS;
-        	Util.info("Using Permissions for user permissions");
-        }
-        else {
-        	Util.info("No permission handler detected, defaulting to superperms");
-        }
+		else if (pm.isPluginEnabled("Permissions")) {
+			handler = PermissionPlugin.PERMISSIONS;
+			Util.info("Using Permissions for user permissions");
+		}
+		else if (pm.isPluginEnabled("bPermissions")) {
+			handler = PermissionPlugin.BPERMISSIONS;
+			Util.info("Using bPermissions for user permissions");
+		}
+		else {
+			Util.info("No permission handler detected, defaulting to superperms");
+		}
 	}
 
 	/**
@@ -69,16 +76,20 @@ public class Permission {
 	private static boolean hasPermission(CommandSender sender, String node) {
 		if (!(sender instanceof Player))
 			return true;
-		Player player = (Player)sender;
+		Player player = (Player)sender;	
+		String play = player.getName();
+		String world = player.getWorld().getName();
 		if (Config.OpPermissions && player.isOp())
 			return true;
 		switch (handler) {
-			case VAULT:
-				return vaultPermissions.has(player, node);
-			case PERMISSIONSEX:
-				return permissionsEx.has(player, node);
-			case BUKKITPERMS:
-				return player.hasPermission(node);
+		case VAULT:
+			return vaultPermissions.has(player, node);
+		case PERMISSIONSEX:
+			return permissionsEx.has(player, node);
+		case BUKKITPERMS:
+			return player.hasPermission(node);
+		case BPERMISSIONS:
+			return ApiLayer.hasPermission(world, CalculableType.USER, play, node);
 		}
 		return false;
 	}
@@ -155,11 +166,11 @@ public class Permission {
 		return hasPermission(player, "hawkeye.preview");
 	}
 
-    /**
-     * Permission to bind a tool
-     * @param player
-     * @return
-     */
+	/**
+	 * Permission to bind a tool
+	 * @param player
+	 * @return
+	 */
 	public static boolean toolBind(CommandSender player) {
 		return hasPermission(player, "hawkeye.tool.bind");
 	}
@@ -195,10 +206,12 @@ public class Permission {
 	@SuppressWarnings("incomplete-switch")
 	public static boolean inGroup(String world, String player, String group) {
 		switch (handler) {
-			case VAULT:
-				return vaultPermissions.playerInGroup(world, player, group);
-			case PERMISSIONSEX:
-				return permissionsEx.getUser(player).inGroup(group);
+		case VAULT:
+			return vaultPermissions.playerInGroup(world, player, group);
+		case PERMISSIONSEX:
+			return permissionsEx.getUser(player).inGroup(group);
+		case BPERMISSIONS:
+			return ApiLayer.hasPermission(world, CalculableType.GROUP, player, group);
 		}
 		return false;
 	}
@@ -211,6 +224,7 @@ public class Permission {
 		VAULT,
 		PERMISSIONSEX,
 		PERMISSIONS,
+		BPERMISSIONS,
 		BUKKITPERMS
 	}
 
