@@ -128,7 +128,7 @@
 127,Cocoa Plant
 128,Sandstone Stairs
 129,Emerald Ore
-130, Ender Chest
+130,Ender Chest
 131,Tripwire Hook
 132,Tripwire
 133,Block of Emerald
