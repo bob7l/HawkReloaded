@@ -79,8 +79,10 @@
 									   "33" => "Enderman Place",
 									   "34" => "Tree Grow",
 									   "35" => "Mushroom Grow",
-									   "36" => "Mob Kill"),
-					
+									   "36" => "Mob Kill",
+									   "37" => "Spawnegg",
+									   "38" => "HeroChat"),			
+
 					"results" => array("title" => "Results",
 									   "id" => "ID",
 									   "date" => "Date",
