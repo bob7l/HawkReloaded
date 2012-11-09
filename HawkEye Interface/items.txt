@@ -128,7 +128,7 @@
 127,Cocoa Plant
 128,Sandstone Stairs
 129,Emerald Ore
-130, Ender Chest
+130,Ender Chest
 131,Tripwire Hook
 132,Tripwire
 133,Block of Emerald
@@ -142,6 +142,8 @@
 141,Carrots
 142,Potatoes
 143,Wooden Button
+144,Head
+145,Anvil
 256,Iron Shovel
 257,Iron Pickaxe
 258,Iron Axe
@@ -283,6 +285,10 @@
 394,Poisonous Potato
 395,Map
 396,Golden Carrot
+397,Head
+398,Carrot on a Stick
+399,Nether Star
+400,Pumpkin Pie
 2256,13 Disc
 2257,Cat Disc
 2258,blocks Disc
