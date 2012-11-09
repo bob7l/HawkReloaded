@@ -1,7 +1,7 @@
 log:
     lava-bucket: false
     water-bucket: false
-    painting-place: false
+    item-place: false
     pvp-death: false
     mob-death: false
     other-death: false
@@ -19,10 +19,10 @@ log:
     lever: false
     sign-place: false
     sign-break: false
-    painting-break: false
+    item-break: false
     flint-steel: false
-    block-place: false
-    block-break: false
+    block-place: true
+    block-break: true
     block-burn: false
     block-fade: false
     block-form: false

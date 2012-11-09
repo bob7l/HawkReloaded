@@ -47,15 +47,15 @@ public enum DataType {
 	WATER_FLOW(27, BlockChangeEntry.class, "water-flow", true, true),
 	CONTAINER_TRANSACTION(28, ContainerEntry.class, "container-transaction", true, true),
 	SIGN_BREAK(29, SignEntry.class, "sign-break", true, true),
-	PAINTING_BREAK(30, DataEntry.class, "painting-break", true, false),
-	PAINTING_PLACE(31, DataEntry.class, "painting-place", true, false),
+	ITEM_BREAK(30, DataEntry.class, "item-break", true, false),
+	ITEM_PLACE(31, DataEntry.class, "item-place", true, false),
 	ENDERMAN_PICKUP(32, BlockEntry.class, "enderman-pickup", true, true),
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
     MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
 	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false),
 	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
-	HEROCHAT(38, DataEntry.class, "herochat", true, true);
+	HEROCHAT(38, DataEntry.class, "herochat", false, false);
 
 	private int id;
 	private boolean canHere;

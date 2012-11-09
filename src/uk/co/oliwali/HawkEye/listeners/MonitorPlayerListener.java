@@ -40,7 +40,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		DataManager.addEntry(new DataEntry(player, DataType.CHAT, player.getLocation(), event.getMessage()));
 	}
-	
+
 	@HawkEvent(dataType = DataType.COMMAND)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
@@ -49,7 +49,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		DataManager.addEntry(new DataEntry(player, DataType.COMMAND, player.getLocation(), event.getMessage()));
 	}
 
-	
 	@HawkEvent(dataType = DataType.JOIN)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -95,7 +94,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
 
-	    
+
 		if (block != null) {
 
 			Location loc = block.getLocation();

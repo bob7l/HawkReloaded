@@ -8,15 +8,15 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
-import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import uk.co.oliwali.HawkEye.DataType;
@@ -36,6 +36,7 @@ import uk.co.oliwali.HawkEye.util.Util;
  * Contains system for managing player deaths
  * @author oliverw92
  */
+@SuppressWarnings("unused")
 public class MonitorEntityListener extends HawkEyeListener {
 
 	public MonitorEntityListener(HawkEye HawkEye) {
@@ -105,19 +106,18 @@ public class MonitorEntityListener extends HawkEyeListener {
 		for (Block b : event.blockList().toArray(new Block[0]))
 			DataManager.addEntry(new BlockEntry("Environment", DataType.EXPLOSION, b));
 	}
+//This isn't working for some reason..
+//	@HawkEvent(dataType = DataType.ITEM_BREAK) 
+//	public void onPaintingBreak(HangingBreakEvent event) {
+//		HangingBreakByEntityEvent e = (HangingBreakByEntityEvent)event;
+//		if (e.getRemover() instanceof Player)
+//			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, e.getEntity().getLocation(), ""));
+//	}
 
-	@HawkEvent(dataType = DataType.PAINTING_BREAK)
-	public void onPaintingBreak(PaintingBreakEvent event) {
-		if (event.getCause() != RemoveCause.ENTITY) return;
-		PaintingBreakByEntityEvent e = (PaintingBreakByEntityEvent)event;
-		if (e.getRemover() instanceof Player)
-			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.PAINTING_BREAK, e.getPainting().getLocation(), ""));
-	}
-
-	@HawkEvent(dataType = DataType.PAINTING_PLACE)
-	public void onPaintingPlace(PaintingPlaceEvent event) {
-		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.PAINTING_PLACE, event.getPainting().getLocation(), ""));
-	}
+//	@HawkEvent(dataType = DataType.ITEM_PLACE)
+//	public void onPaintingPlace(HangingPlaceEvent event) {
+//		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, event.getEntity().getLocation(), ""));
+//	}
 
 	@HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})
 	public void onEntityChangeBlock(EntityChangeBlockEvent event) {
