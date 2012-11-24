@@ -22,7 +22,8 @@ public class BlockUtil {
 		return getBlockString(block.getState());
 	}
 	public static String getBlockString(BlockState block) {
-		if (block.getRawData() != 0)
+		//This is a temp fix for the placement Log face data
+		if ((block.getRawData() != 0) && (block.getTypeId() != 17))
 			return block.getTypeId() + ":" + block.getRawData();
 		return Integer.toString(block.getTypeId());
 	}

@@ -5,10 +5,17 @@ import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EnderDragonPart;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -63,7 +70,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 					if (!Config.isLogged(DataType.MOB_DEATH) && !Config.LogDeathDrops) return;
 					DataManager.addEntry(new DataEntry(victim, DataType.MOB_DEATH, victim.getLocation(), Util.getEntityName(damager)));
 				}
-			//Other death
+				//Other death
 			} else {
 				if (!Config.isLogged(DataType.OTHER_DEATH) && !Config.LogDeathDrops) return;
 				EntityDamageEvent dEvent = victim.getLastDamageCause();
@@ -81,9 +88,9 @@ public class MonitorEntityListener extends HawkEyeListener {
 				for (ItemStack stack : event.getDrops()) {
 					if (stack.getData() != null)
 						data = stack.getAmount() + "x " + stack.getTypeId() + ":" + stack.getData().getData();
-				    else
-				    	data = stack.getAmount() + "x " + stack.getTypeId();
-				    DataManager.addEntry(new DataEntry(victim, DataType.ITEM_DROP, victim.getLocation(), data));
+					else
+						data = stack.getAmount() + "x " + stack.getTypeId();
+					DataManager.addEntry(new DataEntry(victim, DataType.ITEM_DROP, victim.getLocation(), data));
 				}
 			}
 		} else { //Mob Death
@@ -103,21 +110,63 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.EXPLOSION)
 	public void onEntityExplode(EntityExplodeEvent event) {
+		Entity en = event.getEntity();
+		String type = "Environment";
+		if ((en instanceof TNTPrimed)) {
+			type = "Tnt";
+		}
+		else if ((en instanceof Creeper)) {
+			type = "Creeper";
+		}
+		else if (((en instanceof EnderDragon)) || ((en instanceof EnderDragonPart))) {
+			type = "EnderDragon";
+		}
+		else if (((en instanceof Wither)) || ((en instanceof WitherSkull))) {
+			type = "Wither";
+		}
 		for (Block b : event.blockList().toArray(new Block[0]))
-			DataManager.addEntry(new BlockEntry("Environment", DataType.EXPLOSION, b));
+			DataManager.addEntry(new BlockEntry(type, DataType.EXPLOSION, b));
 	}
-//This isn't working for some reason..
-//	@HawkEvent(dataType = DataType.ITEM_BREAK) 
-//	public void onPaintingBreak(HangingBreakEvent event) {
-//		HangingBreakByEntityEvent e = (HangingBreakByEntityEvent)event;
-//		if (e.getRemover() instanceof Player)
-//			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, e.getEntity().getLocation(), ""));
-//	}
 
-//	@HawkEvent(dataType = DataType.ITEM_PLACE)
-//	public void onPaintingPlace(HangingPlaceEvent event) {
-//		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, event.getEntity().getLocation(), ""));
-//	}
+	@HawkEvent(dataType = DataType.ITEM_BREAK) 
+	public void onPaintingBreak(HangingBreakEvent event) {
+		HangingBreakByEntityEvent e = (HangingBreakByEntityEvent)event;
+		Entity en = event.getEntity();
+		String type = "Unknown";
+		if (en instanceof Painting) {
+			type = "Painting";
+		} else if (en instanceof ItemFrame) {
+			type = "Itemframe";
+		}
+		if (e.getRemover() instanceof Player)
+			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, en.getLocation(), ""));
+	}
+
+	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
+	public void onEntityModifyBlock(EntityChangeBlockEvent event) {
+		Entity en = event.getEntity();
+		Block block = event.getBlock();
+		String type = "Environment";
+		if (((en instanceof EnderDragon)) || ((en instanceof EnderDragonPart))) {
+			type = "EnderDragon";
+		}
+		else if (((en instanceof Wither)) || ((en instanceof WitherSkull))) {
+			type = "Wither";
+		}
+		DataManager.addEntry(new BlockEntry(type, DataType.ENTITY_MODIFY, block));
+	}
+
+	@HawkEvent(dataType = DataType.ITEM_PLACE)
+	public void onHangingPlace(HangingPlaceEvent event) {
+		Entity e = event.getEntity();
+		String type = "Unknown";
+		if (e instanceof Painting) {
+			type = "Painting";
+		} else if (e instanceof ItemFrame) {
+			type = "Itemframe";
+		}
+		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, e.getLocation(), type));
+	}
 
 	@HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})
 	public void onEntityChangeBlock(EntityChangeBlockEvent event) {

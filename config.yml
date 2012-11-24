@@ -38,6 +38,7 @@ log:
     other: false
     spawnmob-egg: false
     herochat: false
+    entity-modify: false
 general:
     max-lines: 0
     log-item-drops-on-death: false

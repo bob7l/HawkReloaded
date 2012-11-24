@@ -15,7 +15,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
-import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -78,28 +77,10 @@ public class DataManager extends TimerTask {
 	 * @param entry {@link DataEntry} to be added
 	 * @return
 	 */
-	@SuppressWarnings("incomplete-switch")
 	public static void addEntry(DataEntry entry) {
 
 		if (!Config.isLogged(entry.getType())) return;
-
-		//Check block filter
-		switch (entry.getType()) {
-		case BLOCK_BREAK:
-			if (Config.BlockFilter.contains(BlockUtil.getBlockStringName(entry.getSqlData())))
-				return;
-			break;
-		case BLOCK_PLACE:
-			String txt = null;
-			if (entry.getSqlData().indexOf("-") == -1)
-				txt = BlockUtil.getBlockStringName(entry.getSqlData());
-			else
-				txt = BlockUtil.getBlockStringName(entry.getSqlData().substring(entry.getSqlData().indexOf("-") + 1));
-			if (Config.BlockFilter.contains(txt))
-				return;
-		}
-
-		//Check world ignore list
+		
 		if (Config.IgnoreWorlds.contains(entry.getWorld())) return;
 
 		queue.add(entry);
