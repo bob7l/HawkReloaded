@@ -73,9 +73,18 @@ public class HawkEye extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-
+		PluginManager pm = getServer().getPluginManager();
+		try
+		{
+			Class.forName("org.bukkit.event.hanging.HangingPlaceEvent");
+		}
+		catch (ClassNotFoundException ex)
+		{
+			Util.info("HawkEye requires CraftBukkit 1.4+ to run properly!");
+			pm.disablePlugin(this);
+			return;
+		}
 		//Set up config and permissions
-        PluginManager pm = getServer().getPluginManager();
         instance = this;
 		server = getServer();
 		name = this.getDescription().getName();
