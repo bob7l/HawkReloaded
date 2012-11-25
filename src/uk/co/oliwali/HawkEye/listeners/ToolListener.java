@@ -24,7 +24,7 @@ public class ToolListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block block   = event.getBlock();
-		if (BlockUtil.getBlockString(block).equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
+		if (BlockUtil.getToolString(block).equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, block.getLocation());
 			event.setCancelled(true);
 		}
