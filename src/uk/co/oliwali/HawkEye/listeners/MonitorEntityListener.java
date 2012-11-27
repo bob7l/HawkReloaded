@@ -43,7 +43,6 @@ import uk.co.oliwali.HawkEye.util.Util;
  * Contains system for managing player deaths
  * @author oliverw92
  */
-@SuppressWarnings("unused")
 public class MonitorEntityListener extends HawkEyeListener {
 
 	public MonitorEntityListener(HawkEye HawkEye) {
@@ -139,7 +138,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 			type = "Itemframe";
 		}
 		if (e.getRemover() instanceof Player)
-			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, en.getLocation(), ""));
+			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, en.getLocation().getBlock().getLocation(), type));
 	}
 
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
@@ -165,7 +164,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 		} else if (e instanceof ItemFrame) {
 			type = "Itemframe";
 		}
-		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, e.getLocation(), type));
+		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, e.getLocation().getBlock().getLocation(), type));
 	}
 
 	@HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})
