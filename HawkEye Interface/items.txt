@@ -1,4 +1,4 @@
-00,Air
+00,-
 01,Stone
 02,Grass Block
 03,Dirt
