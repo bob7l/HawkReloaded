@@ -5,17 +5,12 @@ import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.EnderDragonPart;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.Silverfish;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -109,22 +104,9 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.EXPLOSION)
 	public void onEntityExplode(EntityExplodeEvent event) {
-		Entity en = event.getEntity();
-		String type = "Environment";
-		if ((en instanceof TNTPrimed)) {
-			type = "Tnt";
-		}
-		else if ((en instanceof Creeper)) {
-			type = "Creeper";
-		}
-		else if (((en instanceof EnderDragon)) || ((en instanceof EnderDragonPart))) {
-			type = "EnderDragon";
-		}
-		else if (((en instanceof Wither)) || ((en instanceof WitherSkull))) {
-			type = "Wither";
-		}
+		String entity = event.getEntityType().getName();
 		for (Block b : event.blockList().toArray(new Block[0]))
-			DataManager.addEntry(new BlockEntry(type, DataType.EXPLOSION, b));
+			DataManager.addEntry(new BlockEntry(entity, DataType.EXPLOSION, b));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
@@ -144,17 +126,19 @@ public class MonitorEntityListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
 	public void onEntityModifyBlock(EntityChangeBlockEvent event) {
 		Entity en = event.getEntity();
-		Block block = event.getBlock();
-		String type = "Environment";
-		if (((en instanceof EnderDragon)) || ((en instanceof EnderDragonPart))) {
-			type = "EnderDragon";
-		}
-		else if (((en instanceof Wither)) || ((en instanceof WitherSkull))) {
-			type = "Wither";
-		}
-		DataManager.addEntry(new BlockEntry(type, DataType.ENTITY_MODIFY, block));
+		String entity = event.getEntityType().getName();
+		if (en instanceof Silverfish) return;
+		DataManager.addEntry(new BlockEntry(entity, DataType.ENTITY_MODIFY, event.getBlock()));
 	}
 
+	@HawkEvent(dataType = DataType.BLOCK_INHABIT)
+	public void onEntityBlockChange(EntityChangeBlockEvent event) {
+		Entity en = event.getEntity();
+		String entity = event.getEntityType().getName();
+		if (!(en instanceof Silverfish)) return;
+		DataManager.addEntry(new BlockEntry(entity, DataType.BLOCK_INHABIT, event.getBlock()));
+	}
+	
 	@HawkEvent(dataType = DataType.ITEM_PLACE)
 	public void onHangingPlace(HangingPlaceEvent event) {
 		Entity e = event.getEntity();

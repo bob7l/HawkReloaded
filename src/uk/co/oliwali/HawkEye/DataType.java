@@ -40,8 +40,8 @@ public enum DataType {
 	LEAF_DECAY(20, BlockEntry.class, "leaf-decay", true, true),
 	MOB_DEATH(21, DataEntry.class, "mob-death", false, false),
 	OTHER_DEATH(22, DataEntry.class, "other-death", false, false),
-	ITEM_DROP(23, DataEntry.class, "item-drop", true, false),
-	ITEM_PICKUP(24, DataEntry.class, "item-pickup", true, false),
+	ITEM_DROP(23, DataEntry.class, "item-drop", false, false),
+	ITEM_PICKUP(24, DataEntry.class, "item-pickup", false, false),
 	BLOCK_FADE(25, BlockChangeEntry.class, "block-fade", true, true),
 	LAVA_FLOW(26, BlockChangeEntry.class, "lava-flow", true, true),
 	WATER_FLOW(27, BlockChangeEntry.class, "water-flow", true, true),
@@ -56,7 +56,8 @@ public enum DataType {
 	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false),
 	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
 	HEROCHAT(38, DataEntry.class, "herochat", false, false),
-	ENTITY_MODIFY(39, DataEntry.class, "entity-modify", true, true);
+	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),
+	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true);
 
 	private int id;
 	private boolean canHere;

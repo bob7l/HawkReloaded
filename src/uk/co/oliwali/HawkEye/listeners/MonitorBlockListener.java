@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -26,7 +25,7 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
-import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
+import uk.co.oliwali.HawkEye.util.Config;
 
 /**
  * Block listener class for HawkEye
@@ -41,19 +40,17 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_BREAK)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
-		Configuration config = this.plugin.getConfig();
-		if (config.getStringList("block-filter").contains(block.getType().toString())) return;
+		if (Config.BlockFilter.contains(block.getType().toString())) return;
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
 			DataManager.addEntry(new SignEntry(event.getPlayer(), DataType.SIGN_BREAK, event.getBlock()));
 		else
-			DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+			DataManager.addEntry(new BlockEntry("Environment", DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Block block = event.getBlock();
-		Configuration config = this.plugin.getConfig();
-		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || config.getStringList("block-filter").contains(block.getType().toString())) return;
+		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getType().toString())) return;
 		
 		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
 		final BlockPlaceEvent finalEvent = event;
@@ -89,11 +86,6 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_BURN)
 	public void onBlockBurn(BlockBurnEvent event) {
 		DataManager.addEntry(new BlockEntry("Environment", DataType.BLOCK_BURN, event.getBlock()));
-	}
-
-	@HawkEvent(dataType = DataType.LEAF_DECAY)
-	public void onLeavesDecay(LeavesDecayEvent event) {
-		DataManager.addEntry(new SimpleRollbackEntry("Environment", DataType.LEAF_DECAY, event.getBlock().getLocation(), ""));
 	}
 
 	@HawkEvent(dataType = {DataType.LAVA_FLOW, DataType.WATER_FLOW})
@@ -147,6 +139,10 @@ public class MonitorBlockListener extends HawkEyeListener {
 
 		}
 		
+	}
+	@HawkEvent(dataType = DataType.LEAF_DECAY)
+	public void onLeavesDecay(LeavesDecayEvent event) {
+		DataManager.addEntry(new BlockEntry("Environment", DataType.LEAF_DECAY, event.getBlock()));
 	}
 
 }
