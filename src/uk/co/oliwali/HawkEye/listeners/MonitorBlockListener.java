@@ -50,22 +50,28 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Block block = event.getBlock();
+		//Fix for "- replaced by Stone" in web interface
+		BlockState replaced = null;
+		if (block.getType() == Material.AIR) {
+			replaced = event.getBlockReplacedState();
+		}
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getType().toString())) return;
 		
 		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
 		final BlockPlaceEvent finalEvent = event;
+		final BlockState replaced2 = replaced;
 		if ((block.getTypeId() == 53) || (block.getTypeId() == 67) || (block.getTypeId() == 108) || (block.getTypeId() == 109) || (block.getTypeId() == 114) || (block.getTypeId() == 128) || (block.getTypeId() == 134) || (block.getTypeId() == 135)|| (block.getTypeId() == 17) || (block.getTypeId() == 136)) {
 			HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
 				@Override
 				public void run() {
-					DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), finalEvent.getBlockReplacedState(), finalEvent.getBlock().getState()));
+					DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), replaced2, finalEvent.getBlock().getState()));
 				}
 			}, 1L);
 			return;
 		}
 		// End Stair Fix
 		
-		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), DataType.BLOCK_PLACE, block.getLocation(), event.getBlockReplacedState(), block.getState()));
+		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), DataType.BLOCK_PLACE, block.getLocation(), replaced, block.getState()));
 	}
 	
 	@HawkEvent(dataType = DataType.SIGN_PLACE)
