@@ -80,9 +80,10 @@
 									   "34" => "Tree Grow",
 									   "35" => "Mushroom Grow",
 									   "36" => "Mob Kill",
-									   "37" => "Spawnegg",
+									   "37" => "Spawn Egg",
 									   "38" => "HeroChat",	
-                                                                           "39" => "Entity Modify"),
+									   "39" => "Entity Modify",
+                                                                           "40" => "Block Inhabit"),
 
 					"results" => array("title" => "Results",
 									   "id" => "ID",
