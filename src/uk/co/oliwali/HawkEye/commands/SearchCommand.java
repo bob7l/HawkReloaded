@@ -53,6 +53,7 @@ public class SearchCommand extends BaseCommand {
 		Util.sendMessage(sender, "&6Filter &cf:&7 - list of keywords. &6Location &cl:&7 - x,y,z location");
 		Util.sendMessage(sender, "&6Radius &cr:&7 - radius to search around given location");
 		Util.sendMessage(sender, "&6Time &ct:&7 - time bracket in the following format:");
+		Util.sendMessage(sender, "&7  -&c Date format: yyyy-MM-dd");
 		Util.sendMessage(sender, "&7  -&c t:10h45m10s &7-back specified amount of time");
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10 &7-from given date");
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10,2011-07-04,18:15:00 &7-between dates");
