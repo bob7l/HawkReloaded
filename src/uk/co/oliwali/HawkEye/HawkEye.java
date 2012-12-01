@@ -94,7 +94,7 @@ public class HawkEye extends JavaPlugin {
 
 		//Load config and permissions
         config = new Config(this);
-        new Permission(this);
+        new Permission();
 
         setupUpdater();
 
