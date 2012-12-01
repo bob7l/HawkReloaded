@@ -186,7 +186,8 @@ public class DataManager extends TimerTask {
 		try {
 			Util.debug("Attempting to add player '" + name + "' to database");
 			conn = getConnection();
-			conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "');");
+			//Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
+			conn.createStatement().execute("INSERT INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "') ON DUPLICATE KEY UPDATE player='" + name + "';");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add player to database: " + ex);
 			return false;
