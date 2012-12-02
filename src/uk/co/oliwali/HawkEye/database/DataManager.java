@@ -294,9 +294,10 @@ public class DataManager extends TimerTask {
 	 */
 	@Override
 	public void run() {
-			Util.info("The queue is at:" + queue.size());
 		if (queue.isEmpty())
 			return;
+		if (queue.size() >= 2000)
+			Util.info("The queue is almost overloaded! Queue: " + queue.size());
 		JDCConnection conn = getConnection();
 		PreparedStatement stmnt = null;
 		try {

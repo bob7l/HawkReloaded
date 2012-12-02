@@ -33,6 +33,7 @@ public class Config {
 	public static boolean DeleteDataOnRollback;
 	public static boolean LogDeathDrops;
 	public static boolean OpPermissions;
+	public static int LogDelay;
 	public static String DbUrl;
 	public static String DbUser;
 	public static String DbPassword;
@@ -73,6 +74,7 @@ public class Config {
 		DeleteDataOnRollback = config.getBoolean("general.delete-data-on-rollback");
 		LogDeathDrops = config.getBoolean("general.log-item-drops-on-death");
 		OpPermissions = config.getBoolean("general.op-permissions");
+		LogDelay = config.getInt("general.log-delay");
 		DbUser = config.getString("mysql.username");
 		DbPassword = config.getString("mysql.password");
 		DbUrl = "jdbc:mysql://" + config.getString("mysql.hostname") + ":" + config.getInt("mysql.port") + "/" + config.getString("mysql.database");

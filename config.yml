@@ -56,6 +56,7 @@ general:
     default-tool-command: ''
     check-for-updates: true
     op-permissions: false
+    log-delay: 2
 mysql:
     hawkeye-table: hawkeye
     port: 3306
