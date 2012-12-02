@@ -102,7 +102,7 @@ public class HawkEye extends JavaPlugin {
 
         //Initiate database connection
         try {
-			new DataManager(this);
+    	    getServer().getScheduler().scheduleAsyncRepeatingTask(this, new DataManager(this), 1 * 20, 1 * 20);
 		} catch (Exception e) {
 			Util.severe("Error initiating HawkEye database connection, disabling plugin");
 			pm.disablePlugin(this);
@@ -117,7 +117,6 @@ public class HawkEye extends JavaPlugin {
 	    registerListeners(pm);
 
 	    registerCommands();
-
         Util.info("Version " + version + " enabled!");
 
 	}
