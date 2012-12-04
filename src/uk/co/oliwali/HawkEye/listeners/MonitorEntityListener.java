@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -111,16 +112,21 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
 	public void onPaintingBreak(HangingBreakEvent event) {
-		HangingBreakByEntityEvent e = (HangingBreakByEntityEvent)event;
+		if (event.getCause().equals(RemoveCause.ENTITY)) return;
 		Entity en = event.getEntity();
 		String type = "Unknown";
-		if (en instanceof Painting) {
-			type = "Painting";
-		} else if (en instanceof ItemFrame) {
-			type = "Itemframe";
-		}
-		if (e.getRemover() instanceof Player)
-			DataManager.addEntry(new DataEntry((Player)e.getRemover(), DataType.ITEM_BREAK, en.getLocation().getBlock().getLocation(), type));
+		if (en instanceof Painting) type = "Painting";
+		else if (en instanceof ItemFrame) type = "Itemframe";
+		DataManager.addEntry(new DataEntry(event.getCause().name(), DataType.ITEM_BREAK, en.getLocation().getBlock().getLocation(), type));
+	}
+	
+	@HawkEvent(dataType = DataType.ITEM_BREAK) 
+	public void onPaintingBreak(HangingBreakByEntityEvent event) {
+		Entity en = event.getEntity();
+		String type = "Unknown";
+		if (en instanceof Painting) type = "Painting";
+		else if (en instanceof ItemFrame) type = "Itemframe";
+		DataManager.addEntry(new DataEntry((Player)event.getRemover(), DataType.ITEM_BREAK, en.getLocation().getBlock().getLocation(), type));
 	}
 
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
@@ -138,16 +144,13 @@ public class MonitorEntityListener extends HawkEyeListener {
 		if (!(en instanceof Silverfish)) return;
 		DataManager.addEntry(new BlockEntry(entity, DataType.BLOCK_INHABIT, event.getBlock()));
 	}
-	
+
 	@HawkEvent(dataType = DataType.ITEM_PLACE)
 	public void onHangingPlace(HangingPlaceEvent event) {
 		Entity e = event.getEntity();
 		String type = "Unknown";
-		if (e instanceof Painting) {
-			type = "Painting";
-		} else if (e instanceof ItemFrame) {
-			type = "Itemframe";
-		}
+		if (e instanceof Painting) type = "Painting";
+		else if (e instanceof ItemFrame) type = "Itemframe";
 		DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.ITEM_PLACE, e.getLocation().getBlock().getLocation(), type));
 	}
 
