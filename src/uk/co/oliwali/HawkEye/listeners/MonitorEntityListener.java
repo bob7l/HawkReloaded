@@ -5,12 +5,18 @@ import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -102,12 +108,18 @@ public class MonitorEntityListener extends HawkEyeListener {
 			}
 		}
 	}
-
+	
 	@HawkEvent(dataType = DataType.EXPLOSION)
 	public void onEntityExplode(EntityExplodeEvent event) {
-		String entity = event.getEntityType().getName();
+		Entity e = event.getEntity();
+		String name = "Environment";
+		if (e instanceof TNTPrimed) name = "TNT";
+		else if (e instanceof Creeper) name = "Creeper";
+		else if (e instanceof Fireball) name = "Ghast";
+		else if (e instanceof EnderDragon) name = "EnderDragon";
+		else if ((e instanceof Wither) || (e instanceof WitherSkull)) name = "Wither";
 		for (Block b : event.blockList().toArray(new Block[0]))
-			DataManager.addEntry(new BlockEntry(entity, DataType.EXPLOSION, b));
+			DataManager.addEntry(new BlockEntry(name, DataType.EXPLOSION, b));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
