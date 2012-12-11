@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -79,6 +80,14 @@ public class HawkEye extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
+		// Metrics logging
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+		
 		//Set up config and permissions
         PluginManager pm = getServer().getPluginManager();
         instance = this;

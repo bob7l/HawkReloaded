@@ -26,11 +26,6 @@
 			<url>http://repo.tehkode.ru/repository/bukkit-plugins/</url>
 		</repository>
 
-		<!-- Plugin Metrics -->
-		<repository>
-			<id>Plugin Metrics</id>
-			<url>http://repo.mcstats.org/content/repositories/public</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -66,13 +61,6 @@
 			<version>5.6.5</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/Herochat.jar</systemPath>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mcstats</groupId>
-			<artifactId>metrics</artifactId>
-			<version>R6</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
