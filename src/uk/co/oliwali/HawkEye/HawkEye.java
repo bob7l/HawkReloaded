@@ -1,5 +1,13 @@
 package uk.co.oliwali.HawkEye;
 
+<<<<<<< HEAD
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+=======
+>>>>>>> 3e0d1cd17bdc5485e23dd00633fbc02c3ce2d06d
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +81,17 @@ public class HawkEye extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
+<<<<<<< HEAD
+
+		// Metrics logging
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+		
+=======
 		PluginManager pm = getServer().getPluginManager();
 		try
 		{
@@ -84,6 +103,7 @@ public class HawkEye extends JavaPlugin {
 			pm.disablePlugin(this);
 			return;
 		}
+>>>>>>> 3e0d1cd17bdc5485e23dd00633fbc02c3ce2d06d
 		//Set up config and permissions
         instance = this;
 		server = getServer();
