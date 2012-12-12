@@ -20,11 +20,4 @@
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/uk/co/oliwali/HawkEye/lib</name>
-			<type>2</type>
-			<locationURI>PARENT-1-WORKSPACE_LOC/AppData/Local/Temp/Rar$DRa0.650/PatPeter-SQLibrary-cd062d6/lib</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
