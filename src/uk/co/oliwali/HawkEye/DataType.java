@@ -40,22 +40,24 @@ public enum DataType {
 	LEAF_DECAY(20, BlockEntry.class, "leaf-decay", true, true),
 	MOB_DEATH(21, DataEntry.class, "mob-death", false, false),
 	OTHER_DEATH(22, DataEntry.class, "other-death", false, false),
-	ITEM_DROP(23, DataEntry.class, "item-drop", true, false),
-	ITEM_PICKUP(24, DataEntry.class, "item-pickup", true, false),
+	ITEM_DROP(23, DataEntry.class, "item-drop", false, false),
+	ITEM_PICKUP(24, DataEntry.class, "item-pickup", false, false),
 	BLOCK_FADE(25, BlockChangeEntry.class, "block-fade", true, true),
 	LAVA_FLOW(26, BlockChangeEntry.class, "lava-flow", true, true),
 	WATER_FLOW(27, BlockChangeEntry.class, "water-flow", true, true),
 	CONTAINER_TRANSACTION(28, ContainerEntry.class, "container-transaction", true, true),
 	SIGN_BREAK(29, SignEntry.class, "sign-break", true, true),
-	PAINTING_BREAK(30, DataEntry.class, "painting-break", true, false),
-	PAINTING_PLACE(31, DataEntry.class, "painting-place", true, false),
+	ITEM_BREAK(30, DataEntry.class, "item-break", true, true),
+	ITEM_PLACE(31, DataEntry.class, "item-place", true, true),
 	ENDERMAN_PICKUP(32, BlockEntry.class, "enderman-pickup", true, true),
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
     MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
 	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false),
 	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
-	HEROCHAT(38, DataEntry.class, "herochat", true, true);
+	HEROCHAT(38, DataEntry.class, "herochat", false, false),
+	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),
+	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true);
 
 	private int id;
 	private boolean canHere;

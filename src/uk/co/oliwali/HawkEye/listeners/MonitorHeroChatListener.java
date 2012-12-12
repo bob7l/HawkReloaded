@@ -23,6 +23,6 @@ public class MonitorHeroChatListener extends HawkEyeListener {
 	 public void onChannelChatEvent(ChannelChatEvent event) {
 		final Player player = event.getSender().getPlayer();
 		Location loc  = player.getLocation();
-		DataManager.addEntry(new DataEntry(player, DataType.HEROCHAT, loc, event.getMessage()));
+		DataManager.addEntry(new DataEntry(player, DataType.HEROCHAT, loc, event.getChannel().getName() + ": " + event.getMessage()));
 	}
 }

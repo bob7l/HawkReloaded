@@ -17,7 +17,7 @@ public class Config {
 
 	public static List<String> CommandFilter = new ArrayList<String>();
 	public static List<String> IgnoreWorlds = new ArrayList<String>();
-	public static List<Integer> BlockFilter = new ArrayList<Integer>();
+	public static List<String> BlockFilter = new ArrayList<String>();
 	public static int MaxLines = 0;
 	public static int MaxRadius;
 	public static int DefaultHereRadius;
@@ -33,6 +33,7 @@ public class Config {
 	public static boolean DeleteDataOnRollback;
 	public static boolean LogDeathDrops;
 	public static boolean OpPermissions;
+	public static int LogDelay;
 	public static String DbUrl;
 	public static String DbUser;
 	public static String DbPassword;
@@ -57,7 +58,7 @@ public class Config {
 
 		//Load values
 		CommandFilter = config.getStringList("command-filter");
-		BlockFilter = config.getIntegerList("block-filter");
+		BlockFilter = config.getStringList("block-filter");
 		IgnoreWorlds = config.getStringList("ignore-worlds");
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");
@@ -73,6 +74,7 @@ public class Config {
 		DeleteDataOnRollback = config.getBoolean("general.delete-data-on-rollback");
 		LogDeathDrops = config.getBoolean("general.log-item-drops-on-death");
 		OpPermissions = config.getBoolean("general.op-permissions");
+		LogDelay = config.getInt("general.log-delay");
 		DbUser = config.getString("mysql.username");
 		DbPassword = config.getString("mysql.password");
 		DbUrl = "jdbc:mysql://" + config.getString("mysql.hostname") + ":" + config.getInt("mysql.port") + "/" + config.getString("mysql.database");

@@ -25,7 +25,7 @@ public class JDCConnection implements Connection
 	private long timestamp;
 
 	JDCConnection(Connection connection) {
-		this.conn = connection;
+		conn = connection;
 		inuse = false;
 		timestamp = 0;
 	}

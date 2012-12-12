@@ -3,6 +3,7 @@
 	///////////////////////////////////////////////////
 	//         HawkEye Interface Search File         //
 	//                 by oliverw92                  //
+	//    Maintained by HawkEye Reloaded Dev Team    //
 	///////////////////////////////////////////////////
 	
 	error_reporting(E_ALL);
@@ -155,7 +156,7 @@
 	foreach($items as $i) {
 		$item = explode(",", $i, 2);
 		if (count($item) < 2) continue;
-		$itemhash[intval($item[0])] = $item[1];
+		if(isset($item[0]) && isset($item[1])) $itemhash[intval($item[0])] = $item[1];
 	}
 	$results = array();
 	
@@ -181,9 +182,11 @@
 			case 19:
 			case 25:
 				$arr = explode("-", $fdata);
-				if (count($arr) > 1)
+				if (getBlockName($arr[0]) == "AIR") {
+				    $fdata = getBlockName($arr[1]);
+				 } else {
 					$fdata = getBlockName($arr[0]) . " replaced by " . getBlockName($arr[1]);
-				else $fdata = getBlockName($arr[0]);
+				}
 				break;
 			case 16:
 				$arr = explode("-", $fdata);
@@ -253,8 +256,9 @@
 		if (!isset($itemhash[$parts[0]])) return $string;
 
 		$i = $itemhash[$parts[0]];
-		
-		if (count($parts) == 2)
+		if ($string == "00")
+		    return "AIR";
+		else if (count($parts) == 2)
 			return $i . ":" . $parts[1];
 		else
 			return $i;

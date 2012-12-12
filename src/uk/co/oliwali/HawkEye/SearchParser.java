@@ -198,7 +198,9 @@ public class SearchParser {
 						cal.add(Calendar.MINUTE, -1 * mins);
 						cal.add(Calendar.SECOND, -1 * secs);
 						SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						dateFrom = form.format(cal.getTime());
+						//No need for DateFrom here, they can use the date format for that
+						//This is better for purging data
+						dateTo = form.format(cal.getTime());
 
 					}
 					//If the time is in the format 'yyyy-MM-dd HH:mm:ss'

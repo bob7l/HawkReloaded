@@ -40,7 +40,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		DataManager.addEntry(new DataEntry(player, DataType.CHAT, player.getLocation(), event.getMessage()));
 	}
-	
+
 	@HawkEvent(dataType = DataType.COMMAND)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
@@ -49,7 +49,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		DataManager.addEntry(new DataEntry(player, DataType.COMMAND, player.getLocation(), event.getMessage()));
 	}
 
-	
 	@HawkEvent(dataType = DataType.JOIN)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -95,7 +94,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
 
-	    
+
 		if (block != null) {
 
 			Location loc = block.getLocation();
@@ -104,6 +103,9 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				case FURNACE:
 				case DISPENSER:
 				case CHEST:
+				case ANVIL:
+				case BEACON:
+				case BREWING_STAND:
 				case ENDER_CHEST:
 					if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						//Call container manager for inventory open
@@ -150,11 +152,11 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		Player player = event.getPlayer();
 		ItemStack stack = event.getItemDrop().getItemStack();
 		String data = null;
-		if (stack.getData() != null)
+		if (stack.getDurability() != 0)
 			data = stack.getAmount() + "x " + stack.getTypeId() + ":" + stack.getData().getData();
 		else
 			data = stack.getAmount() + "x " + stack.getTypeId();
-		DataManager.addEntry(new DataEntry(player, DataType.ITEM_DROP, player.getLocation(), data));
+		DataManager.addEntry(new DataEntry(player, DataType.ITEM_DROP, player.getLocation().getBlock().getLocation(), data));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_PICKUP)
@@ -162,10 +164,10 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		Player player = event.getPlayer();
 		ItemStack stack = event.getItem().getItemStack();
 		String data = null;
-		if (stack.getData() != null)
+		if (stack.getDurability() != 0)
 			data = stack.getAmount() + "x " + stack.getTypeId() + ":" + stack.getData().getData();
 		else
 			data = stack.getAmount() + "x " + stack.getTypeId();
-		DataManager.addEntry(new DataEntry(player, DataType.ITEM_PICKUP, player.getLocation(), data));
+		DataManager.addEntry(new DataEntry(player, DataType.ITEM_PICKUP, player.getLocation().getBlock().getLocation(), data));
 	}
 }
