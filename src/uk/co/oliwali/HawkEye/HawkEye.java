@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,13 @@ public class HawkEye extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+		
 		PluginManager pm = getServer().getPluginManager();
 		try
 		{

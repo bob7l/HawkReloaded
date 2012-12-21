@@ -112,7 +112,7 @@ public class Rollback implements Runnable {
 			}
 			else {
 				Util.sendMessage(session.getSender(), "&cRollback preview complete, &7" + undo.size() + "&c edits performed to you");
-				Util.sendMessage(session.getSender(), "&cType &7/hawk apply&c to make these changes permanent or &7/hawk cancel&c to cancel");
+				Util.sendMessage(session.getSender(), "&cType &7/hawk preview apply&c to make these changes permanent or &7/hawk preview cancel&c to cancel");
 			}
 
 			Util.debug("Rollback complete, " + undo.size() + " edits performed");

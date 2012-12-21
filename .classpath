@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/pluggy/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/pluggy/WorldEdit.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/PermissionsPlus.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/PermissionsBukkit-2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/craftbukkit-1.3.1-R2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/Herochat.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/Essentials.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Documents/Server-test/plugins/craftscripts/Vault.jar"/>
-	<classpathentry kind="lib" path="C:/Users/TCP/Downloads/WorldEdit.jar"/>
-	<classpathentry kind="output" path="bin"/>
+  <classpathentry kind="src" path="src" including="**/*.java"/>
+  <classpathentry kind="src" path="." including="plugin.yml|config.yml" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+  <classpathentry kind="var" path="M2_REPO/org/bukkit/bukkit/1.4.5-R0.3-SNAPSHOT/bukkit-1.4.5-R0.3-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sk89q/worldedit/5.4-SNAPSHOT/worldedit-5.4-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/de/schlichtherle/truezip/6.8.3/truezip-6.8.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/rhino/js/1.7R2/js-1.7R2.jar"/>
+  <classpathentry kind="lib" path="lib/Herochat.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mcstats/metrics/R6/metrics-R6.jar"/>
 </classpath>

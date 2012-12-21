@@ -1,14 +1,14 @@
 name: HawkEye
 main: uk.co.oliwali.HawkEye.HawkEye
-authors: [oliverw92, GoalieGuy6]
-version: 1.0.7.1
+authors: [oliverw92, GoalieGuy6, bob7l, ELCHILEN0, stutiguias]
+version: 1.0.8
 description: Track those griefers like a bird of prey!
 dev-url: http://dev.bukkit.org/server-mods/hawkeye-reload/
-softdepend: [WorldEdit,PermissionsEx,Permissions,GroupManager,bPermissions,Vault]
+softdepend: [WorldEdit, HeroChat, bPermissions,]
 commands:
   hawk:
     description: Track those griefers like a bird of prey!
-    aliases: [hawkeye,he,hk,ha]
+    aliases: [hawkeye, he, hk, ha]
     usage: /<command> help
 permissions:
     hawkeye.*:
