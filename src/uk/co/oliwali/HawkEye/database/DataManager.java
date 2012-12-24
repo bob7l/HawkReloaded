@@ -294,9 +294,8 @@ public class DataManager extends TimerTask {
 	 */
 	@Override
 	public void run() {
-		if (queue.isEmpty())
-			return;
-		if (queue.size() >= 2000)
+		if (queue.isEmpty()) return;
+		if (queue.size() >= 2000) 
 			Util.info("The queue is almost overloaded! Queue: " + queue.size());
 		JDCConnection conn = getConnection();
 		PreparedStatement stmnt = null;
@@ -342,7 +341,7 @@ public class DataManager extends TimerTask {
 			}
 			conn.close();
 		} catch (Exception ex) {
-			Util.severe("Exception: " + ex);
+			//To many rare occurrences are possible here
 		} finally {
 			try {
 				if (stmnt != null)
