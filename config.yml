@@ -40,6 +40,7 @@ log:
     herochat: false
     entity-modify: false
     block-inhabit: false
+    super-pick: false
 general:
     max-lines: 0
     log-item-drops-on-death: false
