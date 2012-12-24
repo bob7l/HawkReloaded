@@ -57,7 +57,8 @@ public enum DataType {
 	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
 	HEROCHAT(38, DataEntry.class, "herochat", false, false),
 	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),
-	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true);
+	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true),
+	SUPER_PICK(41, BlockEntry.class, "super-pick", true, true);
 
 	private int id;
 	private boolean canHere;
