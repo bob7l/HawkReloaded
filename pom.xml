@@ -16,8 +16,8 @@
 
 		<!-- WorldEdit -->
 		<repository>
-			<id>spout-repo</id>
-			<url>http://nexus.spout.org/content/groups/public/</url>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
 
