@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.oliwali</groupId>
 	<artifactId>HawkEye</artifactId>
-	<version>1.0.6.4-DEV</version>
+	<version>1.1.0</version>
 	<name>HawkEye</name>
 	<description>Bukkit data logging plugin with web-based data browser</description>
 
@@ -16,8 +16,8 @@
 
 		<!-- WorldEdit -->
 		<repository>
-			<id>spout-repo</id>
-			<url>http://nexus.spout.org/content/groups/public/</url>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
 
