@@ -76,6 +76,7 @@ public class HawkEye extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
+		//Setup metrics
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
@@ -154,7 +155,7 @@ public class HawkEye extends JavaPlugin {
 		monitorWorldListener.registerEvents();
 		pm.registerEvents(toolListener, this);
 		if (herochat != null) monitorHeroChatListener.registerEvents();
-		if (worldEdit != null) pm.registerEvents(monitorWorldEditListener, this); 
+		if ((worldEdit != null) && (Config.SuperPick)) pm.registerEvents(monitorWorldEditListener, this); 
 	}
 
 	/**

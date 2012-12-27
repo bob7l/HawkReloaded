@@ -25,6 +25,7 @@ public class Config {
 	public static String[] DefaultToolCommand;
 	public static String CleanseAge;
 	public static String CleansePeriod;
+	public static boolean SuperPick;
 	public static boolean GiveTool;
 	public static boolean CheckUpdates;
 	public static boolean Debug;
@@ -67,6 +68,7 @@ public class Config {
 		DefaultToolCommand = config.getString("general.default-tool-command").split(" ");
 		CleanseAge = config.getString("general.cleanse-age");
 		CleansePeriod = config.getString("general.cleanse-period");
+		SuperPick = config.getBoolean("log.super-pickaxe");
 		GiveTool = config.getBoolean("general.give-user-tool");
 		CheckUpdates = config.getBoolean("general.check-for-updates");
 		Debug = config.getBoolean("general.debug");
