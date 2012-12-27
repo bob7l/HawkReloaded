@@ -1,6 +1,5 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,10 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+
 import org.bukkit.entity.Player;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import uk.co.oliwali.HawkEye.Base64;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -68,9 +67,8 @@ public class SignEntry extends DataEntry {
 	@Override
 	public String getSqlData() {
 		if (data != null) return data;
-		BASE64Encoder encoder = new BASE64Encoder();
 		List<String> encoded = new ArrayList<String>();
-		for (int i = 0; i < 4; i++) if (lines[i] != null && lines[i].length() > 0) encoded.add(encoder.encode(lines[i].getBytes()));
+		for (int i = 0; i < 4; i++) if (lines[i] != null && lines[i].length() > 0) encoded.add(Base64.encode(lines[i].getBytes()));
 		return wallSign + "@" + facing + "@" + Util.join(encoded, ",");
 	}
 
@@ -136,13 +134,12 @@ public class SignEntry extends DataEntry {
 
 				//Parse lines
 				if (arr.length != 3) return;
-				BASE64Decoder decoder = new BASE64Decoder();
 				List<String> decoded = new ArrayList<String>();
 				String[] encLines = arr[2].split(",");
 				for (int i = 0; i < encLines.length; i++) {
 					try {
-						decoded.add(new String(decoder.decodeBuffer(encLines[i])));
-					} catch (IOException e) {
+						decoded.add(new String(Base64.decode(encLines[i])));
+					} catch (Exception e) {
 						Util.severe("Unable to decode sign data from database");
 					}
 				}
