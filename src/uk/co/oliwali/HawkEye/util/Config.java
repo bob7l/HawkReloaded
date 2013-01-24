@@ -26,6 +26,8 @@ public class Config {
 	public static String CleanseAge;
 	public static String CleansePeriod;
 	public static boolean SuperPick;
+	public static boolean WEPlace;
+	public static boolean WEBreak;
 	public static boolean GiveTool;
 	public static boolean CheckUpdates;
 	public static boolean Debug;
@@ -69,6 +71,8 @@ public class Config {
 		CleanseAge = config.getString("general.cleanse-age");
 		CleansePeriod = config.getString("general.cleanse-period");
 		SuperPick = config.getBoolean("log.super-pickaxe");
+		WEPlace = config.getBoolean("log.worldedit-place");
+		WEBreak = config.getBoolean("log.worldedit-break");
 		GiveTool = config.getBoolean("general.give-user-tool");
 		CheckUpdates = config.getBoolean("general.check-for-updates");
 		Debug = config.getBoolean("general.debug");

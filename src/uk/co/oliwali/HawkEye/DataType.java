@@ -58,7 +58,9 @@ public enum DataType {
 	HEROCHAT(38, DataEntry.class, "herochat", false, false),
 	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),
 	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true),
-	SUPER_PICKAXE(41, BlockEntry.class, "super-pickaxe", true, true);
+	SUPER_PICKAXE(41, BlockEntry.class, "super-pickaxe", true, true),
+	WORLDEDIT_BREAK(42, BlockEntry.class, "worldedit-break", true, true),
+	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true);
 
 	private int id;
 	private boolean canHere;

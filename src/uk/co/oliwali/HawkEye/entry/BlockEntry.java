@@ -30,6 +30,12 @@ public class BlockEntry extends DataEntry {
 		data = BlockUtil.getBlockString(block);
 	}
 
+	public BlockEntry(String player, DataType type, int block, int blockdata, Location loc) {
+		setInfo(player, type, loc);
+        if (blockdata != 0) data = block + ":" + blockdata;
+        else data = Integer.toString(block);
+	}
+	
 	@Override
 	public String getStringData() {
 		return BlockUtil.getBlockStringName(data);
