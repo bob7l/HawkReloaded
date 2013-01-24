@@ -295,16 +295,18 @@ public class DataManager extends TimerTask {
 	@Override
 	public void run() {
 		if (queue.isEmpty()) return;
-		if (queue.size() >= 2000) 
+		if (queue.size() > 70000)
 			Util.info("The queue is almost overloaded! Queue: " + queue.size());
 		JDCConnection conn = getConnection();
 		PreparedStatement stmnt = null;
 		try {
-			while (!queue.isEmpty()) {
-
+			conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
+			
+			stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			
+			for (int i = 0; i < queue.size(); i++) {
 				DataEntry entry = queue.poll();
-
-				//Sort out player IDs
+				
 				if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
 					Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
 					continue;
@@ -319,14 +321,7 @@ public class DataManager extends TimerTask {
 					Util.debug("No player found, skipping entry");
 					continue;
 				}
-
-				//If we are re-inserting we need to also insert the data ID
-				if (entry.getDataId() > 0) {
-					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-					stmnt.setInt(10, entry.getDataId());
-				}
-				else
-					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+				
 				stmnt.setString(1, entry.getDate());
 				stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
 				stmnt.setInt(3, entry.getType().getId());
@@ -336,10 +331,14 @@ public class DataManager extends TimerTask {
 				stmnt.setDouble(7, entry.getZ());
 				stmnt.setString(8, entry.getSqlData());
 				stmnt.setString(9, entry.getPlugin());
-				stmnt.executeUpdate();
-				stmnt.close();
+				if (entry.getDataId() > 0) stmnt.setInt(10, entry.getDataId());
+				else stmnt.setInt(10, 0); //0 is better then setting it to null, like before
+				stmnt.addBatch();
 			}
-			conn.close();
+			stmnt.executeBatch();
+			conn.commit();
+			conn.setAutoCommit(true); //Enable when commit is over (We need this to properly use batch!)
+			
 		} catch (Exception ex) {
 			//To many rare occurrences are possible here
 		} finally {
