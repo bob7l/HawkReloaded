@@ -36,6 +36,7 @@ public class Config {
 	public static boolean DeleteDataOnRollback;
 	public static boolean LogDeathDrops;
 	public static boolean OpPermissions;
+	public static boolean isSimpleTime;
 	public static int LogDelay;
 	public static String DbUrl;
 	public static String DbUser;
@@ -80,6 +81,7 @@ public class Config {
 		DeleteDataOnRollback = config.getBoolean("general.delete-data-on-rollback");
 		LogDeathDrops = config.getBoolean("general.log-item-drops-on-death");
 		OpPermissions = config.getBoolean("general.op-permissions");
+		isSimpleTime = config.getBoolean("general.simplify-time");
 		LogDelay = config.getInt("general.log-delay");
 		DbUser = config.getString("mysql.username");
 		DbPassword = config.getString("mysql.password");

@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -339,5 +343,50 @@ public class Util {
 		LOW,
 		HIGH;
 	}
+	
+	public static String getTime(String oldtime) {
+		if (!(Config.isSimpleTime)) return oldtime;
 
+		String message = "";
+		Date curdate = Calendar.getInstance().getTime();
+
+		SimpleDateFormat form = new SimpleDateFormat("MM-dd HH:mm:ss");
+		
+		Date d1 = null;
+		Date d2 = null;
+		String currentDate = form.format(curdate);
+
+		try {
+			d1 = form.parse(oldtime);
+			d2 = form.parse(currentDate);
+		} catch (ParseException e) {
+			Util.severe("Warning! Hawkeye was unable to parse dates!");
+		}
+
+		long diff = d2.getTime() - d1.getTime();
+
+		int seconds = (int)diff / 1000;
+
+		if (seconds >= 86400) {
+			int days = (seconds / 86400);
+			seconds %= 86400;
+
+			message = message + days + "d ";
+		}
+		if (seconds >= 3600) {
+			int hours = seconds / 3600;
+			seconds %= 3600;
+
+			message = message + hours + "h ";
+		}
+		if (seconds >= 60) {
+			int min = seconds / 60;
+			seconds %= 60;
+
+			message = message + min + "m ";
+		} else {
+			message = message + seconds + "s ";
+		}
+		return message;
+	}
 }

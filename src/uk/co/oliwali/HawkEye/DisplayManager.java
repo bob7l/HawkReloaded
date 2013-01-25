@@ -42,8 +42,10 @@ public class DisplayManager {
 			if (i == results.size())
 				break;
 			DataEntry entry = results.get(i);
-
-			sendLine(session.getSender(), "&cID:" + entry.getDataId() + " &7" + entry.getDate().substring(5) + " &c" + entry.getPlayer() + " &7" + entry.getType().getConfigName());
+			
+			String time = Util.getTime(entry.getDate().substring(5));
+			
+			sendLine(session.getSender(), "&cID:" + entry.getDataId() + " &7" + time + " &c" + entry.getPlayer() + " &7" + entry.getType().getConfigName());
 			sendLine(session.getSender(), "&cLoc: &7" + entry.getWorld() + "-" + entry.getX() + "," + entry.getY() + "," + entry.getZ() + " &cData: &7" + entry.getStringData());
 		}
 		Util.sendMessage(session.getSender(), "&8-----------------------------------------------------");
