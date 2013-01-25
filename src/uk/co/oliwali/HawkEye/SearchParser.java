@@ -155,11 +155,13 @@ public class SearchParser {
 				else if (lastParam.equals("t")) {
 
 					int type = 2;
+					boolean isTo = false;
 					for (int j = 0; j < arg.length(); j++) {
 						String c = arg.substring(j, j+1);
 						if (!Util.isInteger(c)) {
-							if (c.equals("m") || c .equals("s") || c.equals("h") || c.equals("d") || c.equals("w"))
+							if (c.equals("m") || c .equals("s") || c.equals("h") || c.equals("d") || c.equals("w")) {
 								type = 0;
+							}
 							if (c.equals("-") || c.equals(":"))
 								type = 1;
 						}
@@ -177,18 +179,24 @@ public class SearchParser {
 						String nums = "";
 						for (int j = 0; j < values[0].length(); j++) {
 							String c = values[0].substring(j, j+1);
-							if (Util.isInteger(c)) {
-								nums += c;
-								continue;
+							if (c.equals("!")) { //If the number has a ! infront of it the time inverts
+								c = values[0].substring(j, j+2).replace("!", "");
+								isTo = true;
+							} else {
+								if (Util.isInteger(c)) {
+									nums += c;
+									continue;
+								} 
+
+								int num = Integer.parseInt(nums);
+								if (c.equals("w")) weeks = num;
+								else if (c.equals("d")) days = num;
+								else if (c.equals("h")) hours = num;
+								else if (c.equals("m")) mins = num;
+								else if (c.equals("s")) secs = num;
+								else throw new IllegalArgumentException("Invalid time measurement: &7" + c);
+								nums = "";
 							}
-							int num = Integer.parseInt(nums);
-							if (c.equals("w")) weeks = num;
-							else if (c.equals("d")) days = num;
-							else if (c.equals("h")) hours = num;
-							else if (c.equals("m")) mins = num;
-							else if (c.equals("s")) secs = num;
-							else throw new IllegalArgumentException("Invalid time measurement: &7" + c);
-							nums = "";
 						}
 
 						Calendar cal = Calendar.getInstance();
@@ -198,10 +206,12 @@ public class SearchParser {
 						cal.add(Calendar.MINUTE, -1 * mins);
 						cal.add(Calendar.SECOND, -1 * secs);
 						SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						
-						dateFrom = form.format(cal.getTime());
+						if (isTo)
+							dateTo = form.format(cal.getTime());
+						else
+							dateFrom = form.format(cal.getTime());
 					}
-					
+
 					//If the time is in the format 'yyyy-MM-dd HH:mm:ss'
 					else if (type == 1) {
 						if (values.length == 1) {
