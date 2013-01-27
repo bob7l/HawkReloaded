@@ -42,7 +42,7 @@ public class BlockChangeEntry extends DataEntry {
 	
 	public BlockChangeEntry(String player, DataType type, Location loc, int blockfrom, int blockfromdata, int blockto, int blockdatato) {
 		setInfo(player, type, loc);
-        if (blockdatato != 0) from = blockfrom + ":" + blockfromdata;
+        if (blockfromdata != 0) from = blockfrom + ":" + blockfromdata;
         else from = Integer.toString(blockfrom);
         
         if (blockdatato != 0) to = blockto + ":" + blockdatato;
