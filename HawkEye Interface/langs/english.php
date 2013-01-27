@@ -83,7 +83,10 @@
 									   "37" => "Spawn Egg",
 									   "38" => "HeroChat",	
 									   "39" => "Entity Modify",
-                                                                           "40" => "Block Inhabit"),
+                                                                           "40" => "Block Inhabit",
+                                                                           "41" => "Super-Pickaxe",
+                                                                           "42" => "WorldEdit-Break",
+                                                                           "43" => "WorldEdit-Place"),
 
 					"results" => array("title" => "Results",
 									   "id" => "ID",
