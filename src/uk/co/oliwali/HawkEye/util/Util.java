@@ -345,7 +345,7 @@ public class Util {
 	}
 	
 	public static String getTime(String oldtime) {
-		if (!(Config.isSimpleTime)) return oldtime;
+		if (!(Config.isSimpleTime)) return oldtime + " ";
 
 		String message = "";
 		Date curdate = Calendar.getInstance().getTime();
