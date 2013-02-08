@@ -345,12 +345,12 @@ public class Util {
 	}
 	
 	public static String getTime(String oldtime) {
-		if (!(Config.isSimpleTime)) return oldtime + " ";
+		if (!(Config.isSimpleTime)) return oldtime.substring(2) + " ";
 
 		String message = "";
 		Date curdate = Calendar.getInstance().getTime();
 
-		SimpleDateFormat form = new SimpleDateFormat("MM-dd HH:mm:ss");
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		Date d1 = null;
 		Date d2 = null;
