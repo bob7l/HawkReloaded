@@ -41,7 +41,6 @@ import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import com.dthielke.herochat.Herochat;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class HawkEye extends JavaPlugin {
@@ -123,7 +122,7 @@ public class HawkEye extends JavaPlugin {
 		}
 
 		checkDependencies(pm);
-
+		
 		containerManager = new ContainerAccessManager();
 
 		registerListeners(pm);
@@ -158,8 +157,9 @@ public class HawkEye extends JavaPlugin {
 		if (herochat != null) monitorHeroChatListener.registerEvents();
 		
 		if (worldEdit != null)  {
+			Util.info("asdasdasdasdasdasdasd");
 			if (Config.SuperPick) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
-			if (Config.WEBreak || Config.WEPlace) WorldEdit.getInstance().setEditSessionFactory(new WESessionFactory());
+			if (Config.WEBreak || Config.WEPlace) WESessionFactory.enableWELogging();
 		}
 	}
 

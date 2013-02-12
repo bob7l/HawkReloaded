@@ -4,9 +4,12 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.EditSessionFactory;
 import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.LocalWorld;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bags.BlockBag;
 
 public class WESessionFactory extends EditSessionFactory {
+
+	public static void enableWELogging() { WorldEdit.getInstance().setEditSessionFactory(new WESessionFactory()); }
 
 	@Override
 	public EditSession getEditSession(LocalWorld world, int maxBlocks, LocalPlayer player) { return new HawkSession(world, maxBlocks, player); }
