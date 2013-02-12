@@ -157,7 +157,6 @@ public class HawkEye extends JavaPlugin {
 		if (herochat != null) monitorHeroChatListener.registerEvents();
 		
 		if (worldEdit != null)  {
-			Util.info("asdasdasdasdasdasdasd");
 			if (Config.SuperPick) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
 			if (Config.WEBreak || Config.WEPlace) WESessionFactory.enableWELogging();
 		}
