@@ -216,14 +216,12 @@ public class HawkEye extends JavaPlugin {
 			Util.info("Checking for a new update...");
 
 			Updater updater = new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
-			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
 			name = updater.getLatestVersionString();
 			update = updater.getResult() != Updater.UpdateResult.NO_UPDATE;
 
 			if (update) {
 				Util.info("Update found! Downloading...");
 				Util.info(name + " will be enabled on reload!");
-
 			} else {
 				Util.info("No update for HawkEye found!");
 			}
