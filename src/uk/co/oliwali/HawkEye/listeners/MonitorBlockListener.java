@@ -48,7 +48,8 @@ public class MonitorBlockListener extends HawkEyeListener {
 			if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK)) {
 				//If the data is 8, this is the top half!
 				if (block.getData() == (byte)8 || block.getData() == (byte)9) { 
-					block = block.getRelative(BlockFace.DOWN);
+					DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block.getRelative(BlockFace.DOWN)));
+					return;
 				}
 			}
 			if (block.getType().equals(Material.BED_BLOCK)) {
