@@ -87,7 +87,7 @@ public class BlockUtil {
 		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
 
 		if (itemOnTop(type) && block.getRelative(BlockFace.DOWN).getTypeId() == 0) {
-			if (isItemAttached(type) && ((data != 5) || (data != 6))) {
+			if (isItemAttached(type) && ((data < 5) || (data > 8))) {
 				block.getRelative(getFace(data)).setType(Material.LOG); //set type to log to prevent any attachment problems
 			} else {
 				block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
@@ -221,8 +221,12 @@ public class BlockUtil {
 		case 1: return BlockFace.WEST;
 		case 2: return BlockFace.EAST;
 		case 3: return BlockFace.NORTH;
+		case 9: return BlockFace.WEST;
+		case 10: return BlockFace.EAST;
+		case 11: return BlockFace.NORTH;
+		case 12: return BlockFace.SOUTH;
 		}
-		return null;
+		return BlockFace.NORTH;
 	}
 
 	public static boolean isItemAttached(int block) {
