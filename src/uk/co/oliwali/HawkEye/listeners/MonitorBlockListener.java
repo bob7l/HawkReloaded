@@ -25,6 +25,7 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
+import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 
 /**
@@ -43,29 +44,44 @@ public class MonitorBlockListener extends HawkEyeListener {
 		if (Config.BlockFilter.contains(block.getType().toString())) return;
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
 			DataManager.addEntry(new SignEntry(event.getPlayer(), DataType.SIGN_BREAK, event.getBlock()));
-		else
+		else {
+			if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK)) {
+				//If the data is 8, this is the top half!
+				if (block.getData() == (byte)8 || block.getData() == (byte)9) { 
+					block = block.getRelative(BlockFace.DOWN);
+				}
+			}
+			if (block.getType().equals(Material.BED_BLOCK)) {
+
+				if (block.getData() > 7) {
+					block = block.getRelative(BlockUtil.getBedFace(block));
+				}
+			}
+
 			DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+
+			Block topblock = block.getRelative(BlockFace.UP);
+
+			if (BlockUtil.itemOnTop(topblock.getTypeId())) {
+				DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, topblock));
+			}
+		}
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Block block = event.getBlock();
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getType().toString())) return;
-		
+
 		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
 		final BlockPlaceEvent finalEvent = event;
-		if ((block.getTypeId() == 53) || (block.getTypeId() == 67) || (block.getTypeId() == 108) || (block.getTypeId() == 109) || (block.getTypeId() == 114) || (block.getTypeId() == 128) || (block.getTypeId() == 134) || (block.getTypeId() == 135)|| (block.getTypeId() == 17) || (block.getTypeId() == 136)) {
-			HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
-				@Override
-				public void run() {
-					DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), finalEvent.getBlockReplacedState(), finalEvent.getBlock().getState()));
-				}
-			}, 1L);
-			return;
-		}
-		// End Stair Fix
-		
-		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), DataType.BLOCK_PLACE, block.getLocation(), event.getBlockReplacedState(), block.getState()));
+		HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
+			@Override
+			public void run() {
+				DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), finalEvent.getBlockReplacedState(), finalEvent.getBlock().getState()));
+			}
+		}, 1L);
+		return;
 	}
 	
 	@HawkEvent(dataType = DataType.SIGN_PLACE)

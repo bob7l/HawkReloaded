@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.util;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -82,9 +83,28 @@ public class BlockUtil {
 	public static void setBlockString(Block block, String blockData) {
 		String[] blockArr = blockData.split(":");
 		if (!Util.isInteger(blockArr[0])) return;
-		block.setTypeId(Integer.parseInt(blockArr[0]));
-		if (blockArr.length > 1)
-			block.setData((byte) Integer.parseInt(blockArr[1]));
+		int type = Integer.parseInt(blockArr[0]);
+		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
+
+		if (itemOnTop(type) && block.getRelative(BlockFace.DOWN).getTypeId() == 0) {
+			block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
+		}
+
+		if (type == 64 || type == 71) {
+			block.setTypeId(type);
+			block.setData((byte) data);
+
+			Block rel = block.getRelative(BlockFace.UP);
+			rel.setTypeId(type);
+			rel.setData((byte) 8);
+
+		} else if (type == 26) { 
+			placeBed(block, type, (byte)data);
+		}
+
+		block.setTypeId(type);
+		if (data != 0)
+			block.setData((byte) data);
 	}
 
 	/**
@@ -107,4 +127,86 @@ public class BlockUtil {
 		return (byte)Integer.parseInt(string.split(":")[1]);
 	}
 
+	/**
+	 * Returns true if the block will be destroyed
+	 * prior to baseblock removal
+	 * @param int
+	 * @return boolean
+	 */
+	public static boolean itemOnTop(int block) {
+		switch(block){
+		case 6:
+		case 27:
+		case 28:
+		case 31:
+		case 32:
+		case 37:
+		case 38:
+		case 39:
+		case 40:
+		case 50:
+		case 51:
+		case 55:
+		case 59:
+		case 63:
+		case 66:
+		case 70:
+		case 72:
+		case 76:
+		case 83:
+		case 93:
+		case 94:
+		case 104:
+		case 115:
+		case 132:
+		case 140:
+		case 105:
+		case 78:
+		case 141:
+		case 142:
+		case 356:
+		case 64:
+		case 71:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	public static void placeBed(Block block, int type, byte data ){
+		int beddata = 0;
+		Block bed = null;
+
+		if (data == 0) {
+			bed = block.getRelative(BlockFace.SOUTH);
+			beddata = 8;
+		}
+		if (data == 1) {
+			bed = block.getRelative(BlockFace.WEST);
+			beddata = 9;
+		}
+		if (data == 2) {
+			bed = block.getRelative(BlockFace.NORTH);
+			beddata = 10;
+		}
+		if (data == 3) {
+			bed = block.getRelative(BlockFace.EAST);
+			beddata = 11;
+		}
+		if (bed != null) {
+			bed.setTypeId(type);
+			bed.setData((byte)beddata);
+		}
+	}
+
+	public static BlockFace getBedFace(Block block) {
+		int Data = block.getData();
+		switch(Data){
+		case 8: return BlockFace.NORTH;
+		case 9: return BlockFace.EAST;
+		case 10: return BlockFace.SOUTH;
+		case 11: return BlockFace.WEST;
+		}
+		return null;
+	}
 }

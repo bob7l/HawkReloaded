@@ -74,7 +74,7 @@ public class Rollback implements Runnable {
 			World world = HawkEye.server.getWorld(entry.getWorld());
 			if (world == null)
 				continue;
-
+			
 			//Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);

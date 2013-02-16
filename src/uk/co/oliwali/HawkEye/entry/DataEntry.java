@@ -134,6 +134,10 @@ public class DataEntry {
 		return data;
 	}
 
+	public int getIntData() {
+		return Integer.parseInt(data.split(":")[0]);
+	}
+
 	/**
 	 * Converts the raw data from the database into the actual data required by the entry
 	 * Extending classes can override this to support custom storage methods (e.g. sign data etc)
