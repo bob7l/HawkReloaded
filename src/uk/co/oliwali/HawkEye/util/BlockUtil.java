@@ -88,7 +88,8 @@ public class BlockUtil {
 
 		if (itemOnTop(type) && block.getRelative(BlockFace.DOWN).getTypeId() == 0) {
 			if (isItemAttached(type) && ((data < 5) || (data > 8))) {
-				block.getRelative(getFace(data)).setType(Material.LOG); //set type to log to prevent any attachment problems
+				if (block.getRelative(getFace(data)).equals(Material.AIR))
+				block.setType(Material.LOG); //set type to log to prevent any attachment problems
 			} else {
 				block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
 			}
