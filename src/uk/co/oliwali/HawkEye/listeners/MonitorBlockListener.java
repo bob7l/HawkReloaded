@@ -34,6 +34,8 @@ import uk.co.oliwali.HawkEye.util.Config;
  */
 public class MonitorBlockListener extends HawkEyeListener {
 
+	private BlockFace[] faces = new BlockFace[] {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+	
 	public MonitorBlockListener(HawkEye HawkEye) {
 		super(HawkEye);
 	}
@@ -54,14 +56,23 @@ public class MonitorBlockListener extends HawkEyeListener {
 				return;
 			}
 			
+			
 			if (block.getType().equals(Material.BED_BLOCK)) {
 
 				if (block.getData() > 7) {
 					block = block.getRelative(BlockUtil.getBedFace(block));
 				}
 			}
-
+			
 			DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+			
+			for(BlockFace face: faces) {
+				Block b = block.getRelative(face);
+				if (BlockUtil.isItemAttached(b.getTypeId())) {
+					DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, b));
+				}
+			}
+			
 
 			Block topblock = block.getRelative(BlockFace.UP);
 

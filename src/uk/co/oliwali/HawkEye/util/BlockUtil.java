@@ -87,7 +87,11 @@ public class BlockUtil {
 		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
 
 		if (itemOnTop(type) && block.getRelative(BlockFace.DOWN).getTypeId() == 0) {
-			block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
+			if (isItemAttached(type) && ((data != 5) || (data != 6))) {
+				block.getRelative(getFace(data)).setType(Material.LOG); //set type to log to prevent any attachment problems
+			} else {
+				block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
+			}
 		}
 
 		if (type == 64 || type == 71) {
@@ -167,6 +171,7 @@ public class BlockUtil {
 		case 356:
 		case 64:
 		case 71:
+		case 69:
 			return true;
 		default:
 			return false;
@@ -208,5 +213,31 @@ public class BlockUtil {
 		case 11: return BlockFace.WEST;
 		}
 		return null;
+	}
+	
+	public static BlockFace getFace(int Data) {
+		switch(Data){
+		case 4: return BlockFace.SOUTH;
+		case 1: return BlockFace.WEST;
+		case 2: return BlockFace.EAST;
+		case 3: return BlockFace.NORTH;
+		}
+		return null;
+	}
+
+	public static boolean isItemAttached(int block) {
+		switch(block){
+		case 50:
+		case 65:
+		case 69:
+		case 75:
+		case 76:
+		case 77:
+		case 96:
+		case 127:
+		case 131:
+			return true;
+		}
+		return false;
 	}
 }
