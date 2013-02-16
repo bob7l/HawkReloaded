@@ -363,10 +363,14 @@ public class Util {
 			Util.severe("Warning! Hawkeye was unable to parse dates!");
 		}
 
-		long diff = d2.getTime() - d1.getTime();
+		long diff = d2.getTime() / 1000 - d1.getTime() / 1000;
 
-		int seconds = (int)diff / 1000;
+		int seconds = (int)diff;
 
+		if (seconds < -1) {
+			return oldtime.substring(2) + " ";
+		}
+		
 		if (seconds >= 86400) {
 			int days = (seconds / 86400);
 			seconds %= 86400;
@@ -389,4 +393,6 @@ public class Util {
 		}
 		return message;
 	}
+	
+
 }
