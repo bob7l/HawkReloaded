@@ -110,18 +110,19 @@ public class BlockUtil {
 			} else if (downrel.getTypeId() == 0) {
 				downrel.setType(Material.GRASS);
 			}
-		} else if (type == 64 || type == 71) {
+		} 
+		if (type == 64 || type == 71) {
 			block.setTypeId(type);
 			block.setData((byte) data);
-
+			
 			Block rel = block.getRelative(BlockFace.UP);
 			rel.setTypeId(type);
 			rel.setData((byte) 8);
+			return;
 
 		} else if (type == 26) { 
 			placeBed(block, type, (byte)data);
 		}
-
 		block.setTypeIdAndData(type, (byte) data, true);
 	}
 
