@@ -89,13 +89,15 @@ public class BlockUtil {
 		//Handles attachments that cannot be restored on the current baseblock
 		if (isItemAttached(type) && ((data < 5) || (data > 8))) {
 			Block rel = block.getRelative(getFace(data));
+			if (type == 65)
+				rel = block.getRelative(getLadderFace(data));
 			if (type == 127) {
 				rel = block.getRelative(getCocoFace(data));
-				if (rel.getType().equals(Material.LOG) && rel.getData() == 3) {
+				if (rel.getType().equals(Material.AIR)) {
 					rel.setType(Material.LOG);
 					rel.setData((byte) 3);
 				}
-			} else if (rel.getType().equals(Material.AIR)) {
+			} else if(rel.getType().equals(Material.AIR)) {
 				rel.setType(Material.LOG);
 			}
 		} else if (itemOnTop(type)) {
@@ -108,9 +110,7 @@ public class BlockUtil {
 			} else if (downrel.getTypeId() == 0) {
 				downrel.setType(Material.GRASS);
 			}
-		}
-
-		if (type == 64 || type == 71) {
+		} else if (type == 64 || type == 71) {
 			block.setTypeId(type);
 			block.setData((byte) data);
 
@@ -122,9 +122,7 @@ public class BlockUtil {
 			placeBed(block, type, (byte)data);
 		}
 
-		block.setTypeId(type);
-		if (data != 0)
-			block.setData((byte) data);
+		block.setTypeIdAndData(type, (byte) data, true);
 	}
 
 	/**
@@ -256,6 +254,16 @@ public class BlockUtil {
 		case 8: return BlockFace.SOUTH;
 		case 11: return BlockFace.EAST;
 		case 10: return BlockFace.NORTH;
+		}
+		return BlockFace.NORTH;
+	}
+	
+	public static BlockFace getLadderFace(int Data) {
+		switch(Data){
+		case 2: return BlockFace.SOUTH; 
+		case 5: return BlockFace.WEST; 
+		case 3: return BlockFace.NORTH; 
+		case 4: return BlockFace.EAST;
 		}
 		return BlockFace.NORTH;
 	}
