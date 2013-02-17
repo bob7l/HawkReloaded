@@ -88,11 +88,8 @@ public class BlockUtil {
 
 		//Handles attachments that cannot be restored on the current baseblock
 		if (isItemAttached(type) && ((data < 5) || (data > 8))) {
-			Block rel = block.getRelative(getFace(data));
-			if (type == 65)
-				rel = block.getRelative(getLadderFace(data));
+			Block rel = block.getRelative(block.getFace(block));
 			if (type == 127) {
-				rel = block.getRelative(getCocoFace(data));
 				if (rel.getType().equals(Material.AIR)) {
 					rel.setType(Material.LOG);
 					rel.setData((byte) 3);
@@ -229,44 +226,6 @@ public class BlockUtil {
 		case 11: return BlockFace.WEST;
 		}
 		return null;
-	}
-	
-	public static BlockFace getFace(int Data) {
-		switch(Data){
-		case 4: return BlockFace.SOUTH;
-		case 1: return BlockFace.WEST;
-		case 2: return BlockFace.EAST;
-		case 3: return BlockFace.NORTH;
-		case 9: return BlockFace.WEST;
-		case 10: return BlockFace.EAST;
-		case 11: return BlockFace.NORTH;
-		case 12: return BlockFace.SOUTH;
-		}
-		return BlockFace.NORTH;
-	}
-	
-	public static BlockFace getCocoFace(int Data) {
-		switch(Data){
-		case 0: return BlockFace.SOUTH; 
-		case 1: return BlockFace.WEST; 
-		case 2: return BlockFace.NORTH; 
-		case 3: return BlockFace.EAST;
-		case 9: return BlockFace.WEST;
-		case 8: return BlockFace.SOUTH;
-		case 11: return BlockFace.EAST;
-		case 10: return BlockFace.NORTH;
-		}
-		return BlockFace.NORTH;
-	}
-	
-	public static BlockFace getLadderFace(int Data) {
-		switch(Data){
-		case 2: return BlockFace.SOUTH; 
-		case 5: return BlockFace.WEST; 
-		case 3: return BlockFace.NORTH; 
-		case 4: return BlockFace.EAST;
-		}
-		return BlockFace.NORTH;
 	}
 
 	public static boolean isItemAttached(int block) {
