@@ -53,14 +53,15 @@ public enum DataType {
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
     MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
-	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false),
-	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", true, true),
+	ENTITY_KILL(36, DataEntry.class, "entity-kill", true, true),
+	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", false, false),
 	HEROCHAT(38, DataEntry.class, "herochat", false, false),
 	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),
 	BLOCK_INHABIT(40, BlockEntry.class, "block-inhabit", true, true),
 	SUPER_PICKAXE(41, BlockEntry.class, "super-pickaxe", true, true),
 	WORLDEDIT_BREAK(42, BlockEntry.class, "worldedit-break", true, true),
-	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true);
+	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true),
+	CROP_TRAMPLE(44, BlockEntry.class, "crop-trample", true, true);
 
 	private int id;
 	private boolean canHere;

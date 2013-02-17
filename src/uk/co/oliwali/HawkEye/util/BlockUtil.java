@@ -98,8 +98,16 @@ public class BlockUtil {
 			} else if (rel.getType().equals(Material.AIR)) {
 				rel.setType(Material.LOG);
 			}
-		} else if (itemOnTop(type) && block.getRelative(BlockFace.DOWN).getTypeId() == 0) {
-			block.getRelative(BlockFace.DOWN).setType(Material.GRASS);
+		} else if (itemOnTop(type)) {
+			Block downrel = block.getRelative(BlockFace.DOWN);
+			if (type == 81) {
+				downrel.setType(Material.SAND);
+			} else if (isPlant(type)) {
+				downrel.setType(Material.SOIL);
+				downrel.setData((byte) 1);
+			} else if (downrel.getTypeId() == 0) {
+				downrel.setType(Material.GRASS);
+			}
 		}
 
 		if (type == 64 || type == 71) {
@@ -152,6 +160,7 @@ public class BlockUtil {
 		case 28:
 		case 31:
 		case 32:
+		case 81:
 		case 37:
 		case 38:
 		case 39:
@@ -261,6 +270,19 @@ public class BlockUtil {
 		case 77:
 		case 96:
 		case 127:
+		case 131:
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isPlant(int block) {
+		switch(block){
+		case 59:
+		case 105:
+		case 104:
+		case 141:
+		case 142:
 		case 131:
 			return true;
 		}

@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -18,8 +19,10 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
+import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -85,21 +88,29 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	 * Handles several actions:
 	 * OPEN_CHEST, DOOR_INTERACT, LEVER, STONE_BUTTON, FLINT_AND_STEEL, LAVA_BUCKET, WATER_BUCKET
 	 */
-	@SuppressWarnings("incomplete-switch")
-	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.LAVA_BUCKET, DataType.WATER_BUCKET, DataType.SPAWNMOB_EGG})
+
+	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.LAVA_BUCKET, DataType.WATER_BUCKET, DataType.SPAWNMOB_EGG, DataType.CROP_TRAMPLE})
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-
 		//Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
 
 
 		if (block != null) {
-
+			
 			Location loc = block.getLocation();
-
+			
 			switch (block.getType()) {
+			    case SOIL:
+				   if (event.getAction() == Action.PHYSICAL) {
+					  Block rel = block.getRelative(BlockFace.UP);
+					  
+					  if (BlockUtil.isPlant(rel.getTypeId())) {
+					    DataManager.addEntry(new BlockEntry(player, DataType.CROP_TRAMPLE, rel));
+				      }
+				   }
+				  break;
 				case FURNACE:
 				case DISPENSER:
 				case CHEST:
@@ -124,6 +135,8 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				case STONE_BUTTON:
 					DataManager.addEntry(new DataEntry(player, DataType.STONE_BUTTON, loc, ""));
 					break;
+			default:
+				return;
 			}
 
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -142,6 +155,8 @@ public class MonitorPlayerListener extends HawkEyeListener {
 					case MONSTER_EGG:
 						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
 						break;
+				default:
+					return;
 				}
 			}
 		}
