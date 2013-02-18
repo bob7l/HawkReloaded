@@ -5,19 +5,13 @@ import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -37,6 +31,7 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
+import uk.co.oliwali.HawkEye.entry.EntityEntry;
 import uk.co.oliwali.HawkEye.entry.HangingEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -61,7 +56,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 	@HawkEvent(dataType = {DataType.PVP_DEATH, DataType.MOB_DEATH, DataType.OTHER_DEATH, DataType.ENTITY_KILL})
 	public void onEntityDeath(EntityDeathEvent event) {
 		Entity entity = event.getEntity();
-
+		
 		if (entity instanceof Player) { //Player death
 			Player victim = (Player) entity;
 
@@ -101,29 +96,20 @@ public class MonitorEntityListener extends HawkEyeListener {
 		} else { //Mob Death
 			if (!Config.isLogged(DataType.ENTITY_KILL)) return;
 
-			if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-				Entity damager = ((EntityDamageByEntityEvent) entity.getLastDamageCause()).getDamager();
+			Entity killer = ((LivingEntity) entity).getKiller();
 
-				//Only interested in player kills
-				if (!(damager instanceof Player)) return;
+			if ((!(killer == null)) && killer instanceof Player) {
+				Player kill = (Player)killer;
 
-				Player player = (Player) damager;
-				DataManager.addEntry(new DataEntry(player, DataType.ENTITY_KILL, entity.getLocation(), Util.getEntityName(entity)));
+				DataManager.addEntry(new EntityEntry(kill.getName(), DataType.ENTITY_KILL, entity.getLocation().getBlock().getLocation(), Util.getEntityName(entity)));
 			}
 		}
 	}
 
 	@HawkEvent(dataType = DataType.EXPLOSION)
 	public void onEntityExplode(EntityExplodeEvent event) {
-		Entity e = event.getEntity();
-		String name = "Environment";
-		if (e instanceof TNTPrimed) name = "TNT";
-		else if (e instanceof Creeper) name = "Creeper";
-		else if (e instanceof Fireball) name = "Ghast";
-		else if (e instanceof EnderDragon) name = "EnderDragon";
-		else if ((e instanceof Wither) || (e instanceof WitherSkull)) name = "Wither";
 		for (Block b : event.blockList().toArray(new Block[0]))
-			DataManager.addEntry(new BlockEntry(name, DataType.EXPLOSION, b));
+			DataManager.addEntry(new BlockEntry(EntityUtil.entityToString(event.getEntity()), DataType.EXPLOSION, b));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
@@ -174,12 +160,9 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
 	public void onEntityModifyBlock(EntityChangeBlockEvent event) {
-		String type = "Environment";
 		Entity en = event.getEntity();
 		if (en instanceof Silverfish) return;
-		else if (en instanceof Wither) type = "Wither";
-		else if (en instanceof FallingBlock) type = "FallingBlock";
-		DataManager.addEntry(new BlockEntry(type, DataType.ENTITY_MODIFY, event.getBlock()));
+		DataManager.addEntry(new BlockEntry(EntityUtil.entityToString(en), DataType.ENTITY_MODIFY, event.getBlock()));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_INHABIT)

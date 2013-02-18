@@ -1,12 +1,22 @@
 package uk.co.oliwali.HawkEye.util;
 
 import org.bukkit.Art;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityUtil {
@@ -36,7 +46,8 @@ public class EntityUtil {
 	public static String getStringName(String data) {
 		String[] args = data.split(":");
 		if (args[0].equals("389")) {
-			return "ItemFrame with " + Material.getMaterial(Integer.parseInt(args[2]));
+			Material mat = Material.getMaterial(Integer.parseInt(args[2]));
+			return "ItemFrame" + (mat.equals(Material.AIR) ? "" : mat.toString());
 		}
 		return "Painting";
 	}
@@ -123,5 +134,26 @@ public class EntityUtil {
 			painting.setFacingDirection(face.getOppositeFace(), true);
 			painting.setArt(Art.getById(stack));
 		}
+	}
+
+	public static void setEntityString(Block b, String data) {
+		EntityType type = EntityType.fromName(data);
+		Location loc = b.getLocation();
+		try {
+			loc.getWorld().spawnEntity(loc, type);
+		} catch (Exception e) {
+			Util.warning("Unable to spawn " + data + " at: " + loc.toString());
+		}
+	}
+	
+	public static String entityToString(Entity e) {
+		String name = "Unknown";
+		if (e instanceof TNTPrimed) name = "TNT";
+		else if (e instanceof FallingBlock) name = "FallingBlock";
+		else if (e instanceof Creeper) name = "Creeper";
+		else if (e instanceof Fireball) name = "Ghast";
+		else if (e instanceof EnderDragon) name = "EnderDragon";
+		else if ((e instanceof Wither) || (e instanceof WitherSkull)) name = "Wither";
+		return name;
 	}
 }

@@ -8,6 +8,7 @@ import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
+import uk.co.oliwali.HawkEye.entry.EntityEntry;
 import uk.co.oliwali.HawkEye.entry.HangingEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
@@ -54,7 +55,7 @@ public enum DataType {
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
     MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
-	ENTITY_KILL(36, DataEntry.class, "entity-kill", true, true),
+	ENTITY_KILL(36, EntityEntry.class, "entity-kill", true, true),
 	SPAWNMOB_EGG(37, DataEntry.class, "spawnmob-egg", false, false),
 	HEROCHAT(38, DataEntry.class, "herochat", false, false),
 	ENTITY_MODIFY(39, BlockEntry.class, "entity-modify", true, true),

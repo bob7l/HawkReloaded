@@ -42,10 +42,9 @@ public class HangingEntry extends DataEntry {
 		return true;
 	}
 
+	//Simply return true since we can't rebuild (It's an entity)
 	@Override
 	public boolean rebuild(Block block) {
-		if (data == null) return false;
-		else block.setTypeId(0);
 		return true;
 	}
 
