@@ -201,8 +201,6 @@ public class MonitorEntityListener extends HawkEyeListener {
 			type = 389;
 			face = EntityUtil.getFace(frame.getAttachedFace());
 			extra = frame.getItem().getTypeId();
-			System.out.print(frame.getFacing());
-			System.out.print(face);
 		} else if (e instanceof Painting) {
 			Painting paint = (Painting) e;
 			type = 321;
