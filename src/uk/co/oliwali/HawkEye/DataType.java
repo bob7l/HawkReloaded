@@ -8,6 +8,7 @@ import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
+import uk.co.oliwali.HawkEye.entry.HangingEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 
@@ -47,8 +48,8 @@ public enum DataType {
 	WATER_FLOW(27, BlockChangeEntry.class, "water-flow", true, true),
 	CONTAINER_TRANSACTION(28, ContainerEntry.class, "container-transaction", true, true),
 	SIGN_BREAK(29, SignEntry.class, "sign-break", true, true),
-	ITEM_BREAK(30, DataEntry.class, "item-break", true, true),
-	ITEM_PLACE(31, DataEntry.class, "item-place", true, true),
+	ITEM_BREAK(30, HangingEntry.class, "item-break", true, true),
+	ITEM_PLACE(31, HangingEntry.class, "item-place", true, true),
 	ENDERMAN_PICKUP(32, BlockEntry.class, "enderman-pickup", true, true),
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
     TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
