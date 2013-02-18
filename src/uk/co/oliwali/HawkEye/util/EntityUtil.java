@@ -47,7 +47,7 @@ public class EntityUtil {
 		String[] args = data.split(":");
 		if (args[0].equals("389")) {
 			Material mat = Material.getMaterial(Integer.parseInt(args[2]));
-			return "ItemFrame" + (mat.equals(Material.AIR) ? "" : mat.toString());
+			return "ItemFrame" + (mat.equals(Material.AIR) ? "" : " with " + mat.toString());
 		}
 		return "Painting";
 	}
