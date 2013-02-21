@@ -111,7 +111,7 @@ public class SearchParser {
 					for (String value : values) {
 						DataType type = DataType.fromName(value);
 						if (type == null) throw new IllegalArgumentException("Invalid action supplied: &7" + value);
-						if (!Util.hasPerm(player, "hawkeye.search." + type.getConfigName().toLowerCase())) throw new IllegalArgumentException("You do not have permission to search for: &7" + type.getConfigName());
+						if (!Util.hasPerm(player, "search." + type.getConfigName().toLowerCase())) throw new IllegalArgumentException("You do not have permission to search for: &7" + type.getConfigName());
 						actions.add(type);
 					}
 				}
