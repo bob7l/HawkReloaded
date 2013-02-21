@@ -236,6 +236,21 @@ public class Util {
 	}
 
 	/**
+	 * Returns if the player has permission
+	 * @param sender who is being checked
+	 * @param perm string
+	 * @return true / false
+	 */
+	public static boolean hasPerm(CommandSender sender, String perms) {
+		if (!(sender instanceof Player)) return true;
+		Player player = (Player)sender;
+		
+		boolean check = (!(player.hasPermission("hawkeye." + perms)) && (!(perms.equals("help"))) ? false : true); {
+			if ((player.isOp() && Config.OpPermissions)) check = true;
+			return check;
+		}
+	}
+	/**
 	 * Custom colour class.
 	 * Created to allow for easier colouring of text
 	 * @author oliverw92

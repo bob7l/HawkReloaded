@@ -9,7 +9,6 @@ import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -22,6 +21,7 @@ public class RollbackCommand extends BaseCommand {
 	public RollbackCommand() {
 		name = "rollback";
 		argLength = 1;
+		permission = "rollback";
 		usage = "<parameters> <- rollback changes";
 	}
 
@@ -77,10 +77,4 @@ public class RollbackCommand extends BaseCommand {
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10 &7-from given date");
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10,2011-07-04,18:15:00 &7-between dates");
 	}
-
-	@Override
-	public boolean permission() {
-		return Permission.rollback(sender);
-	}
-
 }

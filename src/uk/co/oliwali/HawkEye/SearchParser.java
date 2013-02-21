@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import uk.co.oliwali.HawkEye.util.Config;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -112,7 +111,7 @@ public class SearchParser {
 					for (String value : values) {
 						DataType type = DataType.fromName(value);
 						if (type == null) throw new IllegalArgumentException("Invalid action supplied: &7" + value);
-						if (!Permission.searchType(player, type.getConfigName())) throw new IllegalArgumentException("You do not have permission to search for: &7" + type.getConfigName());
+						if (!Util.hasPerm(player, "hawkeye.search." + type.getConfigName().toLowerCase())) throw new IllegalArgumentException("You do not have permission to search for: &7" + type.getConfigName());
 						actions.add(type);
 					}
 				}

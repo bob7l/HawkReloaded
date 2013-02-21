@@ -2,7 +2,6 @@ package uk.co.oliwali.HawkEye.commands;
 
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.Undo;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -15,6 +14,7 @@ public class PreviewCancelCommand extends BaseCommand {
 	public PreviewCancelCommand() {
 		name = "preview cancel";
 		argLength = 0;
+		permission = "preview";
 		usage = "<- cancel rollback preview";
 	}
 
@@ -40,11 +40,6 @@ public class PreviewCancelCommand extends BaseCommand {
 	public void moreHelp() {
 		Util.sendMessage(sender, "&cCancels results of a &7/hawk preview");
 		Util.sendMessage(sender, "&cOnly affects you - no changes are seen by anyony else");
-	}
-
-	@Override
-	public boolean permission() {
-		return Permission.preview(sender);
 	}
 
 }

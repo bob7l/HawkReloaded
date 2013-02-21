@@ -6,7 +6,6 @@ import org.bukkit.World;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -18,6 +17,7 @@ public class TptoCommand extends BaseCommand {
 	public TptoCommand() {
 		name = "tpto";
 		argLength = 1;
+		permission = "tool.bind";
 		usage = "<id> <- teleport to location of the data entry";
 	}
 
@@ -48,10 +48,4 @@ public class TptoCommand extends BaseCommand {
 		Util.sendMessage(sender, "&cTakes you to the location of the data entry with the specified ID");
 		Util.sendMessage(sender, "&cThe ID can be found in either the DataLog interface or when you do a search command");
 	}
-
-	@Override
-	public boolean permission() {
-		return Permission.tpTo(sender);
-	}
-
 }

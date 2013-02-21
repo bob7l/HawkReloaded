@@ -6,7 +6,6 @@ import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -19,6 +18,7 @@ public class PreviewCommand extends BaseCommand {
 	public PreviewCommand() {
 		name = "preview";
 		argLength = 1;
+		permission = "preview";
 		usage = "<parameters> <- preview rollback changes";
 	}
 
@@ -68,10 +68,4 @@ public class PreviewCommand extends BaseCommand {
 		Util.sendMessage(sender, "&cThe effects can be applied after using &7/hawk preview apply&c or cancelled using &7/hawk preview cancel");
 		Util.sendMessage(sender, "&cThe parameters are the same as &7/hawk rollback");
 	}
-
-	@Override
-	public boolean permission() {
-		return Permission.preview(sender);
-	}
-
 }

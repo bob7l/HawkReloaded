@@ -27,6 +27,7 @@ public abstract class BaseCommand {
 	public String usage;
 	public boolean bePlayer = true;
 	public Player player;
+	public String permission;
 	public String usedCommand;
 	public PlayerSession session;
 	public HawkEye plugin;
@@ -67,9 +68,10 @@ public abstract class BaseCommand {
 			return false;
 		if (sender instanceof Player)
 			player = (Player)sender;
-		if (!permission()) {
+		
+		if (!(Util.hasPerm(sender, permission))) {
 			Util.sendMessage(sender, "&cYou do not have permission to do that!");
-			return false;
+			return true;
 		}
 
 		return execute();
@@ -81,12 +83,6 @@ public abstract class BaseCommand {
 	 * @return true on success, false otherwise
 	 */
 	public abstract boolean execute();
-
-	/**
-	 * Performs the extending command's permission check.
-	 * @return true if the user has permission, false if not
-	 */
-	public abstract boolean permission();
 
 	/**
 	 * Sends advanced help to the sender

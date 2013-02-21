@@ -6,7 +6,6 @@ import uk.co.oliwali.HawkEye.callbacks.SearchCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
 import uk.co.oliwali.HawkEye.util.Config;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -18,6 +17,7 @@ public class HereCommand extends BaseCommand {
 	public HereCommand() {
 		name = "here";
 		argLength = 0;
+		permission = "search";
 		usage = "[radius] [player] <- search around you";
 	}
 
@@ -66,11 +66,6 @@ public class HereCommand extends BaseCommand {
 	public void moreHelp() {
 		Util.sendMessage(sender, "&cShows all changes in a radius around you");
 		Util.sendMessage(sender, "&cRadius should be an integer");
-	}
-
-	@Override
-	public boolean permission() {
-		return Permission.search(sender);
 	}
 
 }

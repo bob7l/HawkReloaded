@@ -2,7 +2,6 @@ package uk.co.oliwali.HawkEye.commands;
 
 import uk.co.oliwali.HawkEye.Rollback;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -15,6 +14,7 @@ public class PreviewApplyCommand extends BaseCommand {
 	public PreviewApplyCommand() {
 		name = "preview apply";
 		argLength = 0;
+		permission = "preview";
 		usage = "<- apply rollback preview";
 	}
 
@@ -39,11 +39,6 @@ public class PreviewApplyCommand extends BaseCommand {
 	public void moreHelp() {
 		Util.sendMessage(sender, "&cApplies the results of a &7/hawk preview&c globally");
 		Util.sendMessage(sender, "&cUntil this command is called, the preview is only visible to you");
-	}
-
-	@Override
-	public boolean permission() {
-		return Permission.preview(sender);
 	}
 
 }

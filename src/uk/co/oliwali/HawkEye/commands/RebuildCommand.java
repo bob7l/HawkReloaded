@@ -8,7 +8,6 @@ import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.RebuildCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 public class RebuildCommand extends BaseCommand {
@@ -16,6 +15,7 @@ public class RebuildCommand extends BaseCommand {
 	public RebuildCommand() {
 		name = "rebuild";
 		argLength = 1;
+		permission = "rebuild";
 		usage = "<parameters> <- re-applies changes";
 	}
 
@@ -71,10 +71,4 @@ public class RebuildCommand extends BaseCommand {
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10 &7-from given date");
 		Util.sendMessage(sender, "&7  -&c t:2011-06-02,10:45:10,2011-07-04,18:15:00 &7-between dates");
 	}
-
-	@Override
-	public boolean permission() {
-		return Permission.rebuild(sender);
-	}
-
 }

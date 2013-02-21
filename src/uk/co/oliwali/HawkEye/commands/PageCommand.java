@@ -1,7 +1,6 @@
 package uk.co.oliwali.HawkEye.commands;
 
 import uk.co.oliwali.HawkEye.DisplayManager;
-import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -13,6 +12,7 @@ public class PageCommand extends BaseCommand {
 	public PageCommand() {
 		bePlayer = false;
 		name = "page";
+		permission = "page";
 		argLength = 1;
 		usage = "<page> <- display a page from your last search";
 	}
@@ -26,11 +26,6 @@ public class PageCommand extends BaseCommand {
 	@Override
 	public void moreHelp() {
 		Util.sendMessage(sender, "&cShows the specified page of results from your latest search");
-	}
-
-	@Override
-	public boolean permission() {
-		return Permission.page(sender);
 	}
 
 }
