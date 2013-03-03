@@ -1,11 +1,13 @@
 package uk.co.oliwali.HawkEye.listeners;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -89,7 +91,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	 * OPEN_CHEST, DOOR_INTERACT, LEVER, STONE_BUTTON, FLINT_AND_STEEL, LAVA_BUCKET, WATER_BUCKET
 	 */
 
-	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.LAVA_BUCKET, DataType.WATER_BUCKET, DataType.SPAWNMOB_EGG, DataType.CROP_TRAMPLE})
+	@HawkEvent(dataType = {DataType.OPEN_CONTAINER, DataType.DOOR_INTERACT, DataType.LEVER, DataType.STONE_BUTTON, DataType.SPAWNMOB_EGG, DataType.CROP_TRAMPLE})
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
@@ -146,12 +148,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 					case FLINT_AND_STEEL:
 						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.FLINT_AND_STEEL, loc, ""));
 						break;
-					case LAVA_BUCKET:
-						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.LAVA_BUCKET, loc, ""));
-						break;
-					case WATER_BUCKET:
-						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.WATER_BUCKET, loc, ""));
-						break;
 					case MONSTER_EGG:
 						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
 						break;
@@ -184,5 +180,13 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		else
 			data = stack.getAmount() + "x " + stack.getTypeId();
 		DataManager.addEntry(new DataEntry(player, DataType.ITEM_PICKUP, player.getLocation().getBlock().getLocation(), data));
+	}
+
+	@HawkEvent(dataType = {DataType.LAVA_BUCKET, DataType.WATER_BUCKET})
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
+		Location loc = event.getBlockClicked().getRelative(event.getBlockFace()).getLocation();
+		DataType type = (event.getBucket().equals(Material.WATER_BUCKET) ? DataType.WATER_BUCKET : DataType.LAVA_BUCKET);
+
+		DataManager.addEntry(new SimpleRollbackEntry(event.getPlayer(), type, loc, ""));
 	}
 }
