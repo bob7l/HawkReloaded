@@ -172,6 +172,8 @@ public class MonitorBlockListener extends HawkEyeListener {
 	}
 	@HawkEvent(dataType = DataType.LEAF_DECAY)
 	public void onLeavesDecay(LeavesDecayEvent event) {
+		Block block = event.getBlock();
+		if (block == null) return;
 		DataManager.addEntry(new BlockEntry("Environment", DataType.LEAF_DECAY, event.getBlock()));
 	}
 }
