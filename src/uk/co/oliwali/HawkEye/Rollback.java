@@ -26,6 +26,7 @@ public class Rollback implements Runnable {
 	private final PlayerSession session;
 	private Iterator<DataEntry> rollbackQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
+	private final List<Location> locs = new ArrayList<Location>();
 	private int timerID;
 	private RollbackType rollbackType = RollbackType.GLOBAL;
 
@@ -82,8 +83,10 @@ public class Rollback implements Runnable {
 
 			//Attempt global rollback
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
-				entry.setUndoState(state);
-				undo.add(entry);
+				if (isValid(loc)) {
+					entry.setUndoState(state);
+					undo.add(entry);
+				}
 			}
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
@@ -101,7 +104,8 @@ public class Rollback implements Runnable {
 
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
-
+            locs.clear();
+            
 			//Store undo results and notify player
 			if (rollbackType == RollbackType.GLOBAL) {
 				Util.sendMessage(session.getSender(), "&cRollback complete, &7" + undo.size() + "&c edits performed");
@@ -119,6 +123,15 @@ public class Rollback implements Runnable {
 
 		}
 
+	}
+
+	public boolean isValid(Location loc) {
+		if (locs.contains(loc)) {
+			return false;
+		} else { 
+			locs.add(loc);
+			return true;
+		}
 	}
 
 	public enum RollbackType {
