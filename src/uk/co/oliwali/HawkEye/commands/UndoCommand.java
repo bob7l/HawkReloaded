@@ -1,6 +1,5 @@
 package uk.co.oliwali.HawkEye.commands;
 
-import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.Undo;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -18,7 +17,7 @@ public class UndoCommand extends BaseCommand {
 
 	@Override
 	public boolean execute() {
-		new Undo(RollbackType.GLOBAL, session);
+		new Undo(session);
 		return true;
 	}
 

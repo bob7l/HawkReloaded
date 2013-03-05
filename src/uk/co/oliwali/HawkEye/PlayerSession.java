@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
+import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 
@@ -17,6 +18,7 @@ public class PlayerSession {
 	private CommandSender sender;
 	private List<DataEntry> searchResults = null;
 	private List<DataEntry> rollbackResults = null;
+	private RollbackType rollbackType = null;
 	private boolean usingTool = false;
 	private boolean doingRollback = false;
 	private String[] toolCommand = Config.DefaultToolCommand;
@@ -46,10 +48,19 @@ public class PlayerSession {
 	public void setRollbackResults(List<DataEntry> rollbackResults) {
 		this.rollbackResults = rollbackResults;
 	}
+	
+	public void setRollbackType(RollbackType rollbackType) {
+		this.rollbackType = rollbackType;
+	}
+	
+	public RollbackType getRollbackType() {
+		return rollbackType;
+	}
 
 	public boolean isUsingTool() {
 		return usingTool;
 	}
+	
 	public void setUsingTool(boolean usingTool) {
 		this.usingTool = usingTool;
 	}

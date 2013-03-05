@@ -22,13 +22,13 @@ public class PreviewCancelCommand extends BaseCommand {
 	public boolean execute() {
 
 		//Check if player already has a rollback processing
-		if (!session.isInPreview()) {
+		if (!session.isInPreview() || (session.getRollbackType() != RollbackType.LOCAL)) {
 			Util.sendMessage(sender, "&cNo preview to cancel!");
 			return true;
 		}
 
 		//Undo local changes to the player
-		new Undo(RollbackType.LOCAL, session);
+		new Undo(session);
 
 		Util.sendMessage(sender, "&cPreview rollback cancelled");
 		session.setInPreview(false);

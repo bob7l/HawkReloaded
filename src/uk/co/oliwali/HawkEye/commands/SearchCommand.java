@@ -47,7 +47,7 @@ public class SearchCommand extends BaseCommand {
 	public void moreHelp() {
 		List<String> acs = new ArrayList<String>();
 		for (DataType type : DataType.values()) acs.add(type.getConfigName());
-		Util.sendMessage(sender, "&7There are 7 parameters you can use - &ca: p: w: l: r: f: t:");
+		Util.sendMessage(sender, "&7There are 7 parameters you can use - &ca: p: w: r: f: t:");
 		Util.sendMessage(sender, "&6Action &ca:&7 - list of actions separated by commas. Select from the following: &8" + Util.join(acs, " "));
 		Util.sendMessage(sender, "&6Player &cp:&7 - list of players. &6World &cw:&7 - list of worlds");
 		Util.sendMessage(sender, "&6Filter &cf:&7 - list of keywords. &6Location &cl:&7 - x,y,z location");

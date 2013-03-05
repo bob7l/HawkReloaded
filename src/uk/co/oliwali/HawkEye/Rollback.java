@@ -37,6 +37,7 @@ public class Rollback implements Runnable {
 
 		this.rollbackType = rollbackType;
 		this.session = session;
+		session.setRollbackType(rollbackType);
 		rollbackQueue = session.getRollbackResults().iterator();
 
 		//Check that we actually have results
@@ -85,12 +86,14 @@ public class Rollback implements Runnable {
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
 				if (isValid(loc)) {
 					entry.setUndoState(state);
-					undo.add(entry);
 				}
+				undo.add(entry);
 			}
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
-				entry.setUndoState(state);
+				if (isValid(loc)) {
+					entry.setUndoState(state);
+				}
 				undo.add(entry);
 			}
 
@@ -104,8 +107,8 @@ public class Rollback implements Runnable {
 
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
-            locs.clear();
-            
+			locs.clear();
+
 			//Store undo results and notify player
 			if (rollbackType == RollbackType.GLOBAL) {
 				Util.sendMessage(session.getSender(), "&cRollback complete, &7" + undo.size() + "&c edits performed");
@@ -113,8 +116,7 @@ public class Rollback implements Runnable {
 				//Delete data if told to
 				if (Config.DeleteDataOnRollback)
 					DataManager.deleteEntries(undo);
-			}
-			else {
+			} else {
 				Util.sendMessage(session.getSender(), "&cRollback preview complete, &7" + undo.size() + "&c edits performed to you");
 				Util.sendMessage(session.getSender(), "&cType &7/hawk preview apply&c to make these changes permanent or &7/hawk preview cancel&c to cancel");
 			}
@@ -136,6 +138,7 @@ public class Rollback implements Runnable {
 
 	public enum RollbackType {
 		GLOBAL,
+		REBUILD,
 		LOCAL
 	}
 

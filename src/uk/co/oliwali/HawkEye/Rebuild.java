@@ -9,11 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Runnable class for performing a data rollback.
+ * Runnable class for performing a data rebuild.
  * This class should always be run in a separate thread to avoid impacting on server performance
  * @author oliverw92
  */
@@ -22,6 +23,7 @@ public class Rebuild implements Runnable {
 	private final PlayerSession session;
 	private Iterator<DataEntry> rebuildQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
+	private final List<Location> locs = new ArrayList<Location>();
 	private int timerID;
 	private int counter = 0;
 
@@ -31,6 +33,7 @@ public class Rebuild implements Runnable {
 	public Rebuild(PlayerSession session) {
 
 		this.session = session;
+		session.setRollbackType(RollbackType.REBUILD);
 		rebuildQueue = session.getRollbackResults().iterator();
 
 		//Check that we actually have results
@@ -41,7 +44,7 @@ public class Rebuild implements Runnable {
 
 		Util.debug("Starting rebuild of " + session.getRollbackResults().size() + " results");
 
-		//Start rollback
+		//Start rebuild
 		session.setDoingRollback(true);
 		Util.sendMessage(session.getSender(), "&cAttempting to rebuild &7" + session.getRollbackResults().size() + "&c results");
 		timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("HawkEye"), this, 1, 2);
@@ -54,7 +57,7 @@ public class Rebuild implements Runnable {
 	 */
 	public void run() {
 
-		//Start rollback process
+		//Start rebuild process
 		int i = 0;
 		while (i < 200 && rebuildQueue.hasNext()) {
 			i++;
@@ -75,6 +78,10 @@ public class Rebuild implements Runnable {
 			Block block = world.getBlockAt(loc);
 
 			//Rebuild it
+			if (isValid(loc)) {
+				entry.setUndoState(block.getState());
+			}
+			undo.add(entry);
 			entry.rebuild(block);
 
 			counter++;
@@ -89,14 +96,24 @@ public class Rebuild implements Runnable {
 
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
+			locs.clear();
 
 			Util.sendMessage(session.getSender(), "&cRebuild complete, &7" + counter + "&c edits performed");
 			Util.sendMessage(session.getSender(), "&cUndo this rebuild using &7/hawk undo");
-
+			
 			Util.debug("Rebuild complete, " + counter + " edits performed");
 
 		}
 
+	}
+	
+	public boolean isValid(Location loc) {
+		if (locs.contains(loc)) {
+			return false;
+		} else { 
+			locs.add(loc);
+			return true;
+		}
 	}
 
 }

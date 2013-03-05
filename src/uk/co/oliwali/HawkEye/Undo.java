@@ -28,10 +28,15 @@ public class Undo implements Runnable {
 	/**
 	 * @param session {@link PlayerSession} to retrieve undo results from
 	 */
-	public Undo(RollbackType undoType, PlayerSession session) {
+	public Undo(PlayerSession session) {
 
-		this.undoType = undoType;
 		this.session = session;
+		this.undoType = session.getRollbackType();
+		if (undoType == null) {
+			Util.sendMessage(session.getSender(), "&cNo results found to undo");
+			return;
+		}
+
 		undoQueue = session.getRollbackResults().iterator();
 
 		//Check if already rolling back
@@ -67,21 +72,27 @@ public class Undo implements Runnable {
 
 			//If undo doesn't exist
 			DataEntry entry = undoQueue.next();
-			if (entry.getUndoState() == null) continue;
 
 			//Global undo
 			if (undoType == RollbackType.GLOBAL) {
-				entry.getUndoState().update(true);
-				//Add back into database if delete data is on
 				if (Config.DeleteDataOnRollback)
 					DataManager.addEntry(entry);
+				if (entry.getUndoState() != null) {
+					entry.getUndoState().update(true);
+				}
+			} else if (undoType == RollbackType.REBUILD) {
+				if (entry.getUndoState() != null) {
+					entry.getUndoState().update(true);
+				}
 			}
 
 			//Player undo
 			else {
-				Player player = (Player)session.getSender();
-				Block block = entry.getUndoState().getBlock();
-				player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+				if (entry.getUndoState() != null) {
+					Player player = (Player)session.getSender();
+					Block block = entry.getUndoState().getBlock();
+					player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+				}
 			}
 
 			counter++;
@@ -94,6 +105,7 @@ public class Undo implements Runnable {
 			//End timer
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
+			session.setRollbackType(null);
 			session.setDoingRollback(false);
 			session.setRollbackResults(null);
 
