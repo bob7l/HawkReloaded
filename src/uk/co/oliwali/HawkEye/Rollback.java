@@ -93,8 +93,6 @@ public class Rollback implements Runnable {
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
 				undo.add(entry);
 			}
-			Util.info(entry.getUndoState().toString());
-
 		}
 
 		//Check if rollback is finished
