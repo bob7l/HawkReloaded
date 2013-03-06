@@ -64,8 +64,6 @@ public class MonitorBlockListener extends HawkEyeListener {
 				}
 			}
 			
-			DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
-			
 			for(BlockFace face: faces) {
 				Block b = block.getRelative(face);
 				if (BlockUtil.isItemAttached(b.getTypeId())) {
@@ -80,6 +78,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 				DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, topblock));
 			}
 		}
+		DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)

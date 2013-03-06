@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.database.DataManager;
@@ -80,29 +79,27 @@ public class Rollback implements Runnable {
 			//Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);
-			BlockState state = block.getState();
-
+			
+			//Get the old blocks state for undo's
+			if (isValid(loc)) {
+				entry.setUndoState(block.getState());
+			}
+			
 			//Attempt global rollback
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
-				if (isValid(loc)) {
-					entry.setUndoState(state);
-				}
 				undo.add(entry);
 			}
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
-				if (isValid(loc)) {
-					entry.setUndoState(state);
-				}
 				undo.add(entry);
 			}
+			Util.info(entry.getUndoState().toString());
 
 		}
 
 		//Check if rollback is finished
 		if (!rollbackQueue.hasNext()) {
-
-			//End timer
+			
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
 			session.setDoingRollback(false);
@@ -141,5 +138,4 @@ public class Rollback implements Runnable {
 		REBUILD,
 		LOCAL
 	}
-
 }

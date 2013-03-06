@@ -77,13 +77,9 @@ public class Undo implements Runnable {
 			if (undoType == RollbackType.GLOBAL) {
 				if (Config.DeleteDataOnRollback)
 					DataManager.addEntry(entry);
-				if (entry.getUndoState() != null) {
-					entry.getUndoState().update(true);
-				}
+				entry.undo();
 			} else if (undoType == RollbackType.REBUILD) {
-				if (entry.getUndoState() != null) {
-					entry.getUndoState().update(true);
-				}
+				entry.undo();
 			}
 
 			//Player undo

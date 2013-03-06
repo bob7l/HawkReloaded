@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -186,6 +187,17 @@ public class DataEntry {
 	 */
 	public boolean rebuild(Block block) {
 		return false;
+	}
+
+	public void undo() {
+		if (undoState != null) {
+			int idnum = undoState.getTypeId();
+			if (BlockUtil.isDepend(idnum)) {
+				BlockUtil.setBlockString(undoState.getBlock(), idnum + ":" + undoState.getRawData());
+			} else {
+				undoState.update(true);
+			}
+		}
 	}
 
     /**
