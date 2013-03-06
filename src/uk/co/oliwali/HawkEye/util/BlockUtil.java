@@ -227,6 +227,14 @@ public class BlockUtil {
 		}
 		return null;
 	}
+	
+	//Does the block depend on another?
+	public static boolean isDepend(int type) {
+		if (isItemAttached(type) || itemOnTop(type)) {
+			return true;
+		}
+		return false;
+	}
 
 	public static boolean isItemAttached(int block) {
 		switch(block){
