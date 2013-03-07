@@ -86,16 +86,33 @@ public class BlockUtil {
 		int type = Integer.parseInt(blockArr[0]);
 		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
 
-		//Handles attachments that cannot be restored on the current baseblock
-		if (isItemAttached(type) && ((data < 5) || (data > 8))) {
-			Block rel = block.getRelative(block.getFace(block));
-			if (type == 127) {
-				if (rel.getType().equals(Material.AIR)) {
+		if (isItemAttached(type)) {
+			if (type == 69) {
+				Block rel = block.getRelative((data == 5 || data == 6 || data == 13) ? BlockFace.DOWN : getFace(data));
+				if(rel.getType().equals(Material.AIR)) {
 					rel.setType(Material.LOG);
-					rel.setData((byte) 3);
 				}
-			} else if(rel.getType().equals(Material.AIR)) {
-				rel.setType(Material.LOG);
+			} else if (type == 96) {
+				Block rel = block.getRelative(getTrapDoorFace(data));
+				if(rel.getType().equals(Material.AIR)) {
+					rel.setType(Material.WOOD);
+				}
+			} else if ((data < 5) || (data > 8)) {
+				Block rel = block.getRelative(getFace(data));
+
+				if (type == 127) {
+					rel = block.getRelative(getCocoFace(data));
+					if (rel.getType().equals(Material.AIR)) {
+						rel.setType(Material.LOG);
+						rel.setData((byte) 3);
+					}
+				} 
+				if (type == 65) rel = block.getRelative(getLadderFace(data));
+				if (type == 131) rel = block.getRelative(getTripFace(data));
+
+				else if(rel.getType().equals(Material.AIR)) {
+					rel.setType(Material.LOG);
+				}
 			}
 		} else if (itemOnTop(type)) {
 			Block downrel = block.getRelative(BlockFace.DOWN);
@@ -111,7 +128,7 @@ public class BlockUtil {
 		if (type == 64 || type == 71) {
 			block.setTypeId(type);
 			block.setData((byte) data);
-			
+
 			Block rel = block.getRelative(BlockFace.UP);
 			rel.setTypeId(type);
 			rel.setData((byte) 8);
@@ -264,4 +281,76 @@ public class BlockUtil {
 		}
 		return false;
 	}
+	
+ 	
+  public static BlockFace getFace(int Data) {
+    switch(Data){
+    case 4: return BlockFace.SOUTH;
+    case 1: return BlockFace.WEST;
+    case 2: return BlockFace.EAST;
+    case 3: return BlockFace.NORTH;
+    case 15: return BlockFace.UP;
+    case 14: return BlockFace.DOWN;
+    case 7: return BlockFace.UP;
+    case 8: return BlockFace.UP;
+    case 0: return BlockFace.UP;
+    case 9: return BlockFace.WEST;
+    case 10: return BlockFace.EAST;
+    case 11: return BlockFace.NORTH;
+    case 12: return BlockFace.SOUTH;
+    case 13: return BlockFace.SOUTH;
+    }
+    return BlockFace.NORTH;
+  }
+  
+  public static BlockFace getCocoFace(int Data) {
+    switch(Data){
+    case 0: return BlockFace.SOUTH; 
+    case 1: return BlockFace.WEST; 
+    case 2: return BlockFace.NORTH; 
+    case 3: return BlockFace.EAST;
+    case 9: return BlockFace.WEST;
+    case 8: return BlockFace.SOUTH;
+    case 11: return BlockFace.EAST;
+    case 10: return BlockFace.NORTH;
+    }
+    return BlockFace.NORTH;
+  }
+  
+  public static BlockFace getTrapDoorFace(int Data) {
+	    switch(Data){
+	    case 14: return BlockFace.EAST; 
+	    case 2: return BlockFace.EAST; 
+	    case 6: return BlockFace.EAST; 
+	    case 10: return BlockFace.EAST;
+	    case 11: return BlockFace.WEST; 
+	    case 15: return BlockFace.WEST; 
+	    case 3: return BlockFace.WEST; 
+	    case 7: return BlockFace.WEST;
+	    case 8: return BlockFace.SOUTH; 
+	    case 12: return BlockFace.SOUTH; 
+	    case 0: return BlockFace.SOUTH; 
+	    case 4: return BlockFace.SOUTH;
+	    }
+	    return BlockFace.NORTH;
+	  }
+  
+  public static BlockFace getLadderFace(int Data) {
+    switch(Data){
+    case 2: return BlockFace.SOUTH; 
+    case 5: return BlockFace.WEST; 
+    case 3: return BlockFace.NORTH; 
+    case 4: return BlockFace.EAST;
+    }
+    return BlockFace.NORTH;
+  }
+  
+  public static BlockFace getTripFace(int Data) {
+	    switch(Data){
+	    case 2: return BlockFace.SOUTH; 
+	    case 3: return BlockFace.EAST; 
+	    case 1: return BlockFace.WEST;
+	    }
+	    return BlockFace.NORTH;
+	  }
 }

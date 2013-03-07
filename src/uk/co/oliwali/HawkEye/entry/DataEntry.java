@@ -193,6 +193,7 @@ public class DataEntry {
 		if (undoState != null) {
 			int idnum = undoState.getTypeId();
 			if (BlockUtil.isDepend(idnum)) {
+				Util.info("ID: " + idnum + ":" + undoState.getRawData());
 				BlockUtil.setBlockString(undoState.getBlock(), idnum + ":" + undoState.getRawData());
 			} else {
 				undoState.update(true);
