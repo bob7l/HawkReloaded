@@ -145,9 +145,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				loc = block.getRelative(event.getBlockFace()).getLocation();
 		        Location locs = block.getLocation();
 				switch (player.getItemInHand().getType()) {
-					case FLINT_AND_STEEL:
-						DataManager.addEntry(new SimpleRollbackEntry(player, DataType.FLINT_AND_STEEL, loc, ""));
-						break;
 					case MONSTER_EGG:
 						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
 						break;

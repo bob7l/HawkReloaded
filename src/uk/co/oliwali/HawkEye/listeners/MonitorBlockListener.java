@@ -13,6 +13,8 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -25,6 +27,7 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
+import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 
@@ -91,7 +94,8 @@ public class MonitorBlockListener extends HawkEyeListener {
 		HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
 			@Override
 			public void run() {
-				DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), DataType.BLOCK_PLACE, finalEvent.getBlock().getLocation(), finalEvent.getBlockReplacedState(), finalEvent.getBlock().getState()));
+				Block b = finalEvent.getBlock();
+				DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), (b.getType().equals(Material.FIRE)) ? DataType.FLINT_AND_STEEL : DataType.BLOCK_PLACE, b.getLocation(), finalEvent.getBlockReplacedState(), b.getState()));
 			}
 		}, 1L);
 		return;
@@ -128,7 +132,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
 		MaterialData data = from.getData();
-
+		
 		//Lava
 		if (from.getTypeId() == 10 || from.getTypeId() == 11) {
 
@@ -174,5 +178,13 @@ public class MonitorBlockListener extends HawkEyeListener {
 		Block block = event.getBlock();
 		if (block == null) return;
 		DataManager.addEntry(new BlockEntry("Environment", DataType.LEAF_DECAY, event.getBlock()));
+	}
+	
+	@HawkEvent(dataType = DataType.BLOCK_IGNITE)
+	public void onBlockIgnite(BlockIgniteEvent event) {
+		IgniteCause ig = event.getCause();
+		Location loc = event.getBlock().getLocation();
+		if (ig.equals(IgniteCause.FLINT_AND_STEEL)) return;
+		DataManager.addEntry(new SimpleRollbackEntry("Environment", DataType.BLOCK_IGNITE, loc, ig.name()));
 	}
 }

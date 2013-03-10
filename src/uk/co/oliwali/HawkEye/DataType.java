@@ -32,7 +32,7 @@ public enum DataType {
 	OPEN_CONTAINER(10, DataEntry.class, "open-container", true, false),
 	DOOR_INTERACT(11, DataEntry.class, "door-interact", true, false),
 	PVP_DEATH(12, DataEntry.class, "pvp-death", false, false),
-	FLINT_AND_STEEL(13, SimpleRollbackEntry.class, "flint-steel", true, true),
+	FLINT_AND_STEEL(13, BlockChangeEntry.class, "flint-steel", true, true),
 	LEVER(14, DataEntry.class, "lever", true, false),
 	STONE_BUTTON(15, DataEntry.class, "button", true, false),
 	OTHER(16, DataEntry.class, "other", false, false),
@@ -63,7 +63,8 @@ public enum DataType {
 	SUPER_PICKAXE(41, BlockEntry.class, "super-pickaxe", true, true),
 	WORLDEDIT_BREAK(42, BlockEntry.class, "worldedit-break", true, true),
 	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true),
-	CROP_TRAMPLE(44, BlockEntry.class, "crop-trample", true, true);
+	CROP_TRAMPLE(44, BlockEntry.class, "crop-trample", true, true),
+	BLOCK_IGNITE(45, SimpleRollbackEntry.class, "block-ignite", true, true);
 
 	private int id;
 	private boolean canHere;
