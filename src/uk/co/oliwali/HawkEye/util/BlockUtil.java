@@ -195,6 +195,12 @@ public class BlockUtil {
 		case 78:
 		case 141:
 		case 142:
+		case 157:
+		case 147:
+		case 148:
+		case 149:
+		case 150:
+		case 404:
 		case 356:
 		case 64:
 		case 71:
