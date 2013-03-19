@@ -53,22 +53,21 @@ public class DisplayManager {
 	}
 
 	/**
-	 * Handler for sending a result. Converts to multiple lines if it is too long
+	 * Handler for sending a result. Converts to multiple lines if it is too long, or if the next word cannot fit on the line
 	 * @param sender {@link CommandSender} to send result to
-	 * @param line text to send
+	 * @param line text to send wordWrap
 	 */
-	public static void sendLine(CommandSender sender, String line) {
-		int len = 68;
-		if (line.length() < len)
-			Util.sendMessage(sender, "&8| " + line);
-		else {
-			CustomColor lastColor = CustomColor.WHITE;
-			for (int i = 0; i < line.length(); i+=len) {
-				String str = (i+len>line.length()?line.substring(i):line.substring(i, i+len));
-				Util.sendMessage(sender, "&8| " + lastColor.getCustom() + str);
-				lastColor = Util.getLastColor(str);
-			}
-		}
+	public static void sendLine(CommandSender sender, String input) {
+		int n = 66;
+		CustomColor lastColor = CustomColor.GRAY;
+		String[] splitInput =input.replaceAll("\\s+"," ").replaceAll(String.format(" *(.{1,%d})(?=$| ) *", n),"$1\n").split("\n");
+		for (String line : splitInput)
+			Util.sendMessage(sender, "&8| " + lastColor.getCustom() + line);
 	}
 
+	//	public static void sendLine(CommandSender sender, String input) { Not sure why this isn't showing last custom color..
+	//		CustomColor lastColor = CustomColor.GRAY;
+	//		for (String s : ChatPaginator.wordWrap(input, 64))
+	//		Util.sendMessage(sender, "&8| " + lastColor.getCustom() + s);
+	//	}
 }
