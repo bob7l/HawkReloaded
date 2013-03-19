@@ -6,6 +6,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -15,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import uk.co.oliwali.HawkEye.DataType;
@@ -22,10 +25,12 @@ import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
+import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.InventoryUtil;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -41,15 +46,12 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.CHAT)
 	 public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		//Check for inventory close
-		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		DataManager.addEntry(new DataEntry(player, DataType.CHAT, player.getLocation(), event.getMessage()));
 	}
 
 	@HawkEvent(dataType = DataType.COMMAND)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		HawkEye.containerManager.checkInventoryClose(player);
 		if (Config.CommandFilter.contains(event.getMessage().split(" ")[0])) return;
 		DataManager.addEntry(new DataEntry(player, DataType.COMMAND, player.getLocation(), event.getMessage()));
 	}
@@ -66,8 +68,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		Player player = event.getPlayer();
 		Location loc  = player.getLocation();
 
-		HawkEye.containerManager.checkInventoryClose(player);
-
 		String ip = "";
 		try {
 			ip = player.getAddress().getAddress().getHostAddress().toString();
@@ -78,8 +78,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.TELEPORT)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		//Check for inventory close
-		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		Location from = event.getFrom();
 		Location to   = event.getTo();
 		if (Util.distance(from, to) > 5)
@@ -95,8 +93,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-		//Check for inventory close
-		HawkEye.containerManager.checkInventoryClose(player);
 
 
 		if (block != null) {
@@ -122,7 +118,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				case ENDER_CHEST:
 					if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						//Call container manager for inventory open
-						HawkEye.containerManager.checkInventoryOpen(player, block);
 						DataManager.addEntry(new DataEntry(player, DataType.OPEN_CONTAINER, loc, Integer.toString(block.getTypeId())));
 					}
 					break;
@@ -185,5 +180,27 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		DataType type = (event.getBucket().equals(Material.WATER_BUCKET) ? DataType.WATER_BUCKET : DataType.LAVA_BUCKET);
 
 		DataManager.addEntry(new SimpleRollbackEntry(event.getPlayer(), type, loc, ""));
+	}
+	
+	@HawkEvent(dataType = DataType.CONTAINER_TRANSACTION)
+	public void onInventoryClose(InventoryCloseEvent event) {
+		String player = event.getPlayer().getName();
+		InventoryHolder holder = event.getInventory().getHolder();
+		if (InventoryUtil.isHolderValid(holder) && HawkEye.InvSession.containsKey(player)) {
+			String data = InventoryUtil.compareInvs(holder, HawkEye.InvSession.get(player), InventoryUtil.compressInventory(holder.getInventory().getContents()));
+			if (data == null) return;
+			DataManager.addEntry(new ContainerEntry(event.getPlayer().getName(), InventoryUtil.getHolderLoc(holder), data));
+			HawkEye.InvSession.remove(player);
+		}
+	}
+
+	@HawkEvent(dataType = DataType.CONTAINER_TRANSACTION)
+	public void onInventoryClose(InventoryOpenEvent event) {
+		String player = event.getPlayer().getName();
+		InventoryHolder holder = event.getInventory().getHolder();
+		if (InventoryUtil.isHolderValid(holder)) {
+			if (HawkEye.InvSession.containsKey(player)) HawkEye.InvSession.remove(player);
+			HawkEye.InvSession.put(player, InventoryUtil.compressInventory(holder.getInventory().getContents()));
+		}
 	}
 }

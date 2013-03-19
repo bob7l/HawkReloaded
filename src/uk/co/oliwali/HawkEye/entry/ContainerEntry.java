@@ -6,12 +6,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
-
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Represents a container transaction as created in {@MonitorInventoryListener}
@@ -32,7 +28,7 @@ public class ContainerEntry extends DataEntry {
 
 	@Override
 	public String getStringData() {
-		return InventoryUtil.createChangeString(InventoryUtil.interpretDifferenceString(data));
+		return InventoryUtil.dataToString(data);
 	}
 
 	@Override
@@ -40,16 +36,12 @@ public class ContainerEntry extends DataEntry {
 		BlockState blockState = block.getState();
 		if (!(blockState instanceof InventoryHolder)) return false;
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
-		List<HashMap<String,Integer>> ops = InventoryUtil.interpretDifferenceString(data);
-		//Handle the additions
-		if (ops.size() > 0) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
-				inv.removeItem(stack);
-		}
-		//Handle subtractions
-		if (ops.size() > 1) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
-				inv.addItem(stack);
+		for (String s : data.split("@")) {
+			if (s.startsWith("+")) {
+				inv.removeItem(InventoryUtil.uncompressItem(s));
+			} else {
+				inv.addItem(InventoryUtil.uncompressItem(s));
+			}
 		}
 		return true;
 	}
@@ -59,18 +51,13 @@ public class ContainerEntry extends DataEntry {
 		BlockState blockState = block.getState();
 		if (!(blockState instanceof InventoryHolder)) return false;
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
-		List<HashMap<String,Integer>> ops = InventoryUtil.interpretDifferenceString(data);
-		//Handle the additions
-		if (ops.size() > 0) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
-				inv.addItem(stack);
-		}
-		//Handle subtractions
-		if (ops.size() > 1) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
-				inv.removeItem(stack);
+		for (String s : data.split("@")) {
+			if (s.startsWith("+")) {
+				inv.addItem(InventoryUtil.uncompressItem(s));
+			} else {
+				inv.removeItem(InventoryUtil.uncompressItem(s));
+			}
 		}
 		return true;
 	}
-
 }

@@ -2,143 +2,132 @@ package uk.co.oliwali.HawkEye.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Location;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Furnace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryUtil {
 
-	/**
-	 * Compress an ItemStack[] into a HashMap of the item string and the total amount of that item
-	 * Uses {@BlockUtil} to get the item string
-	 * @param inventory ItemStack[] to compress
-	 * @return HashMap<String,Integer>
-	 */
 	public static HashMap<String,Integer> compressInventory(ItemStack[] inventory) {
 		HashMap<String,Integer> items = new HashMap<String,Integer>();
 		for (ItemStack item : inventory) {
 			if (item == null) continue;
-			String iString = BlockUtil.getItemString(item);
+			String enchantments = "";
+			Map<Enchantment, Integer> enchants = item.getEnchantments();
+			if (!enchants.isEmpty()) {
+				for (Entry<Enchantment, Integer> entry : enchants.entrySet()) {
+					enchantments = enchantments + "-" + entry.getKey().getName() + "x" + entry.getValue();
+				}
+			}
+			String iString = BlockUtil.getItemString(item) + enchantments;
 			if (items.containsKey(iString)) items.put(iString, items.get(iString) + item.getAmount());
 			else items.put(iString, item.getAmount());
 		}
 		return items;
 	}
 
-	/**
-	 * Uncompress an inventory back into proper ItemStacks
-	 * @param comp Compressed HashMap inventory
-	 * @return ItemStack array
-	 */
-	public static ItemStack[] uncompressInventory(HashMap<String,Integer> comp) {
-		List<ItemStack> inv = new ArrayList<ItemStack>();
-		for (Entry<String, Integer> item : comp.entrySet()) {
-			int i = item.getValue();
-			while (i > 0) {
-				if (i < 64)	inv.add(BlockUtil.itemStringToStack(item.getKey(), i));
-				else inv.add(BlockUtil.itemStringToStack(item.getKey(), 64));
-				i = i-64;
+	public static ItemStack uncompressItem(String data) {
+		data = data.substring(1);
+		String[] item = data.split("~");
+		String[] enchants = item[0].split("-");
+		String[] info = enchants[0].split(":");
+		ItemStack stack = null;
+		if (info.length == 1) {
+			stack = new ItemStack(Integer.parseInt(info[0]), Integer.parseInt(item[1]));
+		} else {
+			stack = new ItemStack(Integer.parseInt(info[0]), Integer.parseInt(item[1]), Byte.valueOf((byte)Integer.parseInt(info[1])) != null ? Byte.valueOf((byte)Integer.parseInt(info[1])) : (short)0);
+		}
+		if (enchants.length > 0) {
+			for (String s : enchants) {
+				String[] types = s.split("x");
+				if (types.length != 1) {
+					Enchantment en = Enchantment.getByName(types[0]);
+					if (en != null) {
+						stack.addUnsafeEnchantment(en, Integer.parseInt(types[1]));
+					}
+				}
 			}
 		}
-		return inv.toArray(new ItemStack[0]);
+		return stack;
 	}
 
-	/**
-	 * Takes two compressed inventories and returns a string representation of the difference
-	 * @param before HashMap<String,Integer> of inventory before changes
-	 * @param after HashMap<String,Integer> of inventory after changes
-	 * @return String in the form item:data,amount&item:data,amount@item:data,amount&item:data,amount where the first part is additions and second is subtractions
-	 */
-	public static String createDifferenceString(HashMap<String,Integer> before, HashMap<String,Integer> after) {
-		List<String> add = new ArrayList<String>();
-		List<String> sub = new ArrayList<String>();
-		for (Entry<String, Integer> item : before.entrySet()) {
-			//If the item does not appear after changes
-		    if (!after.containsKey(item.getKey())) sub.add(item.getKey() + "," + item.getValue());
-		    //If the item is smaller after changes
-		    else if (item.getValue() > after.get(item.getKey())) sub.add(item.getKey() + "," + (item.getValue() - after.get(item.getKey())));
-		    //If the item is larger after changes
-		    else if (item.getValue() < after.get(item.getKey())) add.add(item.getKey() + "," + (after.get(item.getKey()) - item.getValue()));
-		}
-		for (Entry<String, Integer> item : after.entrySet()) {
-			//If the item does not appear before changes
-			if (!before.containsKey(item.getKey())) add.add(item.getKey() + "," + item.getValue());
-		}
-		return Util.join(add, "&") + "@" + Util.join(sub, "&");
-	}
-
-	/**
-	 * Takes an inventory difference string and forms two HashMaps containing the compressed inventory forms of the additions and subtractions
-	 * @param diff The difference string to be processed
-	 * @return a List of two HashMaps containing the additions and subtractions. First list element is adds, second is subs.
-	 */
-	public static List<HashMap<String,Integer>> interpretDifferenceString(String diff) {
-		List<HashMap<String,Integer>> ops = new ArrayList<HashMap<String,Integer>>();
-		for (String changes : diff.split("@")) {
-			HashMap<String,Integer> op = new HashMap<String,Integer>();
-			for (String change : changes.split("&")) {
-				if (change.length() == 0) continue;
-				String[] item = change.split(",");
-				op.put(item[0], Integer.parseInt(item[1]));
+	public static String dataToString(String data) {
+		String type = null;
+		for (String changes : data.split("@")) {
+			String[] item = changes.split("~");
+			String[] enchants = item[0].substring(1).split("-");
+			String c = changes.startsWith("+")?"&a":"&4";
+			String ench = "";
+			if (enchants.length != 1) {
+				for (String s : enchants) {
+					ench = ench + "-" + s;
+				}
+				ench = ench.substring(enchants[0].length() + 1);
 			}
-			ops.add(op);
+			if (type == null) {
+				type = c+item[1] + "x " + c+BlockUtil.getBlockStringName(enchants[0]) + ench;
+			} else {
+				type = type +", " + c+item[1] + "x " + c+BlockUtil.getBlockStringName(enchants[0]) + ench;
+			}
 		}
-		if (ops.size() == 1) ops.add(new HashMap<String,Integer>());
-		return ops;
+		return type;
 	}
 
-	/**
-	 * Creates a readable string representing the changes of a difference string
-	 * @param ops additions and subtractions as supplied by interpretDifferenceString
-	 * @return
-	 */
-	public static String createChangeString(List<HashMap<String,Integer>> ops) {
-
-		if (ops.size() == 0) return "";
-		String changeString = "";
-
-		//Loop through ops
-		List<String> add = new ArrayList<String>();
-		for (Entry<String, Integer> item : ops.get(0).entrySet())
-			add.add(item.getValue() + "x " + BlockUtil.getBlockStringName(item.getKey()));
-		List<String> sub = new ArrayList<String>();
-		for (Entry<String, Integer> item : ops.get(1).entrySet())
-			sub.add(item.getValue() + "x " + BlockUtil.getBlockStringName(item.getKey()));
-
-		//Build string
-		if (add.size() > 0) changeString += "&a+(" + Util.join(add, ", ") + ")";
-		if (sub.size() > 0) changeString += "&4-(" + Util.join(sub, ", ") + ")";
-
-		return changeString;
-
+	public static String compareInvs(InventoryHolder holder, HashMap<String,Integer> map1, HashMap<String,Integer> map2) {
+		HashMap<String,Integer> items1 = map1;
+		HashMap<String,Integer> items = map2;
+		if (items1 == null && items == null) return null;
+		ArrayList<String> ses = new ArrayList<String>();
+		String ts = "";
+		for (Entry<String, Integer> entry : items.entrySet()) {
+			int count = entry.getValue();
+			String key = entry.getKey();
+			if (items1.containsKey(key)) {
+				int c = items1.get(key);
+				if (count < c) {
+					ses.add("-" + key + "~" + (c - count));
+				} else if (count > c) {
+					ses.add("+" + key + "~" + (count - c));
+				}
+				items1.remove(key);
+			} else {
+				ses.add("+" + key + "~" + count);
+			}
+		} 
+		for (Entry<String, Integer> entry : items1.entrySet()) {
+			ses.add("-" + entry.getKey() + "~" + entry.getValue());
+		}
+		if (!ses.isEmpty()) {
+			for (String s : ses) {
+				if (ts.length() < 1) ts = s;
+				else ts = ts + "@" + s;
+			}
+			return ts.equals("@")?null:ts;
+		}
+		return null;
 	}
 
-	/**
-	 * Method for getting complete inventory from a ContainerBlock
-	 * Works around a bug in Minecraft that sometimes returns only half the chest
-	 * Thanks to N3X15 and the BigBrother team for letting me use this
-	 * @param container block to check
-	 * @return ItemStack[] of both inventories merged
-	 * @author N3X15
-	 */
-    public static ItemStack[] getContainerContents(InventoryHolder container) {
-
-    	//If it isn't a chest, there is no issue!
-    	if (!(container instanceof Chest) || (!(container instanceof DoubleChest))) return container.getInventory().getContents();
-
-    	Chest chest = (Chest)container;
-        DoubleChest doublechest = (DoubleChest)container;
-        
-        if (chest == doublechest) {
-            return doublechest.getInventory().getContents();
-        } 
-        else
-        {
-			return chest.getInventory().getContents();
-    }
-}
+	public static Location getHolderLoc(InventoryHolder holder) {
+		if (holder instanceof Chest) return ((Chest)holder).getLocation();
+		if (holder instanceof DoubleChest) return ((DoubleChest)holder).getLocation().getBlock().getLocation(); //Need the block location
+		if (holder instanceof Furnace) return ((Furnace)holder).getLocation();
+		if (holder instanceof Dispenser) return ((Dispenser)holder).getLocation();
+		return null;
+	}
+	
+	public static boolean isHolderValid(InventoryHolder holder) {
+		if (holder instanceof Chest) return true;
+		if (holder instanceof DoubleChest) return true;
+		if (holder instanceof Furnace) return true;
+		if (holder instanceof Dispenser) return true;
+		return false;
+	}
 }

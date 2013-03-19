@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Server;
@@ -58,9 +59,9 @@ public class HawkEye extends JavaPlugin {
 	public ToolListener toolListener = new ToolListener();
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
 	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
+	public static HashMap<String, HashMap<String,Integer>> InvSession = new HashMap<String, HashMap<String,Integer>>();
 	public static WorldEditPlugin worldEdit = null;
 	public static Herochat herochat = null;
-	public static ContainerAccessManager containerManager;
 
 	/**
 	 * Safely shuts down HawkEye
@@ -120,8 +121,6 @@ public class HawkEye extends JavaPlugin {
 		}
 
 		checkDependencies(pm);
-		
-		containerManager = new ContainerAccessManager();
 
 		registerListeners(pm);
 		registerCommands();

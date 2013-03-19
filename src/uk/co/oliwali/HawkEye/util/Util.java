@@ -256,7 +256,6 @@ public class Util {
 	 * @author oliverw92
 	 */
 	public enum CustomColor {
-
 		RED("c", 0xC),
 		DARK_RED("4", 0x4),
 		YELLOW("e", 0xE),

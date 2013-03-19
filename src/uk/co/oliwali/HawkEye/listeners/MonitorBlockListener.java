@@ -2,7 +2,6 @@ package uk.co.oliwali.HawkEye.listeners;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

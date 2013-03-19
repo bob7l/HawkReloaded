@@ -74,7 +74,7 @@ public class BlockUtil {
 			return Material.getMaterial(Integer.parseInt(blockArr[0])).name() + ":" + blockArr[1];
 		else return Material.getMaterial(Integer.parseInt(blockArr[0])).name();
 	}
-
+	
 	/**
 	 * Sets the block type and data to the inputted block string
 	 * @param block Block to be changed
@@ -356,33 +356,33 @@ public class BlockUtil {
 	    }
 	    return BlockFace.NORTH;
 	  }
-  
-	public static void placeDoorTop(Block b, Block block, int dd, int type) {
-		Block side = null;
-		Block oside = null;
-		if (dd == 0) {
-			side = b.getRelative(BlockFace.NORTH);
-			oside = b.getRelative(BlockFace.SOUTH);
-		} else if (dd == 1) {
-			side = b.getRelative(BlockFace.EAST);
-			oside = b.getRelative(BlockFace.WEST);
-		} else if (dd == 2) {
-			side = b.getRelative(BlockFace.SOUTH);
-			oside = b.getRelative(BlockFace.NORTH);
-		} else {
-			side = b.getRelative(BlockFace.WEST);
-			oside = b.getRelative(BlockFace.EAST);
-		}
 
-		int id = side.getTypeId();
-		int oid = oside.getTypeId();
-		if (id == 64 || id == 71) {
-			block.setTypeIdAndData(type, (byte)9, true);
-		} else if (oid == 64 || oid == 71) {
-			oside.getRelative(BlockFace.UP).setTypeIdAndData(type, (byte)9, true);
-			block.setTypeIdAndData(type, (byte)8, true);
-		} else {
-			block.setTypeIdAndData(type, (byte)8, true);
-		}
-	}
+  public static void placeDoorTop(Block b, Block block, int dd, int type) {
+	  Block side = null;
+	  Block oside = null;
+	  if (dd == 0) {
+		  side = b.getRelative(BlockFace.NORTH);
+		  oside = b.getRelative(BlockFace.SOUTH);
+	  } else if (dd == 1) {
+		  side = b.getRelative(BlockFace.EAST);
+		  oside = b.getRelative(BlockFace.WEST);
+	  } else if (dd == 2) {
+		  side = b.getRelative(BlockFace.SOUTH);
+		  oside = b.getRelative(BlockFace.NORTH);
+	  } else {
+		  side = b.getRelative(BlockFace.WEST);
+		  oside = b.getRelative(BlockFace.EAST);
+	  }
+
+	  int id = side.getTypeId();
+	  int oid = oside.getTypeId();
+	  if (id == 64 || id == 71) {
+		  block.setTypeIdAndData(type, (byte)9, true);
+	  } else if (oid == 64 || oid == 71) {
+		  oside.getRelative(BlockFace.UP).setTypeIdAndData(type, (byte)9, true);
+		  block.setTypeIdAndData(type, (byte)8, true);
+	  } else {
+		  block.setTypeIdAndData(type, (byte)8, true);
+	  }
+  }
 }
