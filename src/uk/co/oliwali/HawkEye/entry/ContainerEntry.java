@@ -39,9 +39,9 @@ public class ContainerEntry extends DataEntry {
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.removeItem(InventoryUtil.uncompressItem(s));
-			} else {
+			} else if (s.startsWith("-")) {
 				inv.addItem(InventoryUtil.uncompressItem(s));
-			}
+			} else return false;
 		}
 		return true;
 	}
@@ -54,9 +54,9 @@ public class ContainerEntry extends DataEntry {
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.addItem(InventoryUtil.uncompressItem(s));
-			} else {
+			} else if (s.startsWith("-")) {
 				inv.removeItem(InventoryUtil.uncompressItem(s));
-			}
+			} else return false;
 		}
 		return true;
 	}

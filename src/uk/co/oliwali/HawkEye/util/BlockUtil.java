@@ -5,7 +5,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 /**
  * Contains utilities for manipulating blocks without losing data
@@ -37,15 +36,20 @@ public class BlockUtil {
 			return block.getTypeId() + ":" + block.getRawData();
 		return Integer.toString(block.getTypeId());
 	}
+	
 	/**
 	 * Same as getBlockString() except for ItemStack
 	 * @param stack ItemStack you wish to convert
 	 * @return string representing the item
 	 */
 	public static String getItemString(ItemStack stack) {
-		if (stack.getData() != null && stack.getData().getData() != 0)
-			return stack.getTypeId() + ":" + stack.getData().getData();
-		return Integer.toString(stack.getTypeId());
+		int data = stack.getData().getData();
+		int type = stack.getTypeId();
+		if (type == 373) 
+			data = stack.getDurability();
+		if (stack.getData() != null && data != 0)
+			return type + ":" + data;
+		return Integer.toString(type);
 	}
 
 	/**
@@ -56,10 +60,9 @@ public class BlockUtil {
 	 */
 	public static ItemStack itemStringToStack(String item, Integer amount) {
 		String[] itemArr = item.split(":");
-		ItemStack stack = new ItemStack(Integer.parseInt(itemArr[0]), amount);
 		if (itemArr.length > 1)
-			stack.setData(new MaterialData(Integer.parseInt(itemArr[0]), Byte.parseByte(itemArr[1])));
-		return stack;
+			return new ItemStack(Integer.parseInt(itemArr[0]), amount, (itemArr[1].length() <= 3 ? Byte.parseByte(itemArr[1]): ((short) Integer.parseInt(itemArr[1]))));
+		return new ItemStack(Integer.parseInt(itemArr[0]), amount);
 	}
 
 	/**

@@ -41,9 +41,9 @@ public class InventoryUtil {
 		String[] info = enchants[0].split(":");
 		ItemStack stack = null;
 		if (info.length == 1) {
-			stack = new ItemStack(Integer.parseInt(info[0]), Integer.parseInt(item[1]));
+			stack = BlockUtil.itemStringToStack(info[0], Integer.parseInt(item[1]));
 		} else {
-			stack = new ItemStack(Integer.parseInt(info[0]), Integer.parseInt(item[1]), Byte.valueOf((byte)Integer.parseInt(info[1])) != null ? Byte.valueOf((byte)Integer.parseInt(info[1])) : (short)0);
+			stack = BlockUtil.itemStringToStack(info[0] + ":" + info[1], Integer.parseInt(item[1]));
 		}
 		if (enchants.length > 0) {
 			for (String s : enchants) {
