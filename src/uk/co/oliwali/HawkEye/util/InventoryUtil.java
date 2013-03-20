@@ -122,12 +122,12 @@ public class InventoryUtil {
 		if (holder instanceof Dispenser) return ((Dispenser)holder).getLocation();
 		return null;
 	}
-	
+
 	public static boolean isHolderValid(InventoryHolder holder) {
-		if (holder instanceof Chest) return true;
-		if (holder instanceof DoubleChest) return true;
-		if (holder instanceof Furnace) return true;
-		if (holder instanceof Dispenser) return true;
+		if (holder instanceof Chest) return Config.logChest;
+		if (holder instanceof DoubleChest) return Config.logDoubleChest;
+		if (holder instanceof Furnace) return Config.logFurnace;
+		if (holder instanceof Dispenser)return Config.logDispenser;
 		return false;
 	}
 }

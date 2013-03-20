@@ -43,6 +43,8 @@ log:
     super-pickaxe: false
     worldedit-place: false
     worldedit-break: false
+    crop-trample: true
+    block-ignite: false
 general:
     max-lines: 0
     log-item-drops-on-death: false
@@ -81,3 +83,8 @@ command-filter:
 - /spawn
 block-filter:
 - NONE
+containertransaction-filter:
+    chest: true
+    doublechest: true
+    furnace: true
+    dispenser: true

@@ -37,6 +37,10 @@ public class Config {
 	public static boolean LogDeathDrops;
 	public static boolean OpPermissions;
 	public static boolean isSimpleTime;
+	public static boolean logChest;
+	public static boolean logDoubleChest;
+	public static boolean logFurnace;
+	public static boolean logDispenser;
 	public static int LogDelay;
 	public static String DbUrl;
 	public static String DbUser;
@@ -91,6 +95,10 @@ public class Config {
 		DbPlayerTable = config.getString("mysql.player-table");
 		DbWorldTable = config.getString("mysql.world-table");
 		PoolSize = config.getInt("mysql.max-connections");
+		logChest = config.getBoolean("containertransaction-filter.chest");
+		logDoubleChest = config.getBoolean("containertransaction-filter.doublechest");
+		logFurnace = config.getBoolean("containertransaction-filter.furnace");
+		logDispenser = config.getBoolean("containertransaction-filter.dispenser");
 
 		try {
 			DebugLevel = Util.DebugLevel.valueOf(config.getString("general.debug-level").toUpperCase());
