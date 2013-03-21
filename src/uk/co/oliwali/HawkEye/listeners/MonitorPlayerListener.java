@@ -117,7 +117,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				case BREWING_STAND:
 				case ENDER_CHEST:
 					if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-						//Call container manager for inventory open
 						DataManager.addEntry(new DataEntry(player, DataType.OPEN_CONTAINER, loc, Integer.toString(block.getTypeId())));
 					}
 					break;
@@ -139,12 +138,8 @@ public class MonitorPlayerListener extends HawkEyeListener {
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				loc = block.getRelative(event.getBlockFace()).getLocation();
 		        Location locs = block.getLocation();
-				switch (player.getItemInHand().getType()) {
-					case MONSTER_EGG:
+				if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
 						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
-						break;
-				default:
-					return;
 				}
 			}
 		}

@@ -274,6 +274,18 @@ public class BlockUtil {
 		}
 		return false;
 	}
+	
+	public static boolean isInventoryHolder(int block) {
+		switch(block){
+		case 54:
+		case 146:
+		case 61:
+		case 62:
+		case 23:
+			return true;
+		}
+		return false;
+	}
 
 	public static boolean isPlant(int block) {
 		switch(block){

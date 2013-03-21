@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
@@ -13,6 +14,9 @@ import org.bukkit.block.Furnace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 
 public class InventoryUtil {
 
@@ -113,6 +117,15 @@ public class InventoryUtil {
 			return ts.equals("@")?null:ts;
 		}
 		return null;
+	}
+
+	public static void handleHolderRemoval(String remover, BlockState state) {
+		InventoryHolder holder = (InventoryHolder) state;
+		if (InventoryUtil.isHolderValid(holder)) {
+			String data = InventoryUtil.compareInvs(holder, InventoryUtil.compressInventory(holder.getInventory().getContents()), new HashMap<String, Integer>());
+			if (data == null) return;
+			DataManager.addEntry(new ContainerEntry(remover, InventoryUtil.getHolderLoc(holder), data));
+		}
 	}
 
 	public static Location getHolderLoc(InventoryHolder holder) {

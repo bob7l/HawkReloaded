@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -29,6 +30,7 @@ import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
 /**
  * Block listener class for HawkEye
@@ -45,16 +47,20 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_BREAK)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
+		Player player = event.getPlayer();
 		if (Config.BlockFilter.contains(block.getType().toString())) return;
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
-			DataManager.addEntry(new SignEntry(event.getPlayer(), DataType.SIGN_BREAK, event.getBlock()));
+			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, event.getBlock()));
 		else {
+			if (BlockUtil.isInventoryHolder(block.getTypeId()) && Config.isLogged(DataType.CONTAINER_TRANSACTION)) {
+				InventoryUtil.handleHolderRemoval(player.getName(), block.getState());
+			}
 			if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK)) {
 				//If the data is 8, this is the top half!
 				if (block.getData() == (byte)8 || block.getData() == (byte)9) { 
 					block = block.getRelative(BlockFace.DOWN);
 				}
-				DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+				DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 				return;
 			}
 			
@@ -69,7 +75,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 			for(BlockFace face: faces) {
 				Block b = block.getRelative(face);
 				if (BlockUtil.isItemAttached(b.getTypeId())) {
-					DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, b));
+					DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, b));
 				}
 			}
 			
@@ -77,10 +83,10 @@ public class MonitorBlockListener extends HawkEyeListener {
 			Block topblock = block.getRelative(BlockFace.UP);
 
 			if (BlockUtil.itemOnTop(topblock.getTypeId())) {
-				DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, topblock));
+				DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, topblock));
 			}
 		}
-		DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+		DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
