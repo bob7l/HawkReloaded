@@ -17,7 +17,7 @@ public class TptoCommand extends BaseCommand {
 	public TptoCommand() {
 		name = "tpto";
 		argLength = 1;
-		permission = "tool.bind";
+		permission = "tpto";
 		usage = "<id> <- teleport to location of the data entry";
 	}
 
