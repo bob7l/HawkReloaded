@@ -28,6 +28,7 @@ public class ContainerEntry extends DataEntry {
 
 	@Override
 	public String getStringData() {
+		if (data.contains("&")) data = InventoryUtil.updateInv(data); //For OLD entries
 		return InventoryUtil.dataToString(data);
 	}
 
@@ -36,6 +37,7 @@ public class ContainerEntry extends DataEntry {
 		BlockState blockState = block.getState();
 		if (!(blockState instanceof InventoryHolder)) return false;
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
+		if (data.contains("&")) data = InventoryUtil.updateInv(data); //For OLD entries
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.removeItem(InventoryUtil.uncompressItem(s));
@@ -51,6 +53,7 @@ public class ContainerEntry extends DataEntry {
 		BlockState blockState = block.getState();
 		if (!(blockState instanceof InventoryHolder)) return false;
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
+		if (data.contains("&")) data = InventoryUtil.updateInv(data); //For OLD entries
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.addItem(InventoryUtil.uncompressItem(s));

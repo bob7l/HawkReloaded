@@ -143,4 +143,32 @@ public class InventoryUtil {
 		if (holder instanceof Dispenser)return Config.logDispenser;
 		return false;
 	}
+	
+	
+	/**
+	 * Updates the container-transaction string from an older hawkeye
+	 * @param string - old inventory
+	 * @return updated string
+	 */
+    public static String updateInv(String old) {
+    	String ns = "";
+    	String[] sides = old.split("@");
+    	if (sides.length == 1) {
+    		for (String s : sides[0].split("&")) {
+    			ns =  ns + "@" + "+" + s;
+    		}
+    	} else if (sides[0].equals("")) {
+    		for (String s : sides[1].split("&")) {
+    			ns =  ns + "@" + "-" + s;
+    		}
+    	} else {
+    		for (String s : sides[0].split("&")) {
+    			ns =  ns +"@" + "+" + s;
+    		}
+    		for (String s : sides[1].split("&")) {
+    			ns = ns + "@" + "-" + s;
+    		}
+    	}
+    	return ns.replace(",", "~").substring(1);
+    }
 }
