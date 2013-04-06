@@ -1,1 +1,15 @@
-/target/
+# Eclipse stuff
+.classpath
+.project
+.settings
+
+# Build files
+/target
+/build
+/bin
+/dist
+manifest.mf
+build.xml
+
+# Mac filesystem dust
+.DS_Store
