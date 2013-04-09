@@ -85,6 +85,13 @@ public class InventoryUtil {
 		return type;
 	}
 
+	/**
+	 * Checks if the containers content was removed
+	 * @param InventoryHolder - the chest we're checking
+	 * @param HashMap - OLD inventory
+	 * @param HashMap - NEW inventory
+	 * @return updated inventory
+	 */
 	public static String compareInvs(InventoryHolder holder, HashMap<String,Integer> map1, HashMap<String,Integer> map2) {
 		HashMap<String,Integer> items1 = map1;
 		HashMap<String,Integer> items = map2;
