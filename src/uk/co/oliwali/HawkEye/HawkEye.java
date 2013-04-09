@@ -96,7 +96,6 @@ public class HawkEye extends JavaPlugin {
 			return;
 		}
 
-		//Set up config and permissions
 		instance = this;
 		server = getServer();
 		name = this.getDescription().getName();
@@ -104,7 +103,7 @@ public class HawkEye extends JavaPlugin {
 
 		Util.info("Starting HawkEye " + version + " initiation process...");
 
-		//Load config and permissions
+		//Load config
 		config = new Config(this);
 
 		setupUpdater();
@@ -125,7 +124,6 @@ public class HawkEye extends JavaPlugin {
 		registerListeners(pm);
 		registerCommands();
 		Util.info("Version " + version + " enabled!");
-
 	}
 
 	/**
@@ -144,7 +142,6 @@ public class HawkEye extends JavaPlugin {
 	 * @param pm PluginManager
 	 */
 	private void registerListeners(PluginManager pm) {
-
 		//Register events
 		monitorBlockListener.registerEvents();
 		monitorPlayerListener.registerEvents();
@@ -152,10 +149,10 @@ public class HawkEye extends JavaPlugin {
 		monitorWorldListener.registerEvents();
 		pm.registerEvents(toolListener, this);
 		if (herochat != null) monitorHeroChatListener.registerEvents();
-		
+
 		if (worldEdit != null)  {
-			if (Config.SuperPick) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
-			if (Config.WEBreak || Config.WEPlace) WESessionFactory.enableWELogging();
+			if (Config.isLogged(DataType.SUPER_PICKAXE)) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
+			if (Config.isLogged(DataType.WORLDEDIT_BREAK) || Config.isLogged(DataType.WORLDEDIT_PLACE)) WESessionFactory.enableWELogging();
 		}
 	}
 
