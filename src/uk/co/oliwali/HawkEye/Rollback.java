@@ -27,6 +27,9 @@ public class Rollback implements Runnable {
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
 	private final List<Location> locs = new ArrayList<Location>();
 	private int timerID;
+	private boolean showPercent = false;
+	private int size;
+	private int p = 0;
 	private RollbackType rollbackType = RollbackType.GLOBAL;
 
 	/**
@@ -36,6 +39,7 @@ public class Rollback implements Runnable {
 
 		this.rollbackType = rollbackType;
 		this.session = session;
+		this.size = session.getRollbackResults().size();
 		session.setRollbackType(rollbackType);
 		rollbackQueue = session.getRollbackResults().iterator();
 
@@ -49,7 +53,8 @@ public class Rollback implements Runnable {
 
 		//Start rollback
 		session.setDoingRollback(true);
-		Util.sendMessage(session.getSender(), "&cAttempting to rollback &7" + session.getRollbackResults().size() + "&c results");
+		showPercent = (size > 50000);
+		Util.sendMessage(session.getSender(), "&cAttempting to rollback &7" + size + "&c results");
 		timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("HawkEye"), this, 1, 2);
 
 	}
@@ -92,6 +97,14 @@ public class Rollback implements Runnable {
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
 				undo.add(entry);
+			}
+
+			if (showPercent) {
+				int percent = (undo.size() * 100) / size;
+				if (p != percent && ((undo.size() * 100) / size) % 10 == 0) {
+					p = percent;
+					Util.sendMessage(session.getSender(), "&cRollback-Progress: &7" + percent + "%");
+				}
 			}
 		}
 

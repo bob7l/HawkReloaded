@@ -48,7 +48,6 @@ public class Rebuild implements Runnable {
 		session.setDoingRollback(true);
 		Util.sendMessage(session.getSender(), "&cAttempting to rebuild &7" + session.getRollbackResults().size() + "&c results");
 		timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("HawkEye"), this, 1, 2);
-
 	}
 
 	/**
