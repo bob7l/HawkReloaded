@@ -17,6 +17,7 @@ import uk.co.oliwali.HawkEye.commands.BaseCommand;
 import uk.co.oliwali.HawkEye.commands.DeleteCommand;
 import uk.co.oliwali.HawkEye.commands.HelpCommand;
 import uk.co.oliwali.HawkEye.commands.HereCommand;
+import uk.co.oliwali.HawkEye.commands.InfoCommand;
 import uk.co.oliwali.HawkEye.commands.PageCommand;
 import uk.co.oliwali.HawkEye.commands.PreviewApplyCommand;
 import uk.co.oliwali.HawkEye.commands.PreviewCancelCommand;
@@ -177,7 +178,7 @@ public class HawkEye extends JavaPlugin {
 		commands.add(new UndoCommand());
 		commands.add(new RebuildCommand());
 		commands.add(new DeleteCommand());
-
+		commands.add(new InfoCommand());
 	}
 
 	/**
