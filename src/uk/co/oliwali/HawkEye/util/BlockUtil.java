@@ -36,7 +36,7 @@ public class BlockUtil {
 			return block.getTypeId() + ":" + block.getRawData();
 		return Integer.toString(block.getTypeId());
 	}
-	
+
 	/**
 	 * Same as getBlockString() except for ItemStack
 	 * @param stack ItemStack you wish to convert
@@ -77,7 +77,7 @@ public class BlockUtil {
 			return Material.getMaterial(Integer.parseInt(blockArr[0])).name() + ":" + blockArr[1];
 		else return Material.getMaterial(Integer.parseInt(blockArr[0])).name();
 	}
-	
+
 	/**
 	 * Sets the block type and data to the inputted block string
 	 * @param block Block to be changed
@@ -88,52 +88,18 @@ public class BlockUtil {
 		if (!Util.isInteger(blockArr[0])) return;
 		int type = Integer.parseInt(blockArr[0]);
 		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
-
-		if (isItemAttached(type)) {
-			if (type == 69) {
-				Block rel = block.getRelative((data == 5 || data == 6 || data == 13) ? BlockFace.DOWN : getFace(data));
-				if(rel.getType().equals(Material.AIR)) {
-					rel.setType(Material.LOG);
-				}
-			} else if (type == 96) {
-				Block rel = block.getRelative(getTrapDoorFace(data));
-				if(rel.getType().equals(Material.AIR)) {
-					rel.setType(Material.WOOD);
-				}
-			} else if ((data < 5) || (data > 8)) {
-				Block rel = block.getRelative(getFace(data));
-
-				if (type == 127) {
-					rel = block.getRelative(getCocoFace(data));
-					if (rel.getType().equals(Material.AIR)) {
-						rel.setType(Material.LOG);
-						rel.setData((byte) 3);
-					}
-				} 
-				if (type == 65) rel = block.getRelative(getLadderFace(data));
-				if (type == 131) rel = block.getRelative(getTripFace(data));
-
-				else if(rel.getType().equals(Material.AIR)) {
-					rel.setType(Material.LOG);
-				}
-			}
-		} else if (itemOnTop(type)) {
+		if (isPlant(type)) {
 			Block downrel = block.getRelative(BlockFace.DOWN);
-			if (type == 81 && !downrel.getType().equals(Material.CACTUS)) {
-				downrel.setType(Material.SAND);
-			} else if (isPlant(type)) {
-				downrel.setType(Material.SOIL);
-				downrel.setData((byte) 1);
-			} else if (downrel.getTypeId() == 0) {
-				downrel.setType(Material.GRASS);
-			}
+			downrel.setType(Material.SOIL);
+			downrel.setData((byte) 1);
 		} 
+
 		if (type == 64 || type == 71) {
 			block.setTypeId(type);
 			block.setData((byte) data);
 
 			Block rel = block.getRelative(BlockFace.UP);
-	        placeDoorTop(block, rel, data, type);
+			placeDoorTop(block, rel, data, type);
 			return;
 		} else if (type == 26) { 
 			placeBed(block, type, (byte)data);
@@ -250,7 +216,7 @@ public class BlockUtil {
 		}
 		return null;
 	}
-	
+
 	//Does the block depend on another?
 	public static boolean isDepend(int type) {
 		if (isItemAttached(type) || itemOnTop(type)) {
@@ -274,7 +240,7 @@ public class BlockUtil {
 		}
 		return false;
 	}
-	
+
 	public static boolean isInventoryHolder(int block) {
 		switch(block){
 		case 54:
@@ -299,105 +265,33 @@ public class BlockUtil {
 		}
 		return false;
 	}
-	
- 	
-  public static BlockFace getFace(int Data) {
-    switch(Data){
-    case 4: return BlockFace.SOUTH;
-    case 1: return BlockFace.WEST;
-    case 2: return BlockFace.EAST;
-    case 3: return BlockFace.NORTH;
-    case 15: return BlockFace.UP;
-    case 14: return BlockFace.DOWN;
-    case 7: return BlockFace.UP;
-    case 8: return BlockFace.UP;
-    case 0: return BlockFace.UP;
-    case 9: return BlockFace.WEST;
-    case 10: return BlockFace.EAST;
-    case 11: return BlockFace.NORTH;
-    case 12: return BlockFace.SOUTH;
-    case 13: return BlockFace.SOUTH;
-    }
-    return BlockFace.NORTH;
-  }
-  
-  public static BlockFace getCocoFace(int Data) {
-    switch(Data){
-    case 0: return BlockFace.SOUTH; 
-    case 1: return BlockFace.WEST; 
-    case 2: return BlockFace.NORTH; 
-    case 3: return BlockFace.EAST;
-    case 9: return BlockFace.WEST;
-    case 8: return BlockFace.SOUTH;
-    case 11: return BlockFace.EAST;
-    case 10: return BlockFace.NORTH;
-    }
-    return BlockFace.NORTH;
-  }
-  
-  public static BlockFace getTrapDoorFace(int Data) {
-	    switch(Data){
-	    case 14: return BlockFace.EAST; 
-	    case 2: return BlockFace.EAST; 
-	    case 6: return BlockFace.EAST; 
-	    case 10: return BlockFace.EAST;
-	    case 11: return BlockFace.WEST; 
-	    case 15: return BlockFace.WEST; 
-	    case 3: return BlockFace.WEST; 
-	    case 7: return BlockFace.WEST;
-	    case 8: return BlockFace.SOUTH; 
-	    case 12: return BlockFace.SOUTH; 
-	    case 0: return BlockFace.SOUTH; 
-	    case 4: return BlockFace.SOUTH;
-	    }
-	    return BlockFace.NORTH;
-	  }
-  
-  public static BlockFace getLadderFace(int Data) {
-    switch(Data){
-    case 2: return BlockFace.SOUTH; 
-    case 5: return BlockFace.WEST; 
-    case 3: return BlockFace.NORTH; 
-    case 4: return BlockFace.EAST;
-    }
-    return BlockFace.NORTH;
-  }
-  
-  public static BlockFace getTripFace(int Data) {
-	    switch(Data){
-	    case 2: return BlockFace.SOUTH; 
-	    case 3: return BlockFace.EAST; 
-	    case 1: return BlockFace.WEST;
-	    }
-	    return BlockFace.NORTH;
-	  }
 
-  public static void placeDoorTop(Block b, Block block, int dd, int type) {
-	  Block side = null;
-	  Block oside = null;
-	  if (dd == 0) {
-		  side = b.getRelative(BlockFace.NORTH);
-		  oside = b.getRelative(BlockFace.SOUTH);
-	  } else if (dd == 1) {
-		  side = b.getRelative(BlockFace.EAST);
-		  oside = b.getRelative(BlockFace.WEST);
-	  } else if (dd == 2) {
-		  side = b.getRelative(BlockFace.SOUTH);
-		  oside = b.getRelative(BlockFace.NORTH);
-	  } else {
-		  side = b.getRelative(BlockFace.WEST);
-		  oside = b.getRelative(BlockFace.EAST);
-	  }
+	public static void placeDoorTop(Block b, Block block, int dd, int type) {
+		Block side = null;
+		Block oside = null;
+		if (dd == 0) {
+			side = b.getRelative(BlockFace.NORTH);
+			oside = b.getRelative(BlockFace.SOUTH);
+		} else if (dd == 1) {
+			side = b.getRelative(BlockFace.EAST);
+			oside = b.getRelative(BlockFace.WEST);
+		} else if (dd == 2) {
+			side = b.getRelative(BlockFace.SOUTH);
+			oside = b.getRelative(BlockFace.NORTH);
+		} else {
+			side = b.getRelative(BlockFace.WEST);
+			oside = b.getRelative(BlockFace.EAST);
+		}
 
-	  int id = side.getTypeId();
-	  int oid = oside.getTypeId();
-	  if (id == 64 || id == 71) {
-		  block.setTypeIdAndData(type, (byte)9, true);
-	  } else if (oid == 64 || oid == 71) {
-		  oside.getRelative(BlockFace.UP).setTypeIdAndData(type, (byte)9, true);
-		  block.setTypeIdAndData(type, (byte)8, true);
-	  } else {
-		  block.setTypeIdAndData(type, (byte)8, true);
-	  }
-  }
+		int id = side.getTypeId();
+		int oid = oside.getTypeId();
+		if (id == 64 || id == 71) {
+			block.setTypeIdAndData(type, (byte)9, true);
+		} else if (oid == 64 || oid == 71) {
+			oside.getRelative(BlockFace.UP).setTypeIdAndData(type, (byte)9, true);
+			block.setTypeIdAndData(type, (byte)8, true);
+		} else {
+			block.setTypeIdAndData(type, (byte)8, true);
+		}
+	}
 }
