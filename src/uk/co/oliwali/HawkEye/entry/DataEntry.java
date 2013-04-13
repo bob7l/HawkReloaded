@@ -36,7 +36,7 @@ public class DataEntry {
 
     private double z;
 
-    private BlockState undoState;
+    protected BlockState undoState;
 
     protected DataType type = null;
 

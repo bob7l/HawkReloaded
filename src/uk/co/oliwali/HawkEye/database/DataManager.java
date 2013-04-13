@@ -58,6 +58,13 @@ public class DataManager extends TimerTask {
 	}
 
 	/**
+	 * Returns current queue
+	 */
+	public static LinkedBlockingQueue<DataEntry> getQueue() {
+		return queue;
+	}
+	
+	/**
 	 * Closes down all connections
 	 */
 	public static void close() {
