@@ -11,6 +11,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -216,6 +217,21 @@ public class MonitorEntityListener extends HawkEyeListener {
 			}
 
 			DataManager.addEntry(new BlockChangeEntry("Environment", DataType.ENDERMAN_PLACE, block.getLocation(), block.getState(), newState));
+		}
+	}
+
+	@HawkEvent(dataType = {DataType.SHEEP_EAT})
+	public void onEntityEatBlock(EntityChangeBlockEvent event) {
+
+		if (!(event.getEntity() instanceof Sheep)) return;
+
+		Block block = event.getBlock();
+
+		// Enderman picking up block
+		if (Config.isLogged(DataType.SHEEP_EAT) && event.getTo() == Material.DIRT && block.getType() == Material.GRASS) {
+			BlockState newState =block.getState();
+			newState.setType(Material.DIRT);
+			DataManager.addEntry(new BlockChangeEntry("Environment", DataType.SHEEP_EAT, block.getLocation(), block.getState(), newState));
 		}
 	}
 }

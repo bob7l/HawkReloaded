@@ -64,7 +64,8 @@ public enum DataType {
 	WORLDEDIT_BREAK(42, BlockEntry.class, "worldedit-break", true, true),
 	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true),
 	CROP_TRAMPLE(44, BlockEntry.class, "crop-trample", true, true),
-	BLOCK_IGNITE(45, SimpleRollbackEntry.class, "block-ignite", true, true);
+	BLOCK_IGNITE(45, SimpleRollbackEntry.class, "block-ignite", true, true),
+	SHEEP_EAT(46, BlockChangeEntry.class, "sheep-eat", true, true);
 
 	private int id;
 	private boolean canHere;
