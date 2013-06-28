@@ -44,7 +44,8 @@ public class HawkSession extends EditSession {
 			} else {
 				DataManager.addEntry(new BlockEntry(player.getName(), DataType.WORLDEDIT_BREAK, b, bdata, loc));
 			}
+			return true;
 		}
-		return super.rawSetBlock(v, block);
+		return false;
 	}
 }
