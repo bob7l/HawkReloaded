@@ -80,16 +80,16 @@ public class Rollback implements Runnable {
 			World world = HawkEye.server.getWorld(entry.getWorld());
 			if (world == null)
 				continue;
-			
+
 			//Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);
-			
+
 			//Get the old blocks state for undo's
 			if (isValid(loc)) {
 				entry.setUndoState(block.getState());
 			}
-			
+
 			//Attempt global rollback
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
 				undo.add(entry);
@@ -110,7 +110,7 @@ public class Rollback implements Runnable {
 
 		//Check if rollback is finished
 		if (!rollbackQueue.hasNext()) {
-			
+
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
 			session.setDoingRollback(false);

@@ -94,6 +94,21 @@ public class ConnectionManager implements Closeable {
 		connections.remove(conn);
 	}
 
+	public static boolean areConsOpen() {
+		final Enumeration<JDCConnection> conns = connections.elements();
+		while (conns.hasMoreElements()) {
+			final JDCConnection conn = conns.nextElement();
+			try {
+				if (conn.isValid() && !conn.isClosed() && conn.lease()) {
+					return true;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Loops through connections, reaping old ones
 	 */
@@ -105,7 +120,7 @@ public class ConnectionManager implements Closeable {
 		int i = 1;
 		while (conns.hasMoreElements()) {
 			final JDCConnection conn = conns.nextElement();
-
+			
 			if (conn.inUse() && stale > conn.getLastUse() && !conn.isValid()) {
 				connections.remove(conn);
 				count++;
@@ -136,5 +151,9 @@ public class ConnectionManager implements Closeable {
 				reapConnections();
 			}
 		}
+	}
+	
+	public static Vector<JDCConnection> getConnections() {
+		return connections;
 	}
 }

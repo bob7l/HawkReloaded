@@ -345,9 +345,9 @@ public class DataManager extends TimerTask {
 			stmnt.executeBatch();
 			conn.commit();
 			conn.setAutoCommit(true); //Enable when commit is over (We need this to properly use batch!)
-			
+
 		} catch (Exception ex) {
-			//To many rare occurrences are possible here
+			ex.printStackTrace();
 		} finally {
 			try {
 				if (stmnt != null)
@@ -356,9 +356,6 @@ public class DataManager extends TimerTask {
 			} catch (Exception ex) {
 				Util.severe("Unable to close SQL connection: " + ex);
 			}
-
 		}
-
 	}
-
 }

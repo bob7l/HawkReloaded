@@ -7,6 +7,8 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
+import uk.co.oliwali.HawkEye.entry.SignEntry;
+import uk.co.oliwali.HawkEye.util.Config;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalPlayer;
@@ -42,7 +44,10 @@ public class HawkSession extends EditSession {
 			if (block.getType() != 0) {
 				DataManager.addEntry(new BlockChangeEntry(player.getName(), DataType.WORLDEDIT_PLACE, loc, b, bdata, block.getType(), block.getData()));
 			} else {
-				DataManager.addEntry(new BlockEntry(player.getName(), DataType.WORLDEDIT_BREAK, b, bdata, loc));
+				if ((b == 63 || b == 68) && Config.isLogged(DataType.SIGN_BREAK))
+					DataManager.addEntry(new SignEntry(player.getName(), DataType.SIGN_BREAK, world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ())));
+				else
+					DataManager.addEntry(new BlockEntry(player.getName(), DataType.WORLDEDIT_BREAK, b, bdata, loc));
 			}
 		}
 		return super.rawSetBlock(v, block);
