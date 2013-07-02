@@ -1,4 +1,4 @@
-00,-
+00,Air
 01,Stone
 02,Grass Block
 03,Dirt
@@ -144,6 +144,19 @@
 143,Wooden Button
 144,Head
 145,Anvil
+146,Trapped Chest
+147,Weighted Pressure Plate (light)
+148,Weighted Pressure Plate (heavy)
+149,Redstone Comparator (inactive)
+150,Redstone Comparator (active)
+151,Daylight Sensor
+152,Redstone Block
+153,Nether Quartz Ore
+154,Hopper
+155,Quartz Block
+156,Quartz Stairs
+157,Activator Rail
+158,Dropper
 256,Iron Shovel
 257,Iron Pickaxe
 258,Iron Axe
@@ -289,6 +302,14 @@
 398,Carrot on a Stick
 399,Nether Star
 400,Pumpkin Pie
+401,Firework Rocket
+402,Firework Star
+403,Enchanted Book
+404,Redstone Comparator
+405,Nether Brick
+406,Nether Quartz
+407,Minecart with TNT
+408,Minecart with Hopper
 2256,13 Disc
 2257,Cat Disc
 2258,blocks Disc
