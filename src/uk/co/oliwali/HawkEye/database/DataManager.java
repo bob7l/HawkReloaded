@@ -164,18 +164,18 @@ public class DataManager extends TimerTask {
 	 * @throws SQLException
 	 */
 	public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
-		DataType type = DataType.fromId(res.getInt("action"));
+		DataType type = DataType.fromId(res.getInt(4));
 		DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
-		entry.setPlayer(DataManager.getPlayer(res.getInt("player_id")));
-		entry.setDate(res.getString("date"));
-		entry.setDataId(res.getInt("data_id"));
-		entry.setType(DataType.fromId(res.getInt("action")));
-		entry.interpretSqlData(res.getString("data"));
-		entry.setPlugin(res.getString("plugin"));
-		entry.setWorld(DataManager.getWorld(res.getInt("world_id")));
-		entry.setX(res.getInt("x"));
-		entry.setY(res.getInt("y"));
-		entry.setZ(res.getInt("z"));
+		entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
+		entry.setDate(res.getString(2));
+		entry.setDataId(res.getInt(1));
+		entry.setType(DataType.fromId(res.getInt(4)));
+		entry.interpretSqlData(res.getString(9));
+		entry.setPlugin(res.getString(10));
+		entry.setWorld(DataManager.getWorld(res.getInt(5)));
+		entry.setX(res.getInt(6));
+		entry.setY(res.getInt(7));
+		entry.setZ(res.getInt(8));
 		return entry;
 	}
 
