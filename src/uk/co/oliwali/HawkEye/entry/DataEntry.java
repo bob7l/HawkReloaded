@@ -20,6 +20,8 @@ import uk.co.oliwali.HawkEye.util.Util;
  */
 public class DataEntry {
 
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	private String plugin = null;
 
     private int dataId;
@@ -219,7 +221,6 @@ public class DataEntry {
 	}
 	public void setInfo(String player, String instance, DataType type, Location loc) {
 		loc = Util.getSimpleLocation(loc);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    setDate(sdf.format(Calendar.getInstance().getTime()));
 	    setPlugin(instance);
 		setPlayer(player);
