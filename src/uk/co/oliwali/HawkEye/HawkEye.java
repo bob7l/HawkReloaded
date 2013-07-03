@@ -30,6 +30,7 @@ import uk.co.oliwali.HawkEye.commands.ToolCommand;
 import uk.co.oliwali.HawkEye.commands.ToolResetCommand;
 import uk.co.oliwali.HawkEye.commands.TptoCommand;
 import uk.co.oliwali.HawkEye.commands.UndoCommand;
+import uk.co.oliwali.HawkEye.database.ConnectionManager;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorEntityListener;
@@ -58,6 +59,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorWorldEditListener monitorWorldEditListener = new MonitorWorldEditListener();
 	private static boolean update = false;
 	public ToolListener toolListener = new ToolListener();
+	private DataManager dbmanager;
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
 	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
 	public static HashMap<String, HashMap<String,Integer>> InvSession = new HashMap<String, HashMap<String,Integer>>();
@@ -69,6 +71,13 @@ public class HawkEye extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
+		dbmanager.run();
+		while (ConnectionManager.areConsOpen()) {
+			Util.debug("Not ready");
+			if (DataManager.getQueue().size() != 0) {
+				dbmanager.run();
+			}
+		}
 		DataManager.close();
 		Util.info("Version " + version + " disabled!");
 	}
@@ -113,7 +122,8 @@ public class HawkEye extends JavaPlugin {
 
 		//Initiate database connection
 		try {
-			getServer().getScheduler().runTaskTimerAsynchronously(this, new DataManager(this), Config.LogDelay * 20, Config.LogDelay * 20);
+			this.dbmanager = new DataManager(this);
+			getServer().getScheduler().runTaskTimerAsynchronously(this, dbmanager, Config.LogDelay * 20, Config.LogDelay * 20);
 		} catch (Exception e) {
 			Util.severe("Error initiating HawkEye database connection, disabling plugin");
 			pm.disablePlugin(this);

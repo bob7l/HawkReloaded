@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.listeners;
 
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,12 +21,15 @@ import uk.co.oliwali.HawkEye.util.Config;
  */
 public class ToolListener implements Listener {
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block block   = event.getBlock();
 		if (BlockUtil.getToolString(block).equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, block.getLocation());
+			if (player.getGameMode() == GameMode.SURVIVAL)
+				player.updateInventory();
 			event.setCancelled(true);
 		}
 	}
