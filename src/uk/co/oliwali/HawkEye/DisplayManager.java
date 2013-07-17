@@ -35,8 +35,14 @@ public class DisplayManager {
 		if (page > maxPages || page < 1)
 			return;
 
+		//Fix the line to properly fit the screen
+		int len = String.valueOf(maxPages).length();
+		if (len > 3)
+			len = (len - (len / 2)) + 1;
+		String l = "----------------------".substring(len);
+		
 		//Begin displaying page
-		Util.sendMessage(session.getSender(), "&8--------------------- &7Page (&c" + page + "&7/&c" + maxPages + "&7) &8--------------------" + (maxPages < 9?"-":""));
+		Util.sendMessage(session.getSender(), "&8" + l + " &7Page (&c" + page + "&7/&c" + maxPages + "&7) &8" + l + (len > 1?"-":""));
 
 		for (int i = (page-1) * maxLines; i < ((page-1) * maxLines) + maxLines; i++) {
 			if (i == results.size())
