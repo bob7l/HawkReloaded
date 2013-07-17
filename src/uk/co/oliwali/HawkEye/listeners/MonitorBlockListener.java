@@ -39,6 +39,7 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
 public class MonitorBlockListener extends HawkEyeListener {
 
 	private BlockFace[] faces = new BlockFace[] {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+	private List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
 	
 	public MonitorBlockListener(HawkEye HawkEye) {
 		super(HawkEye);
@@ -48,7 +49,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
-		if (Config.BlockFilter.contains(block.getType().toString())) return;
+		if (Config.BlockFilter.contains(block.getTypeId())) return;
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
 			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, event.getBlock()));
 		else {
@@ -108,7 +109,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 	
 	@HawkEvent(dataType = DataType.SIGN_PLACE)
 	public void onSignChange(SignChangeEvent event) {
-		DataManager.addEntry(new SignEntry(event.getPlayer(), DataType.SIGN_PLACE, event.getBlock(), event.getLines()));
+		DataManager.addEntry(new SignEntry(event.getPlayer().getName(), DataType.SIGN_PLACE, event.getBlock(), event.getLines()));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_FORM)
@@ -128,7 +129,6 @@ public class MonitorBlockListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = {DataType.LAVA_FLOW, DataType.WATER_FLOW})
 	public void onBlockFromTo(BlockFromToEvent event) {
-		List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
 
 		//Only interested in liquids flowing
 		if (!event.getBlock().isLiquid()) return;
