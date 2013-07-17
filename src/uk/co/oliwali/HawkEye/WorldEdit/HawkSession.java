@@ -2,6 +2,8 @@ package uk.co.oliwali.HawkEye.WorldEdit;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
@@ -35,18 +37,24 @@ public class HawkSession extends EditSession {
 	@Override
 	public boolean rawSetBlock(Vector v, BaseBlock block) {
 		World world = ((BukkitWorld) player.getWorld()).getWorld();
+		BlockState bs = null;
 		int b = world.getBlockTypeIdAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
 		int bdata = world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).getData();
+
+		//We need to get the blockstate BEFORE "rawSetBlock" to properly log signs!
+		if (b == 63 || b == 68) {
+			bs = world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).getState();
+		}
 
 		if (super.rawSetBlock(v, block)) {
 			Location loc = new Location(world, v.getBlockX(), v.getBlockY(), v.getBlockZ());
 
 			if (block.getType() != 0) {
-				DataManager.addEntry(new BlockChangeEntry(player.getName(), DataType.WORLDEDIT_PLACE, loc, b, bdata, block.getType(), block.getData()));
+					DataManager.addEntry(new BlockChangeEntry(player.getName(), DataType.WORLDEDIT_PLACE, loc, b, bdata, block.getType(), block.getData()));
 			} else {
-				if ((b == 63 || b == 68) && Config.isLogged(DataType.SIGN_BREAK))
-					DataManager.addEntry(new SignEntry(player.getName(), DataType.SIGN_BREAK, world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ())));
-				else
+				if ((b == 63 || b == 68) && Config.isLogged(DataType.SIGN_BREAK)) {
+					DataManager.addEntry(new SignEntry(player.getName(), DataType.SIGN_BREAK, bs.getBlock(), ((Sign)bs).getLines()));
+				} else
 					DataManager.addEntry(new BlockEntry(player.getName(), DataType.WORLDEDIT_BREAK, b, bdata, loc));
 			}
 			return true;
