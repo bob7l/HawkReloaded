@@ -29,7 +29,7 @@
 28,Detector Rail
 29,Sticky Piston
 30,Cobweb
-31,Tall Grass 
+31,Tall Grass
 32,Dead Bush
 33,Piston
 34,Piston Extension
@@ -61,7 +61,7 @@
 60,Farmland
 61,Furnace
 62,Burning Furnace
-63,Sign Post 
+63,Sign Post
 64,Wooden Door
 65,Ladders
 66,Rails
@@ -93,7 +93,7 @@
 92,Cake Block
 93,Redstone Repeater ("off" state)
 94,Redstone Repeater ("on" state)
-95,Locked Chest 
+95,Locked Chest
 96,Trapdoor
 97,Hidden Silverfish
 98,Stone Bricks
@@ -157,6 +157,11 @@
 156,Quartz Stairs
 157,Activator Rail
 158,Dropper
+159,Stained Clay
+170,Hay Block
+171,Carpet
+172,Hardened Clay
+173,Block of Coal
 256,Iron Shovel
 257,Iron Pickaxe
 258,Iron Axe
@@ -188,7 +193,7 @@
 284,Gold Shovel
 285,Gold Pickaxe
 286,Gold Axe
-287,String 
+287,String
 288,Feather
 289,Gunpowder
 290,Wooden Hoe
@@ -220,7 +225,7 @@
 316,Gold Leggings
 317,Gold Boots
 318,Flint
-319,Raw Porkchop 
+319,Raw Porkchop
 320,Cooked Porkchop
 321,Paintings
 322,Golden Apple
@@ -310,14 +315,19 @@
 406,Nether Quartz
 407,Minecart with TNT
 408,Minecart with Hopper
+417,Iron Horse Armor
+418,Gold Horse Armor
+419,Diamond Horse Armor
+420,Lead
+421,Name Tag
 2256,13 Disc
 2257,Cat Disc
-2258,blocks Disc
-2259,chirp Disc
-2260,far Disc
-2261,mall Disc
-2262,mellohi Disc
-2263,stal Disc
-2264,strad Disc
-2265,ward Disc
+2258,Blocks Disc
+2259,Chirp Disc
+2260,Far Disc
+2261,Mall Disc
+2262,Mellohi Disc
+2263,Stal Disc
+2264,Strad Disc
+2265,Ward Disc
 2266,11 Disc
