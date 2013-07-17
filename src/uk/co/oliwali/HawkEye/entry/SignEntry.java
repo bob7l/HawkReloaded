@@ -38,7 +38,7 @@ public class SignEntry extends DataEntry {
 		setInfo(player, type, block.getLocation());
 	}
 
-	public SignEntry(Player player, DataType type, Block block, String[] lines) {
+	public SignEntry(String player, DataType type, Block block, String[] lines) {
 		interpretSignBlock(block);
 		this.lines = lines;
 		setInfo(player, type, block.getLocation());
