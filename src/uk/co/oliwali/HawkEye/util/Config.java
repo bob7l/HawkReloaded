@@ -17,7 +17,7 @@ public class Config {
 
 	public static List<String> CommandFilter = new ArrayList<String>();
 	public static List<String> IgnoreWorlds = new ArrayList<String>();
-	public static List<String> BlockFilter = new ArrayList<String>();
+	public static List<Integer> BlockFilter = new ArrayList<Integer>();
 	public static int MaxLines = 0;
 	public static int MaxRadius;
 	public static int DefaultHereRadius;
@@ -66,7 +66,7 @@ public class Config {
 
 		//Load values
 		CommandFilter = config.getStringList("command-filter");
-		BlockFilter = config.getStringList("block-filter");
+		BlockFilter = config.getIntegerList("block-filter");
 		IgnoreWorlds = config.getStringList("ignore-worlds");
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");

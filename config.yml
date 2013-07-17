@@ -82,7 +82,7 @@ command-filter:
 - /register
 - /spawn
 block-filter:
-- NONE
+- 567
 containertransaction-filter:
     chest: true
     doublechest: true
