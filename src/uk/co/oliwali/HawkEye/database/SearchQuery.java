@@ -1,10 +1,10 @@
 package uk.co.oliwali.HawkEye.database;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +154,7 @@ public class SearchQuery extends Thread {
 
 		//Add order by
 		Util.debug("Ordering by data_id");
-		sql += " ORDER BY `data_id` DESC";
+		sql += " ORDER BY `data_id` " + (dir == SearchDir.DESC ? "DESC" : "ASC");
 
 		//Check the limits
 		Util.debug("Building limits");
@@ -190,25 +190,35 @@ public class SearchQuery extends Thread {
 
 				Util.debug("Getting results");
 
+				DataType type = null;
+				DataEntry entry = null;
+				
 				//Retrieve results
 				while (res.next()) {
-					DataType type = DataType.fromId(res.getInt(4));
-					DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
-					entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
-					entry.setDate(res.getDate(2));
-					entry.setDataId(res.getInt(1));
-					entry.setType(DataType.fromId(res.getInt(4)));
-					entry.interpretSqlData(res.getString(9));
-					entry.setPlugin(res.getString(10));
-					entry.setWorld(DataManager.getWorld(res.getInt(5)));
-					entry.setX(res.getInt(6));
-					entry.setY(res.getInt(7));
-					entry.setZ(res.getInt(8));
+					type = DataType.fromId(res.getInt(4));
+					entry = (DataEntry)type.getEntryClass().getConstructor(int.class,
+																			Date.class,
+																			int.class,
+																			int.class,
+																			String.class,
+																			String.class,
+																			int.class,
+																			int.class,
+																			int.class,
+																			int.class)
+															.newInstance(res.getInt(3),
+																		res.getDate(2),
+																		res.getInt(1),
+																		res.getInt(4),
+																		res.getString(9),
+																		res.getString(10),
+																		res.getInt(5),
+																		res.getInt(6),
+																		res.getInt(7),
+																		res.getInt(8));
+					
 					results.add(entry);
 				}
-				//If ascending, reverse results
-				if (dir == SearchDir.ASC)
-					Collections.reverse(results);
 			}
 			
 			conn.setAutoCommit(true);

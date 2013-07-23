@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -42,6 +43,22 @@ public class DataEntry {
     protected String data = null;
 
     public DataEntry() { }
+    
+	public DataEntry(int playerId, Date date, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
+		// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
+		
+		this.player = DataManager.getPlayer(playerId);
+		this.date = date;
+		this.dataId = dataId;
+		this.type = DataType.fromId(typeId);
+		interpretSqlData(data);
+		this.plugin = plugin;
+		this.world = DataManager.getWorld(worldId);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
     public DataEntry(Player player, DataType type, Location loc, String data) {
     	setInfo(player, type, loc);
     	setData(data);
