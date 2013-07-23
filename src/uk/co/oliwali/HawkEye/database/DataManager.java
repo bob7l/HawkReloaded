@@ -167,7 +167,7 @@ public class DataManager extends TimerTask {
 		DataType type = DataType.fromId(res.getInt(4));
 		DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
 		entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
-		entry.setDate(res.getString(2));
+		entry.setDate(res.getDate(2));
 		entry.setDataId(res.getInt(1));
 		entry.setType(DataType.fromId(res.getInt(4)));
 		entry.interpretSqlData(res.getString(9));
@@ -276,7 +276,7 @@ public class DataManager extends TimerTask {
 			}
 			if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
-				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable + "` (`data_id` int(11) NOT NULL AUTO_INCREMENT, `date` varchar(255) NOT NULL, `player_id` int(11) NOT NULL, `action` int(11) NOT NULL, `world_id` varchar(255) NOT NULL, `x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, `data` varchar(500) DEFAULT NULL, `plugin` varchar(255) DEFAULT 'HawkEye', PRIMARY KEY (`data_id`), KEY `player_action_world` (`player_id`,`action`,`world_id`), KEY `x_y_z` (`x`,`y`,`z` ));");
+				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable + "` (`data_id` int(11) NOT NULL AUTO_INCREMENT, `date` DATE NOT NULL, `player_id` int(11) NOT NULL, `action` int(11) NOT NULL, `world_id` varchar(255) NOT NULL, `x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, `data` varchar(500) DEFAULT NULL, `plugin` varchar(255) DEFAULT 'HawkEye', PRIMARY KEY (`data_id`), KEY `player_action_world` (`player_id`,`action`,`world_id`), KEY `x_y_z` (`x`,`y`,`z` ));");
 			}
 
 		} catch (SQLException ex) {
@@ -329,7 +329,7 @@ public class DataManager extends TimerTask {
 					continue;
 				}
 				
-				stmnt.setString(1, entry.getDate());
+				stmnt.setDate(1, entry.getDate());
 				stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
 				stmnt.setInt(3, entry.getType().getId());
 				stmnt.setInt(4, dbWorlds.get(entry.getWorld()));

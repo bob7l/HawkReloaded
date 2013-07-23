@@ -1,6 +1,6 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.Calendar;
 
 import org.bukkit.Location;
@@ -19,14 +19,11 @@ import uk.co.oliwali.HawkEye.util.Util;
  * @author oliverw92
  */
 public class DataEntry {
-
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 	private String plugin = null;
 
     private int dataId;
 
-    private String date;
+    private Date date;
 
     private String player = null;
 
@@ -68,10 +65,10 @@ public class DataEntry {
 		return dataId;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
         this.date = date;
     }
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -221,7 +218,7 @@ public class DataEntry {
 	}
 	public void setInfo(String player, String instance, DataType type, Location loc) {
 		loc = Util.getSimpleLocation(loc);
-	    setDate(sdf.format(Calendar.getInstance().getTime()));
+	    setDate(new Date(Calendar.getInstance().getTimeInMillis()));
 	    setPlugin(instance);
 		setPlayer(player);
 		setType(type);

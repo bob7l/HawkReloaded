@@ -195,7 +195,7 @@ public class SearchQuery extends Thread {
 					DataType type = DataType.fromId(res.getInt(4));
 					DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
 					entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
-					entry.setDate(res.getString(2));
+					entry.setDate(res.getDate(2));
 					entry.setDataId(res.getInt(1));
 					entry.setType(DataType.fromId(res.getInt(4)));
 					entry.interpretSqlData(res.getString(9));
