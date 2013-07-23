@@ -172,6 +172,7 @@ public class SearchQuery extends Thread {
 
 		try {
 
+			conn.setAutoCommit(false);
 			//Execute query
 			stmnt = conn.prepareStatement(sql);
 
@@ -209,6 +210,9 @@ public class SearchQuery extends Thread {
 				if (dir == SearchDir.ASC)
 					Collections.reverse(results);
 			}
+			
+			conn.setAutoCommit(true);
+			conn.commit();
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
 			ex.printStackTrace();
