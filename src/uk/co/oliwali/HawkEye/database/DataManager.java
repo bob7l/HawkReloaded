@@ -288,7 +288,7 @@ public class DataManager extends TimerTask {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable + "` (" +
 							    "`data_id` int(11) NOT NULL AUTO_INCREMENT," +
-							    "`date` DATE NOT NULL," +
+							    "`date` DATETIME NOT NULL," +
 							    "`player_id` int(11) NOT NULL," +
 							    "`action` int(11) NOT NULL," +
 							    "`world_id` varchar(255) NOT NULL," +
