@@ -286,28 +286,36 @@ public class DataManager extends TimerTask {
 			}
 			if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
-				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable + "` (" +
-							    "`data_id` int(11) NOT NULL AUTO_INCREMENT," +
-							    "`date` DATETIME NOT NULL," +
-							    "`player_id` int(11) NOT NULL," +
-							    "`action` int(11) NOT NULL," +
-							    "`world_id` varchar(255) NOT NULL," +
-							    "`x` double NOT NULL," +
-							    "`y` double NOT NULL," +
-							    "`z` double NOT NULL," +
-							    "`data` varchar(500) DEFAULT NULL," +
-							    "`plugin` varchar(255) DEFAULT 'HawkEye'," +
-							    "PRIMARY KEY (`data_id`)," +
-							    "KEY `player_action_world` (`player_id` , `action` , `world_id`)," +
-							    "KEY `x_y_z` (`x` , `y` , `z`)," +
-								"INDEX(`date`)," +
-								"INDEX(`player_id`)," +
-								"INDEX(`action`)," +
-								"INDEX(`world_id`)," +
-								"INDEX(`x`)," +
-								"INDEX(`y`)," +
-								"INDEX(`z`)" +
-								");");
+				stmnt.execute("CREATE TABLE `" + Config.DbHawkEyeTable + "` (" +
+								  "`data_id` int(11) NOT NULL AUTO_INCREMENT," +
+								  "`date` datetime NOT NULL," +
+								  "`player_id` int(11) NOT NULL," +
+								  "`action` int(11) NOT NULL," +
+								  "`world_id` varchar(255) NOT NULL," +
+								  "`x` double NOT NULL," +
+								  "`y` double NOT NULL," +
+								  "`z` double NOT NULL," +
+								  "`data` varchar(500) DEFAULT NULL," +
+								  "`plugin` varchar(255) DEFAULT 'HawkEye'," +
+								  "PRIMARY KEY (`data_id`)," +
+								  "KEY `date` (`date`)," +
+								  "KEY `player` (`player_id`)," +
+								  "KEY `action` (`action`)," +
+								  "KEY `world_id` (`world_id`)," +
+								  "KEY `x_y_z` (`x`,`y`,`z`)" +
+								  ");");
+			}
+			
+			boolean tableNeedsUpgrading = true;
+			if(tableNeedsUpgrading) {
+				stmnt.execute("ALTER TABLE `" + Config.DbHawkEyeTable + "`" +
+								" CHANGE COLUMN `date` `date` DATETIME NOT NULL" +  
+								", ADD INDEX `date` (`date` DESC)" +
+								", ADD INDEX `player` (`player_id` ASC)" + 
+								", ADD INDEX `action` (`action` ASC)" + 
+								", ADD INDEX `world_id` (`world_id` ASC)" + 
+								", REMOVE INDEX `player_action_world`");
+
 			}
 
 		} catch (SQLException ex) {
