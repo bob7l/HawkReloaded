@@ -221,8 +221,8 @@ public class SearchQuery extends Thread {
 				}
 			}
 			
-			conn.setAutoCommit(true);
 			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
 			ex.printStackTrace();

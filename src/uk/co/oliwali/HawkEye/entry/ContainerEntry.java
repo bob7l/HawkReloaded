@@ -1,5 +1,7 @@
 package uk.co.oliwali.HawkEye.entry;
 
+import java.sql.Date;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -14,6 +16,10 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
  * @author oliverw92
  */
 public class ContainerEntry extends DataEntry {
+
+	public ContainerEntry(int playerId, Date date, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {  
+		super(playerId, date, dataId, typeId, data, plugin, worldId, x, y ,z);
+	}
 
 	public ContainerEntry() { }
 

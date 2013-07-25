@@ -303,32 +303,26 @@ public class Util {
 		HIGH;
 	}
 	
-	public static String getTime(String oldtime) {
-		if (!(Config.isSimpleTime)) return oldtime.substring(2) + " ";
-
+	public static String getTime(Date d1) {
+		if (!(Config.isSimpleTime)) return d1.toString();
+		
 		String message = "";
 		Date curdate = Calendar.getInstance().getTime();
 
 		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		Date d1 = null;
 		Date d2 = null;
 		String currentDate = form.format(curdate);
 
 		try {
-			d1 = form.parse(oldtime);
 			d2 = form.parse(currentDate);
 		} catch (ParseException e) {
 			Util.severe("Warning! Hawkeye was unable to parse dates!");
 		}
 
-		long diff = d2.getTime() / 1000 - d1.getTime() / 1000;
+		long diff = (d2.getTime() / 1000) - (d1.getTime() / 1000);
 
 		int seconds = (int)diff;
-
-		if (seconds < -1) {
-			return oldtime.substring(2) + " ";
-		}
 		
 		if (seconds >= 86400) {
 			int days = (seconds / 86400);
