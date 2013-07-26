@@ -49,7 +49,7 @@ public class DisplayManager {
 				break;
 			DataEntry entry = results.get(i);
 			
-			String time = Util.getTime(entry.getDate());
+			String time = Util.getTime(entry.getTimestamp());
 			
 			sendLine(session.getSender(), "&cID:" + entry.getDataId() + " &7" + time + "&c" + entry.getPlayer() + " &7" + entry.getType().getConfigName());
 			sendLine(session.getSender(), "&cLoc: &7" + entry.getWorld() + "-" + entry.getX() + "," + entry.getY() + "," + entry.getZ() + " &cData: &7" + entry.getStringData());

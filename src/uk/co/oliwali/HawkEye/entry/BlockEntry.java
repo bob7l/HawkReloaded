@@ -1,6 +1,6 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -18,8 +18,8 @@ public class BlockEntry extends DataEntry {
 
 	public BlockEntry() { }
 
-	public BlockEntry(int playerId, Date date, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {  
-		super(playerId, date, dataId, typeId, data, plugin, worldId, x, y ,z);
+	public BlockEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {  
+		super(playerId, timestamp, dataId, typeId, data, plugin, worldId, x, y ,z);
 	}
 
 	public BlockEntry(String player, DataType type, Block block) {

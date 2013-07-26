@@ -1,6 +1,6 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 import org.bukkit.Location;
@@ -24,7 +24,7 @@ public class DataEntry {
 
     private int dataId;
 
-    private Date date;
+    private Timestamp timestamp;
 
     private String player = null;
 
@@ -44,11 +44,11 @@ public class DataEntry {
 
     public DataEntry() { }
     
-	public DataEntry(int playerId, Date date, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
+	public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
 		// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
 		
 		this.player = DataManager.getPlayer(playerId);
-		this.date = date;
+		this.timestamp = timestamp;
 		this.dataId = dataId;
 		this.type = DataType.fromId(typeId);
 		interpretSqlData(data);
@@ -82,11 +82,11 @@ public class DataEntry {
 		return dataId;
 	}
 
-	public void setDate(Date date) {
-        this.date = date;
+	public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
-    public Date getDate() {
-        return date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
     public void setPlayer(String player) {
@@ -235,7 +235,7 @@ public class DataEntry {
 	}
 	public void setInfo(String player, String instance, DataType type, Location loc) {
 		loc = Util.getSimpleLocation(loc);
-	    setDate(new Date(Calendar.getInstance().getTimeInMillis()));
+	    setTimestamp(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 	    setPlugin(instance);
 		setPlayer(player);
 		setType(type);

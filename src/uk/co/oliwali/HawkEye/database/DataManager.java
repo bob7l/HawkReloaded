@@ -167,7 +167,7 @@ public class DataManager extends TimerTask {
 		DataType type = DataType.fromId(res.getInt(4));
 		DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
 		entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
-		entry.setDate(res.getDate(2));
+		entry.setTimestamp(res.getTimestamp(2));
 		entry.setDataId(res.getInt(1));
 		entry.setType(DataType.fromId(res.getInt(4)));
 		entry.interpretSqlData(res.getString(9));
@@ -288,7 +288,7 @@ public class DataManager extends TimerTask {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE `" + Config.DbHawkEyeTable + "` (" +
 								  "`data_id` int(11) NOT NULL AUTO_INCREMENT," +
-								  "`date` datetime NOT NULL," +
+								  "`timestamp` datetime NOT NULL," +
 								  "`player_id` int(11) NOT NULL," +
 								  "`action` int(11) NOT NULL," +
 								  "`world_id` varchar(255) NOT NULL," +
@@ -309,8 +309,8 @@ public class DataManager extends TimerTask {
 			boolean tableNeedsUpgrading = true;
 			if(tableNeedsUpgrading) {
 				stmnt.execute("ALTER TABLE `" + Config.DbHawkEyeTable + "`" +
-								" CHANGE COLUMN `date` `date` DATETIME NOT NULL" +  
-								", ADD INDEX `date` (`date` DESC)" +
+								" CHANGE COLUMN `date` `timestamp` TIMESTAMP NOT NULL" +  
+								", ADD INDEX `timestamp` (`timestamp` DESC)" +
 								", ADD INDEX `player` (`player_id` ASC)" + 
 								", ADD INDEX `action` (`action` ASC)" + 
 								", ADD INDEX `world_id` (`world_id` ASC)" + 
@@ -368,7 +368,7 @@ public class DataManager extends TimerTask {
 					continue;
 				}
 				
-				stmnt.setDate(1, entry.getDate());
+				stmnt.setTimestamp(1, entry.getTimestamp());
 				stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
 				stmnt.setInt(3, entry.getType().getId());
 				stmnt.setInt(4, dbWorlds.get(entry.getWorld()));
