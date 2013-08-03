@@ -306,16 +306,14 @@ public class DataManager extends TimerTask {
 								  ");");
 			}
 			
-			boolean tableNeedsUpgrading = true;
-			if(tableNeedsUpgrading) {
+			if(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "date") && !(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "timestamp"))) {
 				stmnt.execute("ALTER TABLE `" + Config.DbHawkEyeTable + "`" +
 								" CHANGE COLUMN `date` `timestamp` TIMESTAMP NOT NULL" +  
 								", ADD INDEX `timestamp` (`timestamp` DESC)" +
 								", ADD INDEX `player` (`player_id` ASC)" + 
 								", ADD INDEX `action` (`action` ASC)" + 
 								", ADD INDEX `world_id` (`world_id` ASC)" + 
-								", REMOVE INDEX `player_action_world`");
-
+								", REMOVE INDEX `player_action_world`;");
 			}
 
 		} catch (SQLException ex) {
