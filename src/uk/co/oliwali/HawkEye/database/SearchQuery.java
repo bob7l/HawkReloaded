@@ -119,11 +119,11 @@ public class SearchQuery extends Thread {
 		//Add dates
 		Util.debug("Building dates");
 		if (parser.dateFrom != null) {
-			args.add("date >= ?");
+			args.add("timestamp >= ?");
 			binds.add(parser.dateFrom);
 		}
 		if (parser.dateTo != null) {
-			args.add("date <= ?");
+			args.add("timestamp <= ?");
 			binds.add(parser.dateTo);
 		}
 

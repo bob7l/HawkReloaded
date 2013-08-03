@@ -79,8 +79,8 @@ public class CleanseUtil extends TimerTask {
 			ageToDate();
 			conn = DataManager.getConnection();
 			stmnt = conn.createStatement();
-			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `date` < '" + date + "'");
-			int affected = stmnt.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `date` < '" + date + "'");
+			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
+			int affected = stmnt.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
 			Util.info("Deleted " + affected + " row(s) from database");
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
