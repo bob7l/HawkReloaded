@@ -30,13 +30,13 @@ public class DeleteEntry implements Runnable {
 		JDCConnection conn = null;
 		try {
 			conn = DataManager.getConnection();
-			
+
 			conn.setAutoCommit(false);
 			for (Integer id : ids) {
 				conn.createStatement().executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
 			}
-			conn.setAutoCommit(true);
 			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException ex) {
 			Util.severe("Unable to delete data entries from MySQL database: " + ex);
 		} finally {
