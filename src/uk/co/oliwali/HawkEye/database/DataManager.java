@@ -313,7 +313,7 @@ public class DataManager extends TimerTask {
 								", ADD INDEX `player` (`player_id` ASC)" + 
 								", ADD INDEX `action` (`action` ASC)" + 
 								", ADD INDEX `world_id` (`world_id` ASC)" + 
-								", REMOVE INDEX `player_action_world`;");
+								", DROP INDEX `player_action_world`;");
 			}
 
 		} catch (SQLException ex) {
@@ -346,7 +346,7 @@ public class DataManager extends TimerTask {
 		try {
 			conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
 			
-			stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			
 			for (int i = 0; i < queue.size(); i++) {
 				DataEntry entry = queue.poll();
