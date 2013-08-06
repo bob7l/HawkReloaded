@@ -34,6 +34,7 @@ import uk.co.oliwali.HawkEye.database.ConnectionManager;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorEntityListener;
+import uk.co.oliwali.HawkEye.listeners.MonitorFallingBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorHeroChatListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorPlayerListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorWorldEditListener;
@@ -56,6 +57,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorEntityListener monitorEntityListener = new MonitorEntityListener(this);
 	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
+	public MonitorFallingBlockListener monitorFBListerner = new MonitorFallingBlockListener(this);
 	public MonitorWorldEditListener monitorWorldEditListener = new MonitorWorldEditListener();
 	private static boolean update = false;
 	public ToolListener toolListener = new ToolListener();
@@ -158,6 +160,7 @@ public class HawkEye extends JavaPlugin {
 		monitorPlayerListener.registerEvents();
 		monitorEntityListener.registerEvents();
 		monitorWorldListener.registerEvents();
+		monitorFBListerner.registerEvents();
 		pm.registerEvents(toolListener, this);
 		if (herochat != null) monitorHeroChatListener.registerEvents();
 

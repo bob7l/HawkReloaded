@@ -31,6 +31,11 @@ public class BlockChangeEntry extends DataEntry {
 		this.from = BlockUtil.getBlockString(from);
 		this.to = BlockUtil.getBlockString(to);
 	}
+	public BlockChangeEntry(String string, DataType type, Location loc, Block block, BlockState to) {
+		setInfo(string, type, loc);
+		this.from = BlockUtil.getBlockString(block);
+		this.to = BlockUtil.getBlockString(to);
+	}
 	public BlockChangeEntry(String player, DataType type, Location loc, BlockState from, BlockState to) {
 		setInfo(player, type, loc);
 		this.from = BlockUtil.getBlockString(from);
@@ -59,6 +64,12 @@ public class BlockChangeEntry extends DataEntry {
         
         if (blockdatato != 0) to = blockto + ":" + blockdatato;
         else to = Integer.toString(blockto);
+	}
+
+	public BlockChangeEntry(String player, DataType type, Location loc, BlockState from, String to) {
+		setInfo(player, type, loc);
+		this.from = BlockUtil.getBlockString(from);
+		this.to = to;
 	}
 
 	@Override
