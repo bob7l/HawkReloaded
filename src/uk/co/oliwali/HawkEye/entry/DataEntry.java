@@ -46,12 +46,10 @@ public class DataEntry {
     
 	public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
 		// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
-		
 		this.player = DataManager.getPlayer(playerId);
 		this.timestamp = timestamp;
 		this.dataId = dataId;
-		this.type = DataType.fromId(typeId);
-		interpretSqlData(data);
+		this.type = DataType.fromId(typeId);;
 		this.plugin = plugin;
 		this.world = DataManager.getWorld(worldId);
 		this.x = x;

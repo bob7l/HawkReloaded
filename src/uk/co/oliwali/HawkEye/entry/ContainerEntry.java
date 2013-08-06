@@ -17,10 +17,11 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
  */
 public class ContainerEntry extends DataEntry {
 
-	public ContainerEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {  
+	public ContainerEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
 		super(playerId, timestamp, dataId, typeId, data, plugin, worldId, x, y ,z);
+		interpretSqlData(data);
 	}
-
+	
 	public ContainerEntry() { }
 
 	public ContainerEntry(Player player, Location location, String diff) {

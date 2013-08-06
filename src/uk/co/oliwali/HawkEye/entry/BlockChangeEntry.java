@@ -21,11 +21,10 @@ public class BlockChangeEntry extends DataEntry {
 	private String from = null;
 	private String to = null;
 	
-	public BlockChangeEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {  
+	public BlockChangeEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
 		super(playerId, timestamp, dataId, typeId, data, plugin, worldId, x, y ,z);
+		interpretSqlData(data);
 	}
-	
-	public BlockChangeEntry() { }
 
 	public BlockChangeEntry(Player player, DataType type, Location loc, BlockState from, BlockState to) {
 		setInfo(player, type, loc);
@@ -64,7 +63,7 @@ public class BlockChangeEntry extends DataEntry {
 
 	@Override
 	public String getStringData() {
-		if (((from) == null) || (BlockUtil.getBlockStringName(from) == "AIR")) return BlockUtil.getBlockStringName(to);
+		if (from == null || from.equals("0")) return BlockUtil.getBlockStringName(to);
 		return BlockUtil.getBlockStringName(from) + " changed to " + BlockUtil.getBlockStringName(to);
 	}
 

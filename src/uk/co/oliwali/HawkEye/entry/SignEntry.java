@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.entry;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,11 @@ public class SignEntry extends DataEntry {
 	private boolean wallSign = true;
 	private String[] lines = new String[4];
 
+	public SignEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
+		super(playerId, timestamp, dataId, typeId, data, plugin, worldId, x, y ,z);
+		interpretSqlData(data);
+	}
+	
 	public SignEntry() { }
 
 	public SignEntry(Player player, DataType type, Block block) {
