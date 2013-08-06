@@ -1,9 +1,9 @@
 package uk.co.oliwali.HawkEye.database;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -171,8 +171,8 @@ public class SearchQuery extends Thread {
 		int deleted = 0;
 
 		try {
-
 			conn.setAutoCommit(false);
+			
 			//Execute query
 			stmnt = conn.prepareStatement(sql);
 
@@ -197,7 +197,7 @@ public class SearchQuery extends Thread {
 				while (res.next()) {
 					type = DataType.fromId(res.getInt(4));
 					entry = (DataEntry)type.getEntryClass().getConstructor(int.class,
-																			Date.class,
+																			Timestamp.class,
 																			int.class,
 																			int.class,
 																			String.class,
@@ -207,7 +207,7 @@ public class SearchQuery extends Thread {
 																			int.class,
 																			int.class)
 															.newInstance(res.getInt(3),
-																		res.getDate(2),
+																		res.getTimestamp(2),
 																		res.getInt(1),
 																		res.getInt(4),
 																		res.getString(9),
@@ -216,12 +216,11 @@ public class SearchQuery extends Thread {
 																		res.getInt(6),
 																		res.getInt(7),
 																		res.getInt(8));
-					
+
 					results.add(entry);
 				}
 			}
-			
-			conn.commit();
+			 conn.commit();
 			conn.setAutoCommit(true);
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
