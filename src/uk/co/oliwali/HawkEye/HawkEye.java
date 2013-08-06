@@ -30,6 +30,7 @@ import uk.co.oliwali.HawkEye.commands.ToolCommand;
 import uk.co.oliwali.HawkEye.commands.ToolResetCommand;
 import uk.co.oliwali.HawkEye.commands.TptoCommand;
 import uk.co.oliwali.HawkEye.commands.UndoCommand;
+import uk.co.oliwali.HawkEye.commands.WriteLogCommand;
 import uk.co.oliwali.HawkEye.database.ConnectionManager;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
@@ -192,6 +193,7 @@ public class HawkEye extends JavaPlugin {
 		commands.add(new RebuildCommand());
 		commands.add(new DeleteCommand());
 		commands.add(new InfoCommand());
+		commands.add(new WriteLogCommand());
 	}
 
 	/**
