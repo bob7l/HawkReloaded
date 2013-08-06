@@ -93,7 +93,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Block block = event.getBlock();
-		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getType().toString())) return;
+		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getTypeId())) return;
 
 		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
 		final BlockPlaceEvent finalEvent = event;

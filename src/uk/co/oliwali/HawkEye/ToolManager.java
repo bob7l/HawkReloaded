@@ -12,7 +12,6 @@ import org.bukkit.util.Vector;
 import uk.co.oliwali.HawkEye.callbacks.SearchCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
-import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -31,7 +30,7 @@ public class ToolManager {
 
 		Inventory inv = player.getInventory();
 		session.setUsingTool(true);
-		ItemStack stack = BlockUtil.itemStringToStack(Config.ToolBlock, 1);
+		ItemStack stack = Config.ToolBlock;
 
 		//If player doesn't have a tool, give them one if enabled in config
 		if (!inv.contains(stack) && Config.GiveTool) {
@@ -42,8 +41,8 @@ public class ToolManager {
 		}
 
 		//If they aren't holding a tool, move the tool to their hand
-		int first = inv.first(BlockUtil.getIdFromString(Config.ToolBlock));
-		if (!BlockUtil.getItemString(player.getItemInHand()).equals(Config.ToolBlock) && first != -1){
+		int first = inv.first(stack);
+		if (!player.getItemInHand().equals(stack) && first != -1){
 			ItemStack back = player.getItemInHand().clone();
 			player.setItemInHand(inv.getItem(first));
 			if (back.getAmount() == 0) inv.clear(first);
@@ -61,6 +60,7 @@ public class ToolManager {
 	 */
 	public static void disableTool(PlayerSession session, Player player) {
 		session.setUsingTool(false);
+		player.getInventory().remove(Config.ToolBlock);
 		Util.sendMessage(player, "&cHawkEye tool disabled");
 	}
 
