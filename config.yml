@@ -45,6 +45,7 @@ log:
     worldedit-break: false
     crop-trample: true
     block-ignite: false
+    fallingblock-place: true
 general:
     max-lines: 0
     log-item-drops-on-death: false
@@ -61,7 +62,7 @@ general:
     default-tool-command: ''
     check-for-updates: true
     op-permissions: false
-    simplify-time: false
+    simplify-time: true
     log-delay: 2
 mysql:
     hawkeye-table: hawkeye
