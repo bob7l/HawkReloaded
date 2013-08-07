@@ -64,6 +64,7 @@ general:
     op-permissions: false
     simplify-time: true
     log-delay: 2
+    max-write-logs: 5000
 mysql:
     hawkeye-table: hawkeye
     port: 3306

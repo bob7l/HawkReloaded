@@ -45,6 +45,7 @@ public class Config {
 	public static boolean logFurnace;
 	public static boolean logDispenser;
 	public static int LogDelay;
+	public static int MaxLog;
 	public static String DbUrl;
 	public static String DbUser;
 	public static String DbPassword;
@@ -66,6 +67,8 @@ public class Config {
 		config.options().copyDefaults(true);
 		config.set("version", plugin.version);
         plugin.saveConfig();
+        plugin.reloadConfig();
+        config = plugin.getConfig();
 
 		//Load values
 		CommandFilter = config.getStringList("command-filter");
@@ -73,6 +76,7 @@ public class Config {
 		IgnoreWorlds = config.getStringList("ignore-worlds");
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");
+		MaxLog = config.getInt("general.max-write-logs");
 		DefaultHereRadius = config.getInt("general.default-here-radius");
 		ToolBlock = BlockUtil.itemStringToStack(config.getString("general.tool-block"), 1);
 		DefaultToolCommand = config.getString("general.default-tool-command").split(" ");
