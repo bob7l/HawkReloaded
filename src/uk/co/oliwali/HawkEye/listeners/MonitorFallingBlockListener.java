@@ -45,7 +45,7 @@ public class MonitorFallingBlockListener extends HawkEyeListener {
 						}
 					}
 				}
-			}, 4L);
+			}, 6L);
 			return;
 		}
 	}
