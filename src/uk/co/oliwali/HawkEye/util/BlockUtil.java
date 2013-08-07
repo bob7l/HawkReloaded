@@ -153,7 +153,6 @@ public class BlockUtil {
 		case 70:
 		case 72:
 		case 76:
-		case 83:
 		case 93:
 		case 94:
 		case 104:

@@ -40,7 +40,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 
 	private BlockFace[] faces = new BlockFace[] {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
 	private List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
-	
+
 	public MonitorBlockListener(HawkEye HawkEye) {
 		super(HawkEye);
 	}
@@ -49,14 +49,16 @@ public class MonitorBlockListener extends HawkEyeListener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
+		Material type = block.getType();
+
 		if (Config.BlockFilter.contains(block.getTypeId())) return;
 		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
-			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, event.getBlock()));
+			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
 		else {
-			if (BlockUtil.isInventoryHolder(block.getTypeId()) && Config.isLogged(DataType.CONTAINER_TRANSACTION)) {
+			if (BlockUtil.isInventoryHolder(type.getId()) && Config.isLogged(DataType.CONTAINER_TRANSACTION)) {
 				InventoryUtil.handleHolderRemoval(player.getName(), block.getState());
 			}
-			if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK)) {
+			if (type.equals(Material.WOODEN_DOOR) || type.equals(Material.IRON_DOOR_BLOCK)) {
 				//If the data is 8, this is the top half!
 				if (block.getData() == (byte)8 || block.getData() == (byte)9) { 
 					block = block.getRelative(BlockFace.DOWN);
@@ -64,30 +66,34 @@ public class MonitorBlockListener extends HawkEyeListener {
 				DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 				return;
 			}
-			
-			
-			if (block.getType().equals(Material.BED_BLOCK)) {
 
+			if (type.equals(Material.BED_BLOCK)) {
 				if (block.getData() > 7) {
 					block = block.getRelative(BlockUtil.getBedFace(block));
 				}
 			}
-			
+
 			for(BlockFace face: faces) {
 				Block b = block.getRelative(face);
 				if (BlockUtil.isItemAttached(b.getTypeId())) {
 					DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, b));
 				}
 			}
-			
 
 			Block topblock = block.getRelative(BlockFace.UP);
 
 			if (BlockUtil.itemOnTop(topblock.getTypeId())) {
 				DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, topblock));
 			}
+			DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
+
+			if (type.equals(Material.SUGAR_CANE_BLOCK) || topblock.getType().equals(Material.SUGAR_CANE_BLOCK)) {
+				while(topblock.getType().equals(Material.SUGAR_CANE_BLOCK)) {
+					DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, topblock));
+					topblock = topblock.getRelative(BlockFace.UP);
+				}
+			}
 		}
-		DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
@@ -178,6 +184,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 		}
 		
 	}
+	
 	@HawkEvent(dataType = DataType.LEAF_DECAY)
 	public void onLeavesDecay(LeavesDecayEvent event) {
 		Block block = event.getBlock();
