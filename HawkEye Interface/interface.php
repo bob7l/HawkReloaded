@@ -114,9 +114,9 @@
 	}
 	
 	if ($data["dateFrom"] != "" && $data["dateFrom"] != " ")
-		array_push($args, "`date` >= '" . $data["dateFrom"] . "'");
+		array_push($args, "`timestamp` >= '" . $data["dateFrom"] . "'");
 	if ($data["dateTo"] != "" && $data["dateTo"] != " ")
-		array_push($args, "`date` <= '" . $data["dateTo"] . "'");
+		array_push($args, "`timestamp` <= '" . $data["dateTo"] . "'");
 	if ($data["keywords"][0] != "") {
 		foreach ($data["keywords"] as $key => $val)
 			$data["keywords"][$key] = "'%" . $val . "%'";
@@ -176,11 +176,17 @@
 			case 17:
 			case 32:
 			case 33:
+			case 39:
+			case 40:
+			case 41:
+			case 44:
 				$fdata = getBlockName($fdata);
 				break;
 			case 1:
 			case 19:
 			case 25:
+			case 46:
+			case 43:
 				$arr = explode("-", $fdata);
 				if (getBlockName($arr[0]) == "AIR") {
 				    $fdata = getBlockName($arr[1]);
@@ -197,19 +203,22 @@
 				break;
 			case 28:
 				$changeString = "";
-				$i = 0;
-				foreach (explode("@", $fdata) as $op) {
-					$changes = array();
-					foreach (explode("&", $op) as $change) {
+				$changes = array();
+				foreach (explode("@", $fdata) as $change) {
+				
 						if ($change == "") break;
-						$item = explode(",", $change);
-						$changes[] = $item[1] . "x " . getBlockName($item[0]);
-					}
-					if ($i == 0 && count($changes) > 0) $changeString .= '<span style="color: green">+(' . trim(implode(", ", $changes)) . ')</span>';
-					if ($i == 1 && count($changes) > 0) $changeString .= '<span style="color: red">-(' . trim(implode(", ", $changes)) . ')</span>';
-					$i++;
+						$item = explode("~", $change);
+						$itemblock = substr($item[0], 1);
+						
+						if (strpos($itemblock,"-") !== false) {
+                         $itemblock = explode("-", $itemblock);
+                        }
+						$change = $item[1] . "x " . getBlockName($itemblock[0]);
+						if (substr($item[0], 0, 1) == "-") $changeString = $changeString.", ".'<span style="color: red">'.$change.'</span>';
+						else  $changeString = $changeString.", ".'<span style="color: green">'.$change.'</span>';
+					
 				}
-				$fdata = $changeString;
+				$fdata = substr($changeString, 1);
 				break;
 			case 2:
 			case 29:
@@ -238,7 +247,7 @@
 		$action = str_replace(array_reverse(array_keys($lang["actions"])), array_reverse($lang["actions"]), $action);
 	
 		//Add to output row
-		array_push($row, $entry->data_id, $entry->date, $players[$entry->player_id], $action, $worlds[$entry->world_id], round($entry->x, 1).",".round($entry->y, 1).",".round($entry->z, 1), $fdata);
+		array_push($row, $entry->data_id, $entry->timestamp, $players[$entry->player_id], $action, $worlds[$entry->world_id], round($entry->x, 1).",".round($entry->y, 1).",".round($entry->z, 1), $fdata);
 		array_push($output["data"], $row);
 	}
 	
