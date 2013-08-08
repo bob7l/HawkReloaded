@@ -378,13 +378,15 @@ public class DataManager extends TimerTask {
 				if (entry.getDataId() > 0) stmnt.setInt(10, entry.getDataId());
 				else stmnt.setInt(10, 0); //0 is better then setting it to null, like before
 				stmnt.addBatch();
+
+				if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
 			}
 			stmnt.executeBatch();
 			conn.commit();
 			conn.setAutoCommit(true); //Enable when commit is over (We need this to properly use batch!)
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Util.warning(ex.getMessage());
 		} finally {
 			try {
 				if (stmnt != null)
