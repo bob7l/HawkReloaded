@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.database.DataManager;
@@ -25,11 +27,9 @@ public class Rollback implements Runnable {
 	private final PlayerSession session;
 	private Iterator<DataEntry> rollbackQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
-	private final List<Location> locs = new ArrayList<Location>();
 	private int timerID;
 	private boolean showPercent = false;
 	private int size;
-	private int p = 0;
 	private RollbackType rollbackType = RollbackType.GLOBAL;
 
 	/**
@@ -84,25 +84,22 @@ public class Rollback implements Runnable {
 			//Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);
-
-			//Get the old blocks state for undo's
-			if (isValid(loc)) {
-				entry.setUndoState(block.getState());
-			}
+			BlockState state = block.getState();
 
 			//Attempt global rollback
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
+				entry.setUndoState(state);
 				undo.add(entry);
 			}
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
+				entry.setUndoState(state);
 				undo.add(entry);
 			}
 
 			if (showPercent) {
-				int percent = (undo.size() * 100) / size;
-				if (p != percent && ((undo.size() * 100) / size) % 10 == 0) {
-					p = percent;
+				float percent = (undo.size() * 100.0f) / size;
+				if (percent % 10.0 == 0.0) {
 					Util.sendMessage(session.getSender(), "&cRollback-Progress: &7" + percent + "%");
 				}
 			}
@@ -112,10 +109,10 @@ public class Rollback implements Runnable {
 		if (!rollbackQueue.hasNext()) {
 
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
-
+			
+			Collections.reverse(undo); //Reverse the order so we properly undo the rollback!
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
-			locs.clear();
 
 			//Store undo results and notify player
 			if (rollbackType == RollbackType.GLOBAL) {
@@ -133,15 +130,6 @@ public class Rollback implements Runnable {
 
 		}
 
-	}
-
-	public boolean isValid(Location loc) {
-		if (locs.contains(loc)) {
-			return false;
-		} else { 
-			locs.add(loc);
-			return true;
-		}
 	}
 
 	public enum RollbackType {

@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
@@ -23,7 +25,6 @@ public class Rebuild implements Runnable {
 	private final PlayerSession session;
 	private Iterator<DataEntry> rebuildQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
-	private final List<Location> locs = new ArrayList<Location>();
 	private int timerID;
 	private int counter = 0;
 
@@ -75,16 +76,13 @@ public class Rebuild implements Runnable {
 			//Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);
-
-			//Rebuild it
-			if (isValid(loc)) {
-				entry.setUndoState(block.getState());
-			}
+            BlockState state = block.getState();
+            
 			undo.add(entry);
 			entry.rebuild(block);
-
+			entry.setUndoState(state);
+			
 			counter++;
-
 		}
 
 		//Check if rollback is finished
@@ -93,9 +91,9 @@ public class Rebuild implements Runnable {
 			//End timer
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
+			Collections.reverse(undo); //Reverse the order so we properly undo the rollback!
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
-			locs.clear();
 
 			Util.sendMessage(session.getSender(), "&cRebuild complete, &7" + counter + "&c edits performed");
 			Util.sendMessage(session.getSender(), "&cUndo this rebuild using &7/hawk undo");
@@ -104,15 +102,6 @@ public class Rebuild implements Runnable {
 
 		}
 
-	}
-	
-	public boolean isValid(Location loc) {
-		if (locs.contains(loc)) {
-			return false;
-		} else { 
-			locs.add(loc);
-			return true;
-		}
 	}
 
 }

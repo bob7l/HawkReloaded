@@ -18,7 +18,7 @@ public class LogManager {
 
 	public static void log(PlayerSession session) {
 		CommandSender sender = session.getSender();
-
+		
 		List<DataEntry> results = session.getSearchResults();
 		if (results == null || results.size() == 0) {
 			Util.sendMessage(sender, "&cNo results found");

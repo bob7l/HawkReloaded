@@ -302,28 +302,26 @@ public class Util {
 		LOW,
 		HIGH;
 	}
-	
+
 	public static String getTime(Date d1) {
 		if (!(Config.isSimpleTime)) return d1.toString();
-		
+
 		String message = "";
 		Date curdate = Calendar.getInstance().getTime();
 
 		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
-		Date d2 = null;
-		String currentDate = form.format(curdate);
 
+		Date d2 = null;
 		try {
-			d2 = form.parse(currentDate);
-		} catch (ParseException e) {
-			Util.severe("Warning! Hawkeye was unable to parse dates!");
+			d2 = form.parse(form.format(curdate));
+		} catch (ParseException e1) {
+			warning(e1.getMessage());
 		}
 
 		long diff = (d2.getTime() / 1000) - (d1.getTime() / 1000);
 
 		int seconds = (int)diff;
-		
+
 		if (seconds >= 86400) {
 			int days = (seconds / 86400);
 			seconds %= 86400;
@@ -341,11 +339,11 @@ public class Util {
 			seconds %= 60;
 
 			message = message + min + "m ";
-		} else {
+		}
+		if (seconds > 0) {
 			message = message + seconds + "s ";
 		}
 		return message;
 	}
-	
 
 }
