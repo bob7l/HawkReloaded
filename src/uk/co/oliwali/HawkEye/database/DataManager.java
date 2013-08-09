@@ -298,7 +298,7 @@ public class DataManager extends TimerTask {
 								  "`data` varchar(500) DEFAULT NULL," +
 								  "`plugin` varchar(255) DEFAULT 'HawkEye'," +
 								  "PRIMARY KEY (`data_id`)," +
-								  "KEY `date` (`date`)," +
+								  "KEY `timestamp` (`timestamp`)," +
 								  "KEY `player` (`player_id`)," +
 								  "KEY `action` (`action`)," +
 								  "KEY `world_id` (`world_id`)," +
