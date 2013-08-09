@@ -12,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -107,8 +108,22 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.EXPLOSION)
 	public void onEntityExplode(EntityExplodeEvent event) {
+		Entity e = event.getEntity();
+		String s = "Environment";
+
+		if (e != null) { //Nullcheck, the entity CAN be null!
+			if (e instanceof TNTPrimed) {
+				Entity source = ((TNTPrimed)e).getSource();
+				if (source != null && source instanceof Player)
+					s = ((Player)source).getName();
+				else s = EntityUtil.entityToString(e);
+			} else if (e.getType() != null) { //Nullcheck, the entitytype CAN be null!
+				s = EntityUtil.entityToString(e);
+			}
+		}
+
 		for (Block b : event.blockList().toArray(new Block[0]))
-			DataManager.addEntry(new BlockEntry(EntityUtil.entityToString(event.getEntity()), DataType.EXPLOSION, b));
+			DataManager.addEntry(new BlockEntry(s, DataType.EXPLOSION, b));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
