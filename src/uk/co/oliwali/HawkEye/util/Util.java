@@ -339,8 +339,7 @@ public class Util {
 			seconds %= 60;
 
 			message = message + min + "m ";
-		}
-		if (seconds > 0) {
+		} else {
 			message = message + seconds + "s ";
 		}
 		return message;
