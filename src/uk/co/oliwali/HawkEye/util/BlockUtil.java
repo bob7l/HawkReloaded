@@ -27,16 +27,6 @@ public class BlockUtil {
 		return Integer.toString(block.getTypeId());
 	}
 
-	public static String getToolString(Block block) {
-		return getToolString(block.getState());
-	}
-	public static String getToolString(BlockState block) {
-		//This is a temp fix for the placement Log face data
-		if ((block.getRawData() != 0) && (block.getTypeId() != 17))
-			return block.getTypeId() + ":" + block.getRawData();
-		return Integer.toString(block.getTypeId());
-	}
-
 	/**
 	 * Same as getBlockString() except for ItemStack
 	 * @param stack ItemStack you wish to convert

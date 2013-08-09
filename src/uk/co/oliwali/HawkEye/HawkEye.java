@@ -75,12 +75,12 @@ public class HawkEye extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		dbmanager.run();
-		while (ConnectionManager.areConsOpen()) {
-			Util.debug("Not ready");
-			if (DataManager.getQueue().size() != 0) {
-				dbmanager.run();
+			while (ConnectionManager.areConsOpen()) {
+				Util.debug("Not ready");
+				if (DataManager.getQueue().size() != 0) {
+					dbmanager.run();
+				}
 			}
-		}
 		DataManager.close();
 		Util.info("Version " + version + " disabled!");
 	}

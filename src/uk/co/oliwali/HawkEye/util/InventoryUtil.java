@@ -28,7 +28,7 @@ public class InventoryUtil {
 			Map<Enchantment, Integer> enchants = item.getEnchantments();
 			if (!enchants.isEmpty()) {
 				for (Entry<Enchantment, Integer> entry : enchants.entrySet()) {
-					enchantments = enchantments + "-" + entry.getKey().getName() + "x" + entry.getValue();
+					enchantments = enchantments + "-" + Enchantment.getByName(entry.getKey().getName()).getId() + "x" + entry.getValue();
 				}
 			}
 			String iString = BlockUtil.getItemString(item) + enchantments;
@@ -53,7 +53,7 @@ public class InventoryUtil {
 			for (String s : enchants) {
 				String[] types = s.split("x");
 				if (types.length != 1) {
-					Enchantment en = Enchantment.getByName(types[0]);
+					Enchantment en = (Util.isInteger(types[0])?Enchantment.getById(Integer.parseInt(types[0])):Enchantment.getByName(types[0]));
 					if (en != null) {
 						stack.addUnsafeEnchantment(en, Integer.parseInt(types[1]));
 					}
@@ -71,15 +71,12 @@ public class InventoryUtil {
 			String c = changes.startsWith("+")?"&a":"&4";
 			String ench = "";
 			if (enchants.length != 1) {
-				for (String s : enchants) {
-					ench = ench + "-" + s;
-				}
-				ench = ench.substring(enchants[0].length() + 1);
+				ench = "*Enchant*";
 			}
 			if (type == null) {
-				type = c+item[1] + "x " + c+BlockUtil.getBlockStringName(enchants[0]) + ench;
+				type = c+item[1] + "x " + BlockUtil.getBlockStringName(enchants[0]) + ench;
 			} else {
-				type = type +", " + c+item[1] + "x " + c+BlockUtil.getBlockStringName(enchants[0]) + ench;
+				type = type +", " + c+item[1] + "x " + BlockUtil.getBlockStringName(enchants[0]) + ench;
 			}
 		}
 		return type;
@@ -150,32 +147,32 @@ public class InventoryUtil {
 		if (holder instanceof Dispenser)return Config.logDispenser;
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Updates the container-transaction string from an older hawkeye
 	 * @param string - old inventory
 	 * @return updated string
 	 */
-    public static String updateInv(String old) {
-    	String ns = "";
-    	String[] sides = old.split("@");
-    	if (sides.length == 1) {
-    		for (String s : sides[0].split("&")) {
-    			ns =  ns + "@" + "+" + s;
-    		}
-    	} else if (sides[0].equals("")) {
-    		for (String s : sides[1].split("&")) {
-    			ns =  ns + "@" + "-" + s;
-    		}
-    	} else {
-    		for (String s : sides[0].split("&")) {
-    			ns =  ns +"@" + "+" + s;
-    		}
-    		for (String s : sides[1].split("&")) {
-    			ns = ns + "@" + "-" + s;
-    		}
-    	}
-    	return ns.replace(",", "~").substring(1);
-    }
+	public static String updateInv(String old) {
+		String ns = "";
+		String[] sides = old.split("@");
+		if (sides.length == 1) {
+			for (String s : sides[0].split("&")) {
+				ns =  ns + "@" + "+" + s;
+			}
+		} else if (sides[0].equals("")) {
+			for (String s : sides[1].split("&")) {
+				ns =  ns + "@" + "-" + s;
+			}
+		} else {
+			for (String s : sides[0].split("&")) {
+				ns =  ns +"@" + "+" + s;
+			}
+			for (String s : sides[1].split("&")) {
+				ns = ns + "@" + "-" + s;
+			}
+		}
+		return ns.replace(",", "~").substring(1);
+	}
 }
