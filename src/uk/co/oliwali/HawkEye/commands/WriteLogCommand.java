@@ -17,7 +17,7 @@ public class WriteLogCommand extends BaseCommand {
 		name = "writelog";
 		argLength = 1;
 		permission = "writelog";
-		usage = "<parameters> <- Search for entires to log";
+		usage = "<parameters> <- Search for entries to log";
 	}
 
 	@Override

@@ -307,6 +307,8 @@ public class DataManager extends TimerTask {
 			}
 			
 			if(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "date") && !(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "timestamp"))) {
+				Util.info("Attempting to update HawkEye's MySQL tables....");
+				Util.info("This could take 1-30 minutes! Do not restart!");
 				stmnt.execute("ALTER TABLE `" + Config.DbHawkEyeTable + "`" +
 								" CHANGE COLUMN `date` `timestamp` TIMESTAMP NOT NULL" +  
 								", ADD INDEX `timestamp` (`timestamp` DESC)" +

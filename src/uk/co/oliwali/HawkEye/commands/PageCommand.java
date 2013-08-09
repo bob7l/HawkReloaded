@@ -19,6 +19,10 @@ public class PageCommand extends BaseCommand {
 
 	@Override
 	public boolean execute() {
+		if (!Util.isInteger(args.get(0))) {
+			Util.sendMessage(sender,"&cInvalid argument format: &7" + args.get(0));
+			return true;
+		}
 		DisplayManager.displayPage(session, Integer.parseInt(args.get(0)));
 		return true;
 	}
