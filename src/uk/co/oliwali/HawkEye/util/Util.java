@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -23,8 +24,6 @@ import org.bukkit.entity.Player;
 public class Util {
 
 	private static final Logger log = Logger.getLogger("Minecraft");
-	private static int maxLength = 105;
-
 
 	/**
 	 * Send an info level log message to console
@@ -63,6 +62,24 @@ public class Util {
 				Util.info("DEBUG: " + msg);
 	}
 
+	public static ChatColor getLastColor(String s) {
+        int length = s.length();
+        ChatColor color = ChatColor.GRAY;
+        
+        for (int i = length - 1; i > -1; i--) { //Search backwords, better for what we're doing!
+            char ch = s.charAt(i); 
+            if (ch == '&') { //The symbol for colors!
+            	color = ChatColor.getByChar(s.charAt(i+1)); //If the char doesn't belong to a color, returns null
+            	if (color != null) {
+            		return color;
+            	} else {
+            		continue;
+            	}
+            }
+        }
+        return color;
+	}
+	
 	/**
 	 * Send a message to a CommandSender (can be a player or console).
 	 * Has parsing built in for &a colours, as well as `n for new line
@@ -70,21 +87,7 @@ public class Util {
 	 * @param msg message to send
 	 */
 	public static void sendMessage(CommandSender player, String msg) {
-		int i;
-		String part;
-		CustomColor lastColor = CustomColor.WHITE;
-		for (String line : msg.split("\n")) {
-			i = 0;
-			while (i < line.length()) {
-				part = getMaxString(line.substring(i));
-				if (i+part.length() < line.length() && part.contains(" "))
-					part = part.substring(0, part.lastIndexOf(" "));
-				part = lastColor.getCustom() + part;
-				player.sendMessage(replaceColors(part));
-				lastColor = getLastColor(part);
-				i = i + part.length() -1;
-			}
-		}
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
 	}
 
 	/**
@@ -164,64 +167,7 @@ public class Util {
 	public static double distance(Location from, Location to) {
 		return Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2) + Math.pow(from.getZ() - to.getZ(), 2));
 	}
-
-	/**
-	 * Strips colours from inputted string
-	 * @param str
-	 * @return string without colours
-	 */
-	public static String stripColors(String str) {
-		str = str.replaceAll("(?i)\u00A7[0-F]", "");
-		str = str.replaceAll("(?i)&[0-F]", "");
-		return str;
-	}
-
-	/**
-	 * Finds the last colour in the string
-	 * @param str
-	 * @return {@link CustomColor}
-	 */
-	public static CustomColor getLastColor(String str) {
-		int i = 0;
-		CustomColor lastColor = CustomColor.WHITE;
-		while (i < str.length()-2) {
-			for (CustomColor color: CustomColor.values()) {
-				if (str.substring(i, i+2).equalsIgnoreCase(color.getCustom()))
-					lastColor = color;
-			}
-			i = i+1;
-		}
-		return lastColor;
-	}
-
-	/**
-	 * Replaces custom colours with actual colour values
-	 * @param str input
-	 * @return inputted string with proper colour values
-	 */
-	public static String replaceColors(String str) {
-		for (CustomColor color : CustomColor.values())
-			str = str.replace(color.getCustom(), color.getString());
-		return str;
-	}
-
-	/**
-	 * Finds the max length of the inputted string for outputting
-	 * @param str
-	 * @return the string in its longest possible form
-	 */
-	private static String getMaxString(String str) {
-		for (int i = 0; i < str.length(); i++) {
-			if (stripColors(str.substring(0, i)).length() == maxLength) {
-				if (stripColors(str.substring(i, i+1)) == "")
-					return str.substring(0, i-1);
-				else
-					return str.substring(0, i);
-			}
-		}
-		return str;
-	}
-
+	
 	/**
 	 * Returns the name of the supplied entity
 	 * @param entity to get name of
@@ -249,52 +195,6 @@ public class Util {
 			if ((player.isOp() && Config.OpPermissions)) check = true;
 			return check;
 		}
-	}
-	/**
-	 * Custom colour class.
-	 * Created to allow for easier colouring of text
-	 * @author oliverw92
-	 */
-	public enum CustomColor {
-		RED("c", 0xC),
-		DARK_RED("4", 0x4),
-		YELLOW("e", 0xE),
-		GOLD("6", 0x6),
-		GREEN("a", 0xA),
-		DARK_GREEN("2", 0x2),
-		TURQOISE("3", 0x3),
-		AQUA("b", 0xB),
-		DARK_AQUA("8", 0x8),
-		BLUE("9", 0x9),
-		DARK_BLUE("1", 0x1),
-		LIGHT_PURPLE("d", 0xD),
-		DARK_PURPLE("5", 0x5),
-		BLACK("0", 0x0),
-		DARK_GRAY("8", 0x8),
-		GRAY("7", 0x7),
-		WHITE("f", 0xf),
-		MAGIC("k", 0x10),
-		BOLD("l", 0x11),
-		STRIKETHROUGH("m", 0x12),
-		UNDERLINE("n", 0x13),
-		ITALIC("o", 0x14),
-		RESET("r", 0x15);
-
-
-		private final String custom;
-		private final int code;
-
-		private CustomColor(String custom, int code) {
-			this.custom = custom;
-			this.code = code;
-		}
-		public String getCustom() {
-			return "&" + custom;
-		}
-		public String getString() {
-			return String.format("\u00A7%x", code);
-		}
-
 	}
 
 	public enum DebugLevel {

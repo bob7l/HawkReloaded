@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Util;
-import uk.co.oliwali.HawkEye.util.Util.CustomColor;
 
 /**
  * Manages displaying of search results. Includes utilities for handling pages of results
@@ -64,16 +63,12 @@ public class DisplayManager {
 	 * @param line text to send wordWrap
 	 */
 	public static void sendLine(CommandSender sender, String input) {
-		int n = 66;
-		CustomColor lastColor = CustomColor.GRAY;
+		int n = 65;
+		String s = new String();
 		String[] splitInput =input.replaceAll("\\s+"," ").replaceAll(String.format(" *(.{1,%d})(?=$| ) *", n),"$1\n").split("\n");
-		for (String line : splitInput)
-			Util.sendMessage(sender, "&8| " + lastColor.getCustom() + line);
+		for (String line : splitInput) {
+			Util.sendMessage(sender, "&8| " + Util.getLastColor(s) + line);
+		     s = line;
+		}
 	}
-
-	//	public static void sendLine(CommandSender sender, String input) { Not sure why this isn't showing last custom color..
-	//		CustomColor lastColor = CustomColor.GRAY;
-	//		for (String s : ChatPaginator.wordWrap(input, 64))
-	//		Util.sendMessage(sender, "&8| " + lastColor.getCustom() + s);
-	//	}
 }
