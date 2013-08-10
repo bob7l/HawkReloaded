@@ -64,7 +64,7 @@ public class InventoryUtil {
 	}
 
 	public static String dataToString(String data) {
-		String type = null;
+		StringBuffer type = new StringBuffer();
 		for (String changes : data.split("@")) {
 			String[] item = changes.split("~");
 			String[] enchants = item[0].substring(1).split("-");
@@ -73,13 +73,9 @@ public class InventoryUtil {
 			if (enchants.length != 1) {
 				ench = "*Enchant*";
 			}
-			if (type == null) {
-				type = c+item[1] + "x " + BlockUtil.getBlockStringName(enchants[0]) + ench;
-			} else {
-				type = type +", " + c+item[1] + "x " + BlockUtil.getBlockStringName(enchants[0]) + ench;
-			}
+			type.append(", " + c+item[1] + "x " + BlockUtil.getBlockStringName(enchants[0]) + ench);
 		}
-		return type;
+		return type.toString().substring(2);
 	}
 
 	/**
@@ -155,24 +151,24 @@ public class InventoryUtil {
 	 * @return updated string
 	 */
 	public static String updateInv(String old) {
-		String ns = "";
+		StringBuffer ns = new StringBuffer();
 		String[] sides = old.split("@");
 		if (sides.length == 1) {
 			for (String s : sides[0].split("&")) {
-				ns =  ns + "@" + "+" + s;
+				ns.append("@" + "+" + s);
 			}
 		} else if (sides[0].equals("")) {
 			for (String s : sides[1].split("&")) {
-				ns =  ns + "@" + "-" + s;
+				ns.append("@" + "-" + s);
 			}
 		} else {
 			for (String s : sides[0].split("&")) {
-				ns =  ns +"@" + "+" + s;
+				ns.append("@" + "+" + s);
 			}
 			for (String s : sides[1].split("&")) {
-				ns = ns + "@" + "-" + s;
+				ns.append("@" + "-" + s);
 			}
 		}
-		return ns.replace(",", "~").substring(1);
+		return ns.toString().replace(",", "~").substring(1);
 	}
 }

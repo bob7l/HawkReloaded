@@ -131,9 +131,9 @@ public class SearchParser {
 					if (!Util.isInteger(values[0])) {
 						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit")) && HawkEye.worldEdit != null) {
 							Selection sel = HawkEye.worldEdit.getSelection((Player) player);
-							double lRadius = Math.ceil(sel.getLength() / 2);
-							double wRadius = Math.ceil(sel.getWidth() / 2);
-							double hRadius = Math.ceil(sel.getHeight() / 2);
+							int lRadius = (int) Math.ceil(sel.getLength() / 2);
+							int wRadius = (int) Math.ceil(sel.getWidth() / 2);
+							int hRadius = (int) Math.ceil(sel.getHeight() / 2);
 
 							if (Config.MaxRadius != 0 && (lRadius > Config.MaxRadius || wRadius > Config.MaxRadius || hRadius > Config.MaxRadius))
 								throw new IllegalArgumentException("Selection too large, max radius: &7" + Config.MaxRadius);

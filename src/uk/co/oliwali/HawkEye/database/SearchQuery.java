@@ -34,7 +34,6 @@ public class SearchQuery extends Thread {
 		this.parser = parser;
 		this.dir = dir;
 		this.delete = (callBack instanceof DeleteCallback);
-
 		//Start thread
 		this.start();
 	}
@@ -164,7 +163,7 @@ public class SearchQuery extends Thread {
 		//Util.debug("Searching: " + sql);
 
 		//Set up some stuff for the search
-		ResultSet res;
+		ResultSet res = null;
 		List<DataEntry> results = new ArrayList<DataEntry>();
 		JDCConnection conn = DataManager.getConnection();
 		PreparedStatement stmnt = null;
@@ -229,6 +228,8 @@ public class SearchQuery extends Thread {
 			return;
 		} finally {
 			try {
+				if (res != null)
+					res.close();
 				if (stmnt != null)
 					stmnt.close();
 				conn.close();

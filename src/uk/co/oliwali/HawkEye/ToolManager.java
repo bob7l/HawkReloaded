@@ -75,7 +75,7 @@ public class ToolManager {
 		SearchParser parser;
 
 		//If parameters aren't bound, do some default
-		if (session.getToolCommand().length == 0 || session.getToolCommand()[0] == "") {
+		if (session.getToolCommand().length == 0 || session.getToolCommand()[0].equals("")) {
 			parser = new SearchParser(player);
 			for (DataType type : DataType.values())
 				if (type.canHere()) parser.actions.add(type);

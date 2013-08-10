@@ -64,7 +64,7 @@ public class DisplayManager {
 	 */
 	public static void sendLine(CommandSender sender, String input) {
 		int n = 65;
-		String s = new String();
+		String s = "";
 		String[] splitInput =input.replaceAll("\\s+"," ").replaceAll(String.format(" *(.{1,%d})(?=$| ) *", n),"$1\n").split("\n");
 		for (String line : splitInput) {
 			Util.sendMessage(sender, "&8| " + Util.getLastColor(s) + line);

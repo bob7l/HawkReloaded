@@ -1,7 +1,7 @@
 package uk.co.oliwali.HawkEye.database;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -74,24 +74,26 @@ public class CleanseUtil extends TimerTask {
 
 		Util.info("Running cleanse utility for logs older than " + date);
 		JDCConnection conn = null;
-		Statement stmnt = null;
+		PreparedStatement stmnt = null;
+		String sql = "DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'";
 		try {
 			ageToDate();
 			conn = DataManager.getConnection();
-			stmnt = conn.createStatement();
+			stmnt = conn.prepareStatement(sql);
 			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
-			int affected = stmnt.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
-			Util.info("Deleted " + affected + " row(s) from database");
+
+			Util.info("Deleted " + stmnt.executeQuery() + " row(s) from database");
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
 		}
 		finally {
 			try {
-				stmnt.close();
+				if (stmnt != null)
+					stmnt.close();
+				conn.close();
 			} catch (SQLException e) {
-				Util.severe("Error closing SQL statement!");
+				Util.warning(e.getMessage());
 			}
-			conn.close();
 		}
 
 	}

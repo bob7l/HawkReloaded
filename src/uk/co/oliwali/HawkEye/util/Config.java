@@ -123,9 +123,7 @@ public class Config {
 	 * @return true or false
 	 */
 	public static boolean isLogged(DataType dataType) {
-		if (config.getBoolean("log." + dataType.getConfigName(), false) == true)
-			return true;
-		return false;
+		return (config.getBoolean("log." + dataType.getConfigName()));
 	}
 
 }

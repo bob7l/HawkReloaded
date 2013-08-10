@@ -14,8 +14,6 @@ import uk.co.oliwali.HawkEye.util.BlockUtil;
 
 public class MonitorWorldListener extends HawkEyeListener {
 
-	public HawkEye plugin;
-
 	public MonitorWorldListener(HawkEye HawkEye) {
 		super(HawkEye);
 	}

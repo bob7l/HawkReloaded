@@ -136,7 +136,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 			}
 
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				loc = block.getRelative(event.getBlockFace()).getLocation();
 		        Location locs = block.getLocation();
 				if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
 						DataManager.addEntry(new DataEntry(player, DataType.SPAWNMOB_EGG, locs, ""));
