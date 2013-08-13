@@ -43,20 +43,33 @@ public class DataEntry {
     protected String data = null;
 
     public DataEntry() { }
-    
-	public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
-		// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
-		this.player = DataManager.getPlayer(playerId);
-		this.timestamp = timestamp;
-		this.dataId = dataId;
-		this.type = DataType.fromId(typeId);;
-		this.plugin = plugin;
-		this.world = DataManager.getWorld(worldId);
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
+
+    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
+    	// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
+    	this.player = DataManager.getPlayer(playerId);
+    	this.timestamp = timestamp;
+    	this.dataId = dataId;
+    	this.type = DataType.fromId(typeId);;
+    	this.plugin = plugin;
+    	this.world = DataManager.getWorld(worldId);
+    	this.x = x;
+    	this.y = y;
+    	this.z = z;
+    	this.data = data;
+    }
+
+    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String plugin, int worldId, int x, int y, int z) {
+    	this.player = DataManager.getPlayer(playerId);
+    	this.timestamp = timestamp;
+    	this.dataId = dataId;
+    	this.type = DataType.fromId(typeId);;
+    	this.plugin = plugin;
+    	this.world = DataManager.getWorld(worldId);
+    	this.x = x;
+    	this.y = y;
+    	this.z = z;
+    }
+
     public DataEntry(Player player, DataType type, Location loc, String data) {
     	setInfo(player, type, loc);
     	setData(data);
