@@ -82,7 +82,7 @@ public class CleanseUtil extends TimerTask {
 			stmnt = conn.prepareStatement(sql);
 			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
 
-			Util.info("Deleted " + stmnt.executeQuery() + " row(s) from database");
+			Util.info("Deleted " + stmnt.executeUpdate() + " row(s) from database");
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
 		}
