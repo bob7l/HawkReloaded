@@ -37,6 +37,11 @@ public class Undo implements Runnable {
 			return;
 		}
 
+		//Re-add deleted results back to the MySQL
+		if (undoType == RollbackType.GLOBAL && Config.DeleteDataOnRollback) {
+			DataManager.getQueue().addAll(session.getRollbackResults());
+		}
+		
 		undoQueue = session.getRollbackResults().iterator();
 
 		//Check if already rolling back
@@ -73,12 +78,8 @@ public class Undo implements Runnable {
 			//If undo doesn't exist
 			DataEntry entry = undoQueue.next();
 
-			//Global undo
-			if (undoType == RollbackType.GLOBAL) {
-				if (Config.DeleteDataOnRollback)
-					DataManager.addEntry(entry);
-				entry.undo();
-			} else if (undoType == RollbackType.REBUILD) {
+			//Global/Rebuild undo
+			if (undoType != RollbackType.LOCAL) {
 				entry.undo();
 			}
 
@@ -90,9 +91,7 @@ public class Undo implements Runnable {
 					player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
 				}
 			}
-
 			counter++;
-
 		}
 
 		//Check if undo is finished
