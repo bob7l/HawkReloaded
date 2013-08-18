@@ -23,12 +23,12 @@ import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
+import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
-import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -104,7 +104,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 				   if (event.getAction() == Action.PHYSICAL) {
 					  Block rel = block.getRelative(BlockFace.UP);
 					  
-					  if (BlockUtil.isPlant(rel.getTypeId())) {
+					  if (HawkBlockType.getHawkBlock(rel.getTypeId()).equals(HawkBlockType.plant)) {
 					    DataManager.addEntry(new BlockEntry(player, DataType.CROP_TRAMPLE, rel));
 				      }
 				   }
