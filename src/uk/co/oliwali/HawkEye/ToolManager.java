@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +15,7 @@ import org.bukkit.util.Vector;
 import uk.co.oliwali.HawkEye.callbacks.SearchCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
+import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -69,7 +73,9 @@ public class ToolManager {
 	 * @param player
 	 * @param loc
 	 */
-	public static void toolSearch(Player player, Location loc) {
+	public static void toolSearch(Player player, Block b) {
+
+		Location loc = b.getLocation();
 
 		PlayerSession session = SessionManager.getSession(player);
 		SearchParser parser;
@@ -86,10 +92,23 @@ public class ToolManager {
 		}
 
 		Vector vec = Util.getSimpleLocation(loc).toVector();
-
-		parser.loc = vec;
 		parser.minLoc = null;
 		parser.maxLoc = null;
+		parser.loc = vec;
+
+		if (b.getType() == Material.CHEST) {
+			for (BlockFace face : BlockUtil.faces) {
+				Block b2 = b.getRelative(face);
+				if (b2.getType() == Material.CHEST) {
+					Location loc2 = b2.getLocation();
+					parser.minLoc = new Vector(Math.min(loc.getX(),loc2.getX()), Math.min(loc.getY(),loc2.getY()), Math.min(loc.getZ(),loc2.getZ()));
+					parser.maxLoc = new Vector(Math.max(loc.getX(),loc2.getX()), Math.max(loc.getY(),loc2.getY()), Math.max(loc.getZ(),loc2.getZ()));
+					parser.loc = null;
+					break;
+				}
+			}
+		}
+
 		parser.worlds = new String[]{ loc.getWorld().getName() };
 		new SearchQuery(new SearchCallback(SessionManager.getSession(player)), parser, SearchDir.DESC);
 
