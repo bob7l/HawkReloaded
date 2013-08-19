@@ -22,6 +22,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -574,46 +575,44 @@ public class Updater
      */
     private InputStream read()
     {
-        try
-        {
-            return url.openStream();
-        }
-        catch (IOException e)
-        {
-            plugin.getLogger().warning("Could not reach BukkitDev file stream for update checking. Is dev.bukkit.org offline?");
-            return null;
-        }
+    	try
+    	{
+    		return url.openStream();
+    	}
+    	catch (IOException e)
+    	{
+    		plugin.getLogger().warning("Could not reach BukkitDev file stream for update checking. Is dev.bukkit.org offline?");
+    		return null;
+    	}
     }
 
     private class UpdateRunnable implements Runnable {
 
-        public void run() {
-            if(url != null)
-            {
-                // Obtain the results of the project's file feed
-                if(readFeed())
-                {
-                    if(versionCheck(versionTitle))
-                    {
-                        String fileLink = getFile(versionLink);
-                        if(fileLink != null && type != UpdateType.NO_DOWNLOAD)
-                        {
-                            String name = file.getName();
-                            // If it's a zip file, it shouldn't be downloaded as the plugin's name
-                            if(fileLink.endsWith(".zip"))
-                            {
-                                String [] split = fileLink.split("/");
-                                name = split[split.length-1];
-                            }
-                            saveFile(new File("plugins/" + updateFolder), name, fileLink);
-                        }
-                        else
-                        {
-                            result = UpdateResult.UPDATE_AVAILABLE;
-                        }
-                    }
-                }
-            }
-        }
+    	public void run() {
+    		if(url != null)
+    		{
+    			plugin.getLogger().info("Searching for updates..");
+    			// Obtain the results of the project's file feed
+    			if(readFeed())
+    			{
+    				if(versionCheck(versionTitle)) {
+    					String fileLink = getFile(versionLink);
+    					plugin.getLogger().info("Update found! Downloading...");
+    					if(fileLink != null && type != UpdateType.NO_DOWNLOAD)
+    					{
+    						String name = file.getName();
+    						saveFile(new File("plugins/" + updateFolder), name, fileLink);
+    						plugin.getLogger().info("The new version will be installed on startup!");
+    					}
+    					else
+    					{
+    						result = UpdateResult.UPDATE_AVAILABLE;
+    					}
+    				} else {
+    					plugin.getLogger().info("No updates found!");
+    				}
+    			}
+    		}
+    	}
     }
 }
