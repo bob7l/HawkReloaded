@@ -60,7 +60,6 @@ public class HawkEye extends JavaPlugin {
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
 	public MonitorFallingBlockListener monitorFBListerner = new MonitorFallingBlockListener(this);
 	public MonitorWorldEditListener monitorWorldEditListener = new MonitorWorldEditListener();
-	private static boolean update = false;
 	public ToolListener toolListener = new ToolListener();
 	private DataManager dbmanager;
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
@@ -75,12 +74,14 @@ public class HawkEye extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		dbmanager.run();
+		if (!ConnectionManager.getConnections().isEmpty()) {
 			while (ConnectionManager.areConsOpen()) {
 				Util.debug("Not ready");
 				if (DataManager.getQueue().size() != 0) {
 					dbmanager.run();
 				}
 			}
+		}
 		DataManager.close();
 		Util.info("Version " + version + " disabled!");
 	}
@@ -222,19 +223,7 @@ public class HawkEye extends JavaPlugin {
 	}
 
 	private void setupUpdater() {
-		if (getConfig().getBoolean("general.check-for-updates")) {
-			Util.info("Checking for a new update...");
-
-			Updater updater = new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
-			name = updater.getLatestVersionString();
-			update = updater.getResult() != Updater.UpdateResult.NO_UPDATE;
-
-			if (update) {
-				Util.info("Update found! Downloading...");
-				Util.info(name + " will be enabled on reload!");
-			} else {
-				Util.info("No update for HawkEye found!");
-			}
-		}
+		if (getConfig().getBoolean("general.check-for-updates")) 
+			new Updater(this, "hawkeye-reload", this.getFile(), Updater.UpdateType.DEFAULT, false);
 	}
 }
