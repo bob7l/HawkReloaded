@@ -24,7 +24,7 @@ public class ToolListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		if (event.getItemInHand().equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
-			ToolManager.toolSearch(player, event.getBlock().getLocation());
+			ToolManager.toolSearch(player, event.getBlock());
 			if (player.getGameMode() == GameMode.SURVIVAL)
 				player.updateInventory();
 			event.setCancelled(true);
@@ -35,7 +35,7 @@ public class ToolListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if (event.getAction() == Action.LEFT_CLICK_BLOCK && player.getItemInHand().equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
-			ToolManager.toolSearch(player, event.getClickedBlock().getLocation());
+			ToolManager.toolSearch(player, event.getClickedBlock());
 			event.setCancelled(true);
 		}
 	}
