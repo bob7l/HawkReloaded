@@ -11,9 +11,20 @@ public class HawkBlockType {
 	public static final BedBlock bed = new BedBlock();
 	public static final DoorBlock door = new DoorBlock();
 	public static final Plant plant = new Plant();
+	public static final Container container = new Container();
+	public static final SignBlock sign = new SignBlock();
 
 	public static HawkBlock getHawkBlock(int i) {
 		switch (i) {
+		case 54:
+		case 146:
+		case 61:
+		case 62:
+		case 23:
+			return container;
+		case 63:
+		case 68:
+			return sign;
 		case 26:
 			return bed;
 		case 64:
@@ -101,7 +112,6 @@ public class HawkBlockType {
 		case 136:
 		case 137:
 		case 138:
-		case 146:
 		case 144:
 		case 151:
 		case 154:

@@ -105,16 +105,4 @@ public class BlockUtil {
 		if (string.split(":").length == 1) return 0;
 		return (byte)Integer.parseInt(string.split(":")[1]);
 	}
-	
-	public static boolean isInventoryHolder(int block) {
-		switch(block){
-		case 54:
-		case 146:
-		case 61:
-		case 62:
-		case 23:
-			return true;
-		}
-		return false;
-	}
 }

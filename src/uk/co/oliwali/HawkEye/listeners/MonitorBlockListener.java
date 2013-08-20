@@ -25,14 +25,13 @@ import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.blocks.HawkBlock;
 import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
+import uk.co.oliwali.HawkEye.blocks.SignBlock;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
-import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
-import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
 /**
  * Block listener class for HawkEye
@@ -52,22 +51,18 @@ public class MonitorBlockListener extends HawkEyeListener {
 		Player player = event.getPlayer();
 		Material type = block.getType();
 
-		if (Config.BlockFilter.contains(type.getId())) return;
-		
-		if (type == Material.WALL_SIGN || type == Material.SIGN_POST)
+		if (type == Material.AIR || Config.BlockFilter.contains(type.getId())) return;
+
+		HawkBlock hb = HawkBlockType.getHawkBlock(type.getId());
+
+		block = hb.getCorrectBlock(block);
+
+		hb.logAttachedBlocks(block, player, DataType.BLOCK_BREAK);
+
+		if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
 			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
-		else {
-			if (BlockUtil.isInventoryHolder(type.getId()) && Config.isLogged(DataType.CONTAINER_TRANSACTION)) {
-				InventoryUtil.handleHolderRemoval(player.getName(), block.getState());
-			}
-			HawkBlock hb = HawkBlockType.getHawkBlock(type.getId());
-
-			block = hb.getCorrectBlock(block);
-
-			hb.logAttachedBlocks(block, player, DataType.BLOCK_BREAK);
-
-			DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
-		}
+		
+		else DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)

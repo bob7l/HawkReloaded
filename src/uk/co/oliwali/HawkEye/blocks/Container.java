@@ -6,12 +6,12 @@ import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
-import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
-public class Default implements HawkBlock {
+public class Container implements HawkBlock {
 
 	@Override
 	public void Restore(Block b, int id, int data) {
@@ -20,13 +20,14 @@ public class Default implements HawkBlock {
 
 	@Override
 	public void logAttachedBlocks(Block b, Player p, DataType type) {
+		InventoryUtil.handleHolderRemoval(p.getName(), b.getState());
+		
 		Block topb = b.getRelative(BlockFace.UP);
 		HawkBlock hb = HawkBlockType.getHawkBlock(topb.getTypeId());
 		if (hb.isTopBlock()) {
 			hb.logAttachedBlocks(topb, p, type);
 			if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
 				DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(topb)));
-			else DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(topb)));
 		}
 
 		for(BlockFace face: BlockUtil.faces) {
@@ -35,7 +36,6 @@ public class Default implements HawkBlock {
 			if (hb.isAttached()) {
 				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
-				else DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(attch)));
 			}
 		}
 	}
@@ -47,11 +47,11 @@ public class Default implements HawkBlock {
 
 	@Override
 	public boolean isTopBlock() {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public boolean isAttached() {
-		return false;
+		return true;
 	}
 }
