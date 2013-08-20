@@ -11,8 +11,8 @@ public class PistonBlock implements HawkBlock {
 
 	@Override
 	public void Restore(Block b, int id, int data) {
-		if (b.getType() == Material.PISTON_EXTENSION) 
-			b = b.getRelative(getPistonFromExtension(b.getData()));
+		if (id == 34) 
+			b = b.getRelative(getPistonFromExtension(data));
 
 		switch(data) { //Check data just to be sure they will be placed correctly! 
 		case 10:
