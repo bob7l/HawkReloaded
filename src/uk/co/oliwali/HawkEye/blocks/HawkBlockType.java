@@ -65,6 +65,7 @@ public class HawkBlockType {
 		case 78:
 		case 92:
 		case 93:
+		case 55:
 		case 94:
 		case 132:
 		case 140:

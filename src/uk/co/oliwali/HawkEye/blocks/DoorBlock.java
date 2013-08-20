@@ -10,6 +10,8 @@ public class DoorBlock implements HawkBlock {
 
 	@Override
 	public void Restore(Block b, int id, int data) {
+		if (data == (byte)8 || data == (byte)9) return; //This means the invalid part of the door was logged
+		
 		b.setTypeIdAndData(id, ((byte)data), true);
 
 		Block block = b.getRelative(BlockFace.UP);
