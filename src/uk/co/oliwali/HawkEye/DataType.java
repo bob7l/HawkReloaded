@@ -74,6 +74,7 @@ public enum DataType {
 	private String configName;
 	private boolean canRollback;
 	private Class<?> entryClass;
+	private Constructor<?> entryConstructor;
 	
 	private static final Map<String, DataType> nameMapping = new HashMap<String, DataType>();
 	private static final Map<Integer, DataType> idMapping = new HashMap<Integer, DataType>();
@@ -94,6 +95,10 @@ public enum DataType {
 		this.canHere = canHere;
 		this.configName = configName;
 		this.canRollback = canRollback;
+
+		try {
+			this.entryConstructor = entryClass.getConstructor(int.class, Timestamp.class, int.class, int.class, String.class, String.class, int.class, int.class, int.class, int.class);
+		} catch (Exception e) { }  //This wont ever throw so no point in printing!
 	}
 
 	/**
@@ -155,10 +160,6 @@ public enum DataType {
 	}
 
 	public Constructor<?> getEntryConstructor() {
-		try {
-			return entryClass.getConstructor(int.class, Timestamp.class, int.class, int.class, String.class, String.class, int.class, int.class, int.class, int.class);
-		} catch (SecurityException e) { }  //This wont ever throw so no point in printing!
-		catch (NoSuchMethodException e) { } //This wont ever throw so no point in printing!
-		return null;
+		return entryConstructor;
 	}
 }
