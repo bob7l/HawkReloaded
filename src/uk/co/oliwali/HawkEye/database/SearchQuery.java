@@ -3,7 +3,6 @@ package uk.co.oliwali.HawkEye.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -195,17 +194,7 @@ public class SearchQuery extends Thread {
 				//Retrieve results
 				while (res.next()) {
 					type = DataType.fromId(res.getInt(4));
-					entry = (DataEntry)type.getEntryClass().getConstructor(int.class,
-																			Timestamp.class,
-																			int.class,
-																			int.class,
-																			String.class,
-																			String.class,
-																			int.class,
-																			int.class,
-																			int.class,
-																			int.class)
-															.newInstance(res.getInt(3),
+					entry = (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3),
 																		res.getTimestamp(2),
 																		res.getInt(1),
 																		res.getInt(4),
@@ -215,7 +204,6 @@ public class SearchQuery extends Thread {
 																		res.getInt(6),
 																		res.getInt(7),
 																		res.getInt(8));
-
 					results.add(entry);
 				}
 			}

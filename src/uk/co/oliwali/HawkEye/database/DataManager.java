@@ -165,18 +165,7 @@ public class DataManager extends TimerTask {
 	 */
 	public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
 		DataType type = DataType.fromId(res.getInt(4));
-		DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
-		entry.setPlayer(DataManager.getPlayer(res.getInt(3)));
-		entry.setTimestamp(res.getTimestamp(2));
-		entry.setDataId(res.getInt(1));
-		entry.setType(DataType.fromId(res.getInt(4)));
-		entry.interpretSqlData(res.getString(9));
-		entry.setPlugin(res.getString(10));
-		entry.setWorld(DataManager.getWorld(res.getInt(5)));
-		entry.setX(res.getInt(6));
-		entry.setY(res.getInt(7));
-		entry.setZ(res.getInt(8));
-		return entry;
+		return (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getString(10), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
 	}
 
 	/**

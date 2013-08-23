@@ -1,5 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
+import java.lang.reflect.Constructor;
+import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,4 +154,11 @@ public enum DataType {
 		return canHere;
 	}
 
+	public Constructor<?> getEntryConstructor() {
+		try {
+			return entryClass.getConstructor(int.class, Timestamp.class, int.class, int.class, String.class, String.class, int.class, int.class, int.class, int.class);
+		} catch (SecurityException e) { }  //This wont ever throw so no point in printing!
+		catch (NoSuchMethodException e) { } //This wont ever throw so no point in printing!
+		return null;
+	}
 }
