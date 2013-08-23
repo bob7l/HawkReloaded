@@ -7,16 +7,19 @@ public class HawkBlockType {
 	public static final TopBlock topblock = new TopBlock();
 	public static final AttachedBlock attachedblock = new AttachedBlock();
 	public static final BasicBlock basicblock = new BasicBlock();
-	public static final Vine vine = new Vine();
+	public static final VineBlock vine = new VineBlock();
 	public static final BedBlock bed = new BedBlock();
 	public static final DoorBlock door = new DoorBlock();
 	public static final Plant plant = new Plant();
 	public static final Container container = new Container();
 	public static final SignBlock sign = new SignBlock();
 	public static final PistonBlock piston = new PistonBlock();
+	public static final LeafBlock leaf = new LeafBlock();
 
 	public static HawkBlock getHawkBlock(int i) {
 		switch (i) {
+		case 18:
+			return leaf;
 		case 54:
 		case 146:
 		case 61:
@@ -50,6 +53,7 @@ public class HawkBlockType {
 		case 96:
 		case 127:
 		case 131:
+		case 44:
 		case 157:
 			return attachedblock;
 		case 6:
@@ -78,11 +82,9 @@ public class HawkBlockType {
 		case 404:
 		case 356:
 			return topblock;
-		case 18:
 		case 20:
 		case 25:
 		case 30:
-		case 44:
 		case 46:
 		case 51:
 		case 53:

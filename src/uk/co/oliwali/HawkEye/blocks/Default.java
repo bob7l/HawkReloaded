@@ -33,6 +33,7 @@ public class Default implements HawkBlock {
 			Block attch = b.getRelative(face);
 			hb = HawkBlockType.getHawkBlock(attch.getTypeId());
 			if (hb.isAttached()) {
+				hb.logAttachedBlocks(attch, p, type);
 				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
 				else DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(attch)));
