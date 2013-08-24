@@ -62,9 +62,13 @@ public class SearchQuery extends Thread {
 			List<Integer> npids = new ArrayList<Integer>();
 			for (String player : parser.players) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
-					if (entry.getKey().toLowerCase().contains(player.toLowerCase()))
+					String name = entry.getKey().toLowerCase();
+
+					if (name.equals(player.replace("*", ""))) 
 						pids.add(entry.getValue());
-					else if (entry.getKey().toLowerCase().contains(player.replace("!", "").toLowerCase()))
+					else if (name.contains(player))
+						pids.add(entry.getValue());
+					else if (name.contains(player.replace("!", "")))
 						npids.add(entry.getValue());
 				}
 			}
