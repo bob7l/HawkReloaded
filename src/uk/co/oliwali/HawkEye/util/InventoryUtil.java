@@ -1,6 +1,5 @@
 package uk.co.oliwali.HawkEye.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -85,46 +84,39 @@ public class InventoryUtil {
 	 * @param HashMap - NEW inventory
 	 * @return updated inventory
 	 */
-	public static String compareInvs(InventoryHolder holder, HashMap<String,Integer> map1, HashMap<String,Integer> map2) {
-		HashMap<String,Integer> items1 = map1;
-		HashMap<String,Integer> items = map2;
+	public static String compareInvs(HashMap<String,Integer> items1, HashMap<String,Integer> items) {
 		if (items1 == null && items == null) return null;
-		ArrayList<String> ses = new ArrayList<String>();
-		String ts = "";
+		StringBuffer ns = new StringBuffer();
 		for (Entry<String, Integer> entry : items.entrySet()) {
 			int count = entry.getValue();
 			String key = entry.getKey();
 			if (items1.containsKey(key)) {
 				int c = items1.get(key);
 				if (count < c) {
-					ses.add("-" + key + "~" + (c - count));
+					ns.append("@" + "-" + key + "~" + (c - count));
 				} else if (count > c) {
-					ses.add("+" + key + "~" + (count - c));
+					ns.append("@" + "+" + key + "~" + (count - c));
 				}
 				items1.remove(key);
 			} else {
-				ses.add("+" + key + "~" + count);
+				ns.append("@" + "+" + key + "~" + count);
 			}
 		} 
 		for (Entry<String, Integer> entry : items1.entrySet()) {
-			ses.add("-" + entry.getKey() + "~" + entry.getValue());
+			ns.append("@" + "-" + entry.getKey() + "~" + entry.getValue());
 		}
-		if (!ses.isEmpty()) {
-			for (String s : ses) {
-				if (ts.length() < 1) ts = s;
-				else ts = ts + "@" + s;
-			}
-			return ts.equals("@")?null:ts;
-		}
-		return null;
+		String info = ns.toString();
+		if (info == null || info.equals(""))
+			return null;
+
+		return info.substring(1);
 	}
 
 	public static void handleHolderRemoval(String remover, BlockState state) {
 		InventoryHolder holder = (InventoryHolder) state;
 		if (InventoryUtil.isHolderValid(holder)) {
-			String data = InventoryUtil.compareInvs(holder, InventoryUtil.compressInventory(holder.getInventory().getContents()), new HashMap<String, Integer>());
-			if (data == null) return;
-			DataManager.addEntry(new ContainerEntry(remover, InventoryUtil.getHolderLoc(holder), data));
+			String data = InventoryUtil.compareInvs(InventoryUtil.compressInventory((holder instanceof Chest?((Chest)state).getBlockInventory():holder.getInventory()).getContents()), new HashMap<String, Integer>());
+			if (data != null) DataManager.addEntry(new ContainerEntry(remover, InventoryUtil.getHolderLoc(holder), data));
 		}
 	}
 
