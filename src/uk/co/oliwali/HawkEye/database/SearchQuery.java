@@ -70,7 +70,7 @@ public class SearchQuery extends Thread {
 						npids.add(entry.getValue());
 					else if (name.contains(player.replace("*", "")))
 						pids.add(entry.getValue());
-                                        else if (name.contains(player.replace("!", "")))
+					else if (name.contains(player.replace("!", "")))
 						npids.add(entry.getValue());
 				}
 			}
