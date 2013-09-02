@@ -66,10 +66,12 @@ public class SearchQuery extends Thread {
 
 					if (name.equals(player))
 						pids.add(entry.getValue());
-					else if (name.contains(player.replace("!", "")))
+					else if (name.equals(player.replace("!", "").replace("*", "")))
 						npids.add(entry.getValue());
 					else if (name.contains(player.replace("*", "")))
 						pids.add(entry.getValue());
+                                        else if (name.contains(player.replace("!", "")))
+						npids.add(entry.getValue());
 				}
 			}
 			//Include players
