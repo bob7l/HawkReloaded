@@ -11,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -81,15 +80,15 @@ public class Rollback implements Runnable {
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
 			Block block = world.getBlockAt(loc);
 			BlockState state = block.getState();
-
+			
+			entry.setUndoState(state);
+				
 			//Attempt global rollback
 			if (rollbackType == RollbackType.GLOBAL && entry.rollback(world.getBlockAt(loc))) {
-				entry.setUndoState(state);
 				undo.add(entry);
 			}
 			//Local rollback preview
 			else if (rollbackType == RollbackType.LOCAL && entry.rollbackPlayer(block, (Player)session.getSender())) {
-				entry.setUndoState(state);
 				undo.add(entry);
 			}
 		}

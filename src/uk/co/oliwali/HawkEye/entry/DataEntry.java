@@ -146,23 +146,24 @@ public class DataEntry {
     	this.data = data;
     }
 
-	public BlockState getUndoState() {
-		return undoState;
-	}
-	public void setUndoState(BlockState undoState) {
-		this.undoState = undoState;
-	}
+    public BlockState getUndoState() {
+    	return undoState;
+    }
+
+    public void setUndoState(BlockState undoState) {
+    	this.undoState = undoState;
+    }
 
     /**
      * Returns the entry data in a visually attractive and readable way for an in-game user to read
      * Extending classes can add colours, customise layout etc.
      * @return
      */
-	public String getStringData() {
-		return data;
-	}
+    public String getStringData() {
+    	return data;
+    }
 
-	public int getIntData() {
+    public int getIntData() {
 		return Integer.parseInt(data.split(":")[0]);
 	}
 
@@ -224,12 +225,12 @@ public class DataEntry {
 		}
 	}
 
-    /**
-     * Parses the inputted action into the DataEntry instance
-     * @param player
-     * @param instance
-     * @param type
-     * @param loc
+	/**
+	 * Parses the inputted action into the DataEntry instance
+	 * @param player
+	 * @param instance
+	 * @param type
+	 * @param loc
      * @param action
      */
 	public void setInfo(Player player, DataType type, Location loc) {

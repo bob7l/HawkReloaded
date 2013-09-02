@@ -153,4 +153,19 @@ public class SignEntry extends DataEntry {
 
 	}
 
+	@Override
+	public void undo() {
+		if (undoState != null && undoState instanceof Sign) {
+			undoState.update(true);
+
+			String[] s = ((Sign) undoState).getLines();
+
+			Sign s2 = (Sign) undoState.getBlock().getState(); //Get the new state
+
+			for (int i = 0; i < s.length; i++) {
+				s2.setLine(i, s[i]);
+			}
+			s2.update();
+		}
+	}
 }

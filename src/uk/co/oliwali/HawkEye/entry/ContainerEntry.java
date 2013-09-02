@@ -8,6 +8,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
@@ -16,7 +18,10 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
  * @author oliverw92
  */
 public class ContainerEntry extends DataEntry {
-
+	
+	private ItemStack[] is;
+	private BlockState state;
+	
 	public ContainerEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
 		super(playerId, timestamp, dataId, typeId, plugin, worldId, x, y ,z);
 		interpretSqlData(data);
@@ -69,5 +74,23 @@ public class ContainerEntry extends DataEntry {
 			} else return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void undo() {
+		if (is != null && state != null) {
+			state.update();
+			Inventory inv2 = ((InventoryHolder) state.getBlock().getState()).getInventory();
+			inv2.setContents(is);
+		}
+	}
+	
+	@Override
+	public void setUndoState(BlockState undoState) {
+		if (undoState instanceof InventoryHolder) {
+			Inventory inv = ((InventoryHolder) undoState).getInventory();
+			this.is = inv.getContents();
+			this.state = (BlockState) inv.getHolder();
+		}
 	}
 }

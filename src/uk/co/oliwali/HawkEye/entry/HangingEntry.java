@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.DataType;
@@ -54,4 +55,13 @@ public class HangingEntry extends DataEntry {
 		return true;
 	}
 
+	@Override
+	public void undo() {
+		Location l = undoState.getLocation();
+		for (Hanging e : l.getWorld().getEntitiesByClass(Hanging.class)) {
+			if (e.getLocation().getBlock().equals(undoState.getBlock())) {
+				e.remove();
+			}
+		}
+	}
 }
