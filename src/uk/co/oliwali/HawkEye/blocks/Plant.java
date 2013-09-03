@@ -14,7 +14,7 @@ public class Plant implements HawkBlock {
 		Block downrel = b.getRelative(BlockFace.DOWN);
 		downrel.setType(Material.SOIL);
 		downrel.setData((byte) 1);
-		b.setTypeIdAndData(id, ((byte) data), true);
+		b.setTypeIdAndData(id, ((byte) data), false);
 	}
 
 	@Override

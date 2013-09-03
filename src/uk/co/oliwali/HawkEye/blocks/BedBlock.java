@@ -12,7 +12,7 @@ public class BedBlock implements HawkBlock {
 	public void Restore(Block b, int id, int data) {
 		if (data > 7) return;
 		
-		b.setTypeIdAndData(id, ((byte)data), true);
+		b.setTypeIdAndData(id, ((byte)data), false);
 		int beddata = 0;
 		Block bed = null;
 
@@ -33,7 +33,7 @@ public class BedBlock implements HawkBlock {
 			beddata = 11;
 		}
 		if (bed != null) {
-			bed.setTypeIdAndData(id, ((byte)beddata), true);
+			bed.setTypeIdAndData(id, ((byte)beddata), false);
 		}
 	}
 

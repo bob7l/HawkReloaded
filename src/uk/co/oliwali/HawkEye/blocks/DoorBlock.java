@@ -12,7 +12,7 @@ public class DoorBlock implements HawkBlock {
 	public void Restore(Block b, int id, int data) {
 		if (data == (byte)8 || data == (byte)9) return; //This means the invalid part of the door was logged
 		
-		b.setTypeIdAndData(id, ((byte)data), true);
+		b.setTypeIdAndData(id, ((byte)data), false);
 
 		Block block = b.getRelative(BlockFace.UP);
 
@@ -35,12 +35,12 @@ public class DoorBlock implements HawkBlock {
 		int id2 = side.getTypeId();
 		int oid = oside.getTypeId();
 		if (id2 == 64 || id2 == 71) {
-			block.setTypeIdAndData(id, (byte)9, true);
+			block.setTypeIdAndData(id, (byte)9, false);
 		} else if (oid == 64 || oid == 71) {
-			oside.getRelative(BlockFace.UP).setTypeIdAndData(id, (byte)9, true);
-			block.setTypeIdAndData(id, (byte)8, true);
+			oside.getRelative(BlockFace.UP).setTypeIdAndData(id, (byte)9, false);
+			block.setTypeIdAndData(id, (byte)8, false);
 		} else {
-			block.setTypeIdAndData(id, (byte)8, true);
+			block.setTypeIdAndData(id, (byte)8, false);
 		}
 	}
 

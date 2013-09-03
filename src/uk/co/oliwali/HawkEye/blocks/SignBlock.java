@@ -14,7 +14,7 @@ public class SignBlock implements HawkBlock {
 
 	@Override
 	public void Restore(Block b, int id, int data) {
-		b.setTypeIdAndData(id, ((byte) data), true);
+		b.setTypeIdAndData(id, ((byte) data), false);
 	}
 
 	@Override
