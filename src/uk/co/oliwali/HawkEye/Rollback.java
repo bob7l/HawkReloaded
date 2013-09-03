@@ -62,7 +62,7 @@ public class Rollback implements Runnable {
 
 		//Start rollback process
 		int i = 0;
-		while (i < 1000 && rollbackQueue.hasNext()) {
+		while (i < 200 && rollbackQueue.hasNext()) {
 			i++;
 
 			DataEntry entry = rollbackQueue.next();
