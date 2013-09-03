@@ -6,12 +6,16 @@ import java.util.Calendar;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
-import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.undoData.UndoBlock;
+import uk.co.oliwali.HawkEye.undoData.UndoChest;
+import uk.co.oliwali.HawkEye.undoData.UndoSign;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -36,7 +40,7 @@ public class DataEntry {
 
     private double z;
 
-    protected BlockState undoState;
+    private UndoBlock undo;
 
     protected DataType type = null;
 
@@ -136,22 +140,27 @@ public class DataEntry {
     }
 
     public void setZ(double z) {
-        this.z = z;
+    	this.z = z;
     }
     public double getZ() {
-        return z;
+    	return z;
     }
 
     public void setData(String data) {
     	this.data = data;
     }
 
-    public BlockState getUndoState() {
-    	return undoState;
+    public void setUndoState(BlockState state) {
+    	if (state instanceof InventoryHolder)
+    		undo = new UndoChest(state);
+    	else if (state instanceof Sign)
+    		undo = new UndoSign(state);
+    	else
+    		undo = new UndoBlock(state);
     }
 
-    public void setUndoState(BlockState undoState) {
-    	this.undoState = undoState;
+    public UndoBlock getUndo() {
+    	return undo;
     }
 
     /**
@@ -218,11 +227,7 @@ public class DataEntry {
 	}
 
 	public void undo() {
-		if (undoState != null) {
-			final int id = undoState.getTypeId();
-			final int data = undoState.getData().getData();
-			HawkBlockType.getHawkBlock(id).Restore(undoState.getBlock(), id, data);
-		}
+		this.undo.undo();
 	}
 
 	/**

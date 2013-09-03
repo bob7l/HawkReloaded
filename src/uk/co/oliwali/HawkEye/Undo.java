@@ -3,7 +3,7 @@ package uk.co.oliwali.HawkEye;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
@@ -36,11 +36,6 @@ public class Undo implements Runnable {
 			Util.sendMessage(session.getSender(), "&cNo results found to undo");
 			return;
 		}
-
-		//Re-add deleted results back to the MySQL
-		if (undoType == RollbackType.GLOBAL && Config.DeleteDataOnRollback) {
-			DataManager.getQueue().addAll(session.getRollbackResults());
-		}
 		
 		undoQueue = session.getRollbackResults().iterator();
 
@@ -54,6 +49,11 @@ public class Undo implements Runnable {
 		if (!undoQueue.hasNext()) {
 			Util.sendMessage(session.getSender(), "&cNo results found to undo");
 			return;
+		}
+		
+		//Re-add deleted results back to the MySQL
+		if (undoType == RollbackType.GLOBAL && Config.DeleteDataOnRollback) {
+			DataManager.getQueue().addAll(session.getRollbackResults());
 		}
 
 		Util.debug("Starting undo of " + session.getRollbackResults().size() + " results");
@@ -85,10 +85,10 @@ public class Undo implements Runnable {
 
 			//Player undo
 			else {
-				if (entry.getUndoState() != null) {
+				if (entry.getUndo() != null) {
 					Player player = (Player)session.getSender();
-					Block block = entry.getUndoState().getBlock();
-					player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+					BlockState state = entry.getUndo().getState();
+					player.sendBlockChange(state.getLocation(), state.getType(), state.getData().getData());
 				}
 			}
 			counter++;
