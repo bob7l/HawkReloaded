@@ -3,7 +3,6 @@ package uk.co.oliwali.HawkEye.WorldEdit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
@@ -53,7 +52,7 @@ public class HawkSession extends EditSession {
 					DataManager.addEntry(new BlockChangeEntry(player.getName(), DataType.WORLDEDIT_PLACE, loc, b, bdata, block.getType(), block.getData()));
 			} else {
 				if ((b == 63 || b == 68) && Config.isLogged(DataType.SIGN_BREAK)) {
-					DataManager.addEntry(new SignEntry(player.getName(), DataType.SIGN_BREAK, bs.getBlock(), ((Sign)bs).getLines()));
+					DataManager.addEntry(new SignEntry(player.getName(), DataType.SIGN_BREAK, bs));
 				} else
 					DataManager.addEntry(new BlockEntry(player.getName(), DataType.WORLDEDIT_BREAK, b, bdata, loc));
 			}

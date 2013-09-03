@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
 import org.bukkit.entity.Player;
@@ -35,17 +36,22 @@ public class SignEntry extends DataEntry {
 	public SignEntry() { }
 
 	public SignEntry(Player player, DataType type, Block block) {
-		interpretSignBlock(block);
+		interpretSignBlock(block.getState());
 		setInfo(player, type, block.getLocation());
 	}
 
 	public SignEntry(String player, DataType type, Block block) {
-		interpretSignBlock(block);
+		interpretSignBlock(block.getState());
 		setInfo(player, type, block.getLocation());
+	}
+	
+	public SignEntry(String player, DataType type, BlockState state) {
+		interpretSignBlock(state);
+		setInfo(player, type, state.getLocation());
 	}
 
 	public SignEntry(String player, DataType type, Block block, String[] lines) {
-		interpretSignBlock(block);
+		interpretSignBlock(block.getState());
 		this.lines = lines;
 		setInfo(player, type, block.getLocation());
 	}
@@ -54,9 +60,9 @@ public class SignEntry extends DataEntry {
 	 * Extracts the sign data from a block
 	 * @param block
 	 */
-	private void interpretSignBlock(Block block) {
-		if (!(block.getState() instanceof Sign)) return;
-		Sign sign = (Sign) block.getState();
+	private void interpretSignBlock(BlockState state) {
+		if (!(state instanceof Sign)) return;
+		Sign sign = (Sign) state;
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) sign.getData();
 		if (signData.isWallSign()) this.facing = signData.getAttachedFace();
 		else this.facing = signData.getFacing();
@@ -71,7 +77,7 @@ public class SignEntry extends DataEntry {
 	}
 
 	@Override
-	public String getSqlData() {
+	public String getSqlData() { //TODO: Fix this, throws a ArrayIndexOutOfBoundsException
 		if (data != null) return data;
 		List<String> encoded = new ArrayList<String>();
 		for (int i = 0; i < 4; i++) if (lines[i] != null && lines[i].length() > 0) encoded.add(Base64.encode(lines[i].getBytes()));
@@ -126,7 +132,6 @@ public class SignEntry extends DataEntry {
 
 	@Override
 	public void interpretSqlData(String data) {
-
 		if (data.indexOf("@") == -1) return;
 
 		String[] arr = data.split("@");
@@ -151,21 +156,5 @@ public class SignEntry extends DataEntry {
 				}
 				lines = decoded.toArray(new String[0]);
 
-	}
-
-	@Override
-	public void undo() {
-		if (undoState != null && undoState instanceof Sign) {
-			undoState.update(true);
-
-			String[] s = ((Sign) undoState).getLines();
-
-			Sign s2 = (Sign) undoState.getBlock().getState(); //Get the new state
-
-			for (int i = 0; i < s.length; i++) {
-				s2.setLine(i, s[i]);
-			}
-			s2.update();
-		}
 	}
 }
