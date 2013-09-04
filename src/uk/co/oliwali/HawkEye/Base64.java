@@ -1,161 +1,61 @@
 package uk.co.oliwali.HawkEye;
 
-/**
- * A string encoder/decoder
- * @author Stephen Uhler
- */
-
 public class Base64 {
-	static byte[] encodeData;
-	static String charSet = 
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-	static {
-		encodeData = new byte[64];
-		for (int i = 0; i<64; i++) {
-			byte c = (byte) charSet.charAt(i);
-			encodeData[i] = c;
-		}
-	}
+    private final static char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
-	private Base64() {}
+    private static int[]  toInt   = new int[128];
 
-	/**
-	 * base-64 encode a string
-	 * @param s		The ascii string to encode
-	 * @returns		The base64 encoded result
-	 */
+    static {
+        for(int i=0; i< ALPHABET.length; i++){
+            toInt[ALPHABET[i]]= i;
+        }
+    }
+    
+    public static String encode(byte[] buf){
+        int size = buf.length;
+        char[] ar = new char[((size + 2) / 3) * 4];
+        int a = 0;
+        int i=0;
+        while(i < size){
+            byte b0 = buf[i++];
+            byte b1 = (i < size) ? buf[i++] : 0;
+            byte b2 = (i < size) ? buf[i++] : 0;
 
-	public static String
-	encode(String s) {
-		return encode(s.getBytes());
-	}
+            int mask = 0x3F;
+            ar[a++] = ALPHABET[(b0 >> 2) & mask];
+            ar[a++] = ALPHABET[((b0 << 4) | ((b1 & 0xFF) >> 4)) & mask];
+            ar[a++] = ALPHABET[((b1 << 2) | ((b2 & 0xFF) >> 6)) & mask];
+            ar[a++] = ALPHABET[b2 & mask];
+        }
+        switch(size % 3){
+            case 1: ar[--a]  = '=';
+            case 2: ar[--a]  = '=';
+        }
+        return new String(ar);
+    }
+    
+    public static byte[] decode(String s){
+        int delta = s.endsWith( "==" ) ? 2 : s.endsWith( "=" ) ? 1 : 0;
+        byte[] buffer = new byte[s.length()*3/4 - delta];
+        int mask = 0xFF;
+        int index = 0;
+        for(int i=0; i< s.length(); i+=4){
+            int c0 = toInt[s.charAt( i )];
+            int c1 = toInt[s.charAt( i + 1)];
+            buffer[index++]= (byte)(((c0 << 2) | (c1 >> 4)) & mask);
+            if(index >= buffer.length){
+                return buffer;
+            }
+            int c2 = toInt[s.charAt( i + 2)];
+            buffer[index++]= (byte)(((c1 << 4) | (c2 >> 2)) & mask);
+            if(index >= buffer.length){
+                return buffer;
+            }
+            int c3 = toInt[s.charAt( i + 3 )];
+            buffer[index++]= (byte)(((c2 << 6) | c3) & mask);
+        }
+        return buffer;
+    } 
 
-	/**
-	 * base-64 encode a byte array
-	 * @param src	The byte array to encode
-	 * @returns		The base64 encoded result
-	 */
-
-	public static String
-	encode(byte[] src) {
-		return encode(src, 0, src.length);
-	}
-
-	/**
-	 * base-64 encode a byte array
-	 * @param src	The byte array to encode
-	 * @param start	The starting index
-	 * @param len	The number of bytes
-	 * @returns		The base64 encoded result
-	 */
-
-	public static String
-	encode(byte[] src, int start, int length) {
-		byte[] dst = new byte[(length+2)/3 * 4 + length/72];
-		int x = 0;
-		int dstIndex = 0;
-		int state = 0;	// which char in pattern
-		int old = 0;	// previous byte
-		int len = 0;	// length decoded so far
-		int max = length + start;
-		for (int srcIndex = start; srcIndex<max; srcIndex++) {
-			x = src[srcIndex];
-			switch (++state) {
-			case 1:
-				dst[dstIndex++] = encodeData[(x>>2) & 0x3f];
-				break;
-			case 2:
-				dst[dstIndex++] = encodeData[((old<<4)&0x30) 
-				                             | ((x>>4)&0xf)];
-				break;
-			case 3:
-				dst[dstIndex++] = encodeData[((old<<2)&0x3C) 
-				                             | ((x>>6)&0x3)];
-				dst[dstIndex++] = encodeData[x&0x3F];
-				state = 0;
-				break;
-			}
-			old = x;
-			if (++len >= 72) {
-				dst[dstIndex++] = (byte) '\n';
-				len = 0;
-			}
-		}
-
-		/*
-		 * now clean up the end bytes
-		 */
-
-		switch (state) {
-		case 1: dst[dstIndex++] = encodeData[(old<<4) & 0x30];
-		dst[dstIndex++] = (byte) '=';
-		dst[dstIndex++] = (byte) '=';
-		break;
-		case 2: dst[dstIndex++] = encodeData[(old<<2) & 0x3c];
-		dst[dstIndex++] = (byte) '=';
-		break;
-		}
-		return new String(dst);
-	}
-
-	/**
-	 * A Base64 decoder.  This implementation is slow, and 
-	 * doesn't handle wrapped lines.
-	 * The output is undefined if there are errors in the input.
-	 * @param s		a Base64 encoded string
-	 * @returns		The byte array eith the decoded result
-	 */
-
-	public static byte[]
-			decode(String s) {
-		int end = 0;	// end state
-		if (s.endsWith("=")) {
-			end++;
-		}
-		if (s.endsWith("==")) {
-			end++;
-		}
-		int len = (s.length() + 3)/4 * 3 - end;
-		byte[] result = new byte[len];
-		int dst = 0;
-		try {
-			for(int src = 0; src< s.length(); src++) {
-				int code =  charSet.indexOf(s.charAt(src));
-				if (code == -1) {
-					break;
-				}
-				switch (src%4) {
-				case 0:
-					result[dst] = (byte) (code<<2);
-					break;
-				case 1: 
-					result[dst++] |= (byte) ((code>>4) & 0x3);
-					result[dst] = (byte) (code<<4);
-					break;
-				case 2:
-					result[dst++] |= (byte) ((code>>2) & 0xf);
-					result[dst] = (byte) (code<<6);
-					break;
-				case 3:
-					result[dst++] |= (byte) (code & 0x3f);
-					break;
-				}
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {}
-		return result;
-	}
-
-	/**
-	 * Test the decoder and encoder.
-	 * Call as <code>Base64 [string]</code>.
-	 */
-
-	public static void
-	main(String[] args) {
-		System.out.println("encode: " + args[0]  + " -> (" 
-				+ encode(args[0]) + ")");
-		System.out.println("decode: " + args[0]  + " -> (" 
-				+ new String(decode(args[0])) + ")");
-	}
 }

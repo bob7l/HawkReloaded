@@ -77,10 +77,10 @@ public class SignEntry extends DataEntry {
 	}
 
 	@Override
-	public String getSqlData() { //TODO: Fix this, throws a ArrayIndexOutOfBoundsException
+	public String getSqlData() {
 		if (data != null) return data;
 		List<String> encoded = new ArrayList<String>();
-		for (int i = 0; i < 4; i++) if (lines[i] != null && lines[i].length() > 0) encoded.add(Base64.encode(lines[i].getBytes()));
+		for (int i = 0; i < 4; i++) encoded.add((lines[i] == null)?"":Base64.encode(lines[i].getBytes()));
 		return wallSign + "@" + facing + "@" + Util.join(encoded, ",");
 	}
 
@@ -135,26 +135,20 @@ public class SignEntry extends DataEntry {
 		if (data.indexOf("@") == -1) return;
 
 		String[] arr = data.split("@");
+
 		//Parse wall sign or not
-		if (arr[0].equals("true")) wallSign = true;
-		else wallSign = false;
+		if (!arr[0].equals("true")) wallSign = false;
 
 		//Parse sign direction
 		for (BlockFace face : BlockFace.values())
 			if (face.toString().equalsIgnoreCase(arr[1])) facing = face;
 
-				//Parse lines
-				if (arr.length != 3) return;
-				List<String> decoded = new ArrayList<String>();
-				String[] encLines = arr[2].split(",");
-				for (int i = 0; i < encLines.length; i++) {
-					try {
-						decoded.add(new String(Base64.decode(encLines[i])));
-					} catch (Exception e) {
-						Util.severe("Unable to decode sign data from database");
-					}
-				}
-				lines = decoded.toArray(new String[0]);
+		//Parse lines
+		if (arr.length != 3) return;
 
+		String[] encLines = arr[2].split(",");
+
+		for (int i = 0; i < encLines.length; i++)
+			if (encLines[i] != null && !encLines[i].equals("")) lines[i] = new String(Base64.decode(encLines[i]));
 	}
 }
