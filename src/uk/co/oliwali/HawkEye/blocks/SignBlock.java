@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.blocks;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -29,11 +30,8 @@ public class SignBlock implements HawkBlock {
 
 		for(BlockFace face: BlockUtil.faces) {
 			Block attch = b.getRelative(face);
-			hb = HawkBlockType.getHawkBlock(attch.getTypeId());
-			if (hb.isAttached()) {
-				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
-					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
-			}
+			if (attch.getType() == Material.WALL_SIGN && Config.isLogged(DataType.SIGN_BREAK))
+				DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, attch));
 		}
 	}
 

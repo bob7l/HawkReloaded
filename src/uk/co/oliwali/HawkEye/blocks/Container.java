@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.blocks;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -21,21 +22,12 @@ public class Container implements HawkBlock {
 	@Override
 	public void logAttachedBlocks(Block b, Player p, DataType type) {
 		InventoryUtil.handleHolderRemoval(p.getName(), b.getState());
-		
-		Block topb = b.getRelative(BlockFace.UP);
-		HawkBlock hb = HawkBlockType.getHawkBlock(topb.getTypeId());
-		if (hb.isTopBlock()) {
-			hb.logAttachedBlocks(topb, p, type);
-			if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
-				DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(topb)));
-		}
 
 		for(BlockFace face: BlockUtil.faces) {
 			Block attch = b.getRelative(face);
-			hb = HawkBlockType.getHawkBlock(attch.getTypeId());
-			if (hb.isAttached()) {
-				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
-					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
+			if (attch.getType() == Material.WALL_SIGN) {
+				if (Config.isLogged(DataType.SIGN_BREAK))
+					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, attch));
 			}
 		}
 	}
