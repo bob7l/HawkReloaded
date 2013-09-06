@@ -46,6 +46,8 @@ log:
     crop-trample: true
     block-ignite: false
     fallingblock-place: true
+    player-water-flow: false
+    player-lava-flow: false
 general:
     max-lines: 0
     log-item-drops-on-death: false
