@@ -64,15 +64,15 @@ public class MonitorEntityListener extends HawkEyeListener {
 			if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 				Entity damager = ((EntityDamageByEntityEvent)(victim.getLastDamageCause())).getDamager();
 				if (damager instanceof Player) {
-					if (!Config.isLogged(DataType.PVP_DEATH) && !Config.LogDeathDrops) return;
+					if (!DataType.PVP_DEATH.isLogged() && !Config.LogDeathDrops) return;
 					DataManager.addEntry(new DataEntry(victim, DataType.PVP_DEATH, victim.getLocation(), Util.getEntityName(damager)));
 				} else {
-					if (!Config.isLogged(DataType.MOB_DEATH) && !Config.LogDeathDrops) return;
+					if (!DataType.MOB_DEATH.isLogged() && !Config.LogDeathDrops) return;
 					DataManager.addEntry(new DataEntry(victim, DataType.MOB_DEATH, victim.getLocation(), Util.getEntityName(damager)));
 				}
 				//Other death
 			} else {
-				if (!Config.isLogged(DataType.OTHER_DEATH) && !Config.LogDeathDrops) return;
+				if (!DataType.OTHER_DEATH.isLogged() && !Config.LogDeathDrops) return;
 				EntityDamageEvent dEvent = victim.getLastDamageCause();
 				String cause = dEvent == null?"Unknown":victim.getLastDamageCause().getCause().name();
 				String[] words = cause.split("_");
@@ -94,7 +94,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 				}
 			}
 		} else { //Mob Death
-			if (!Config.isLogged(DataType.ENTITY_KILL)) return;
+			if (DataType.ENTITY_KILL.isLogged()) return;
 
 			Entity killer = ((LivingEntity) entity).getKiller();
 
@@ -215,11 +215,11 @@ public class MonitorEntityListener extends HawkEyeListener {
 		Block block = event.getBlock();
 
 		// Enderman picking up block
-		if (event.getTo() == Material.AIR && Config.isLogged(DataType.ENDERMAN_PICKUP)) {
+		if (event.getTo() == Material.AIR && DataType.ENDERMAN_PICKUP.isLogged()) {
 			if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
 				DataManager.addEntry(new SignEntry("Environment", DataType.SIGN_BREAK, event.getBlock()));
 			DataManager.addEntry(new BlockEntry("Environment", DataType.ENDERMAN_PICKUP, block));
-		} else if (Config.isLogged(DataType.ENDERMAN_PLACE)) {
+		} else if (DataType.ENDERMAN_PLACE.isLogged()) {
 			// Enderman placing block
 			Enderman enderman = (Enderman) event.getEntity();
 			BlockState newState = block.getState();

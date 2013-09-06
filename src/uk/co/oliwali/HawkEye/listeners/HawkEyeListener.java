@@ -11,7 +11,6 @@ import org.bukkit.plugin.PluginManager;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
-import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 import uk.co.oliwali.HawkEye.util.Util.DebugLevel;
 
@@ -35,7 +34,7 @@ public abstract class HawkEyeListener implements Listener {
 
 			boolean register = false;
 			for (DataType dt : he.dataType()) {
-				if (Config.isLogged(dt)) register = true;
+				if (dt.isLogged()) register = true;
 			}
 			if (!register) continue;
 

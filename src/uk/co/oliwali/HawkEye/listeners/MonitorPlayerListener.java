@@ -25,10 +25,10 @@ import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
-import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -173,7 +173,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		Location loc = event.getBlockClicked().getRelative(event.getBlockFace()).getLocation();
 		DataType type = (event.getBucket().equals(Material.WATER_BUCKET) ? DataType.WATER_BUCKET : DataType.LAVA_BUCKET);
 
-		DataManager.addEntry(new SimpleRollbackEntry(event.getPlayer(), type, loc, ""));
+		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), type, loc, loc.getBlock().getState(), event.getBucket().getId()));
 	}
 	
 	@HawkEvent(dataType = DataType.CONTAINER_TRANSACTION)

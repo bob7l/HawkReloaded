@@ -8,7 +8,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
@@ -116,14 +115,4 @@ public class Config {
 		}
 
 	}
-
-	/**
-	 * Check if a {@link DataType} is logged or not
-	 * @param dataType
-	 * @return true or false
-	 */
-	public static boolean isLogged(DataType dataType) {
-		return (config.getBoolean("log." + dataType.getConfigName()));
-	}
-
 }

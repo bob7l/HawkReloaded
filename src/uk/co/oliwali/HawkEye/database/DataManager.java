@@ -80,7 +80,7 @@ public class DataManager extends TimerTask {
 	 */
 	public static void addEntry(DataEntry entry) {
 
-		if (!Config.isLogged(entry.getType())) return;
+		if (!entry.getType().isLogged()) return;
 
 		if (Config.IgnoreWorlds.contains(entry.getWorld())) return;
 

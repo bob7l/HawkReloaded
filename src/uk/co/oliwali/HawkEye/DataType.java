@@ -29,8 +29,8 @@ public enum DataType {
 	JOIN(5, DataEntry.class, "join", false, false),
 	QUIT(6, DataEntry.class, "quit", false, false),
 	TELEPORT(7, DataEntry.class, "teleport", false, false),
-	LAVA_BUCKET(8, SimpleRollbackEntry.class, "lava-bucket", true, true),
-	WATER_BUCKET(9, SimpleRollbackEntry.class, "water-bucket", true, true),
+	LAVA_BUCKET(8, BlockChangeEntry.class, "lava-bucket", true, true),
+	WATER_BUCKET(9, BlockChangeEntry.class, "water-bucket", true, true),
 	OPEN_CONTAINER(10, DataEntry.class, "open-container", true, false),
 	DOOR_INTERACT(11, DataEntry.class, "door-interact", true, false),
 	PVP_DEATH(12, DataEntry.class, "pvp-death", false, false),
@@ -67,12 +67,15 @@ public enum DataType {
 	WORLDEDIT_PLACE(43, BlockChangeEntry.class, "worldedit-place", true, true),
 	CROP_TRAMPLE(44, BlockEntry.class, "crop-trample", true, true),
 	BLOCK_IGNITE(45, SimpleRollbackEntry.class, "block-ignite", true, true),
-	FALLING_BLOCK(46, BlockChangeEntry.class, "fallingblock-place", true, true);
+	FALLING_BLOCK(46, BlockChangeEntry.class, "fallingblock-place", true, true),
+	PLAYER_LAVA_FLOW(47, BlockChangeEntry.class, "player-lava-flow", true, true),
+	PLAYER_WATER_FLOW(48, BlockChangeEntry.class, "player-water-flow", true, true);
 
 	private int id;
 	private boolean canHere;
 	private String configName;
 	private boolean canRollback;
+	private boolean isLogged;
 	private Class<?> entryClass;
 	private Constructor<?> entryConstructor;
 	
@@ -95,6 +98,7 @@ public enum DataType {
 		this.canHere = canHere;
 		this.configName = configName;
 		this.canRollback = canRollback;
+		this.isLogged = HawkEye.instance.getConfig().getBoolean("log." + configName);
 
 		try {
 			this.entryConstructor = entryClass.getConstructor(int.class, Timestamp.class, int.class, int.class, String.class, String.class, int.class, int.class, int.class, int.class);
@@ -161,5 +165,9 @@ public enum DataType {
 
 	public Constructor<?> getEntryConstructor() {
 		return entryConstructor;
+	}
+	
+	public boolean isLogged() {
+		return isLogged;
 	}
 }

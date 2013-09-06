@@ -5,7 +5,6 @@ import java.util.List;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
-import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 public class InfoCommand extends BaseCommand {
@@ -21,7 +20,7 @@ public class InfoCommand extends BaseCommand {
 	public boolean execute() {
 		List<String> acs = new ArrayList<String>();
 		for (DataType type : DataType.values()) 
-			if (Config.isLogged(type)) acs.add(type.getConfigName());
+			if (type.isLogged()) acs.add(type.getConfigName());
 		
 		Util.sendMessage(sender, "&c---------------------&8[ &7HawkEye &8]&c---------------------");
 		Util.sendMessage(sender, "&8  - &cQueue-load: &7" + DataManager.getQueue().size());

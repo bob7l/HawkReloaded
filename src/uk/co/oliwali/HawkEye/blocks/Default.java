@@ -10,7 +10,6 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
-import uk.co.oliwali.HawkEye.util.Config;
 
 public class Default implements HawkBlock {
 
@@ -25,7 +24,7 @@ public class Default implements HawkBlock {
 		HawkBlock hb = HawkBlockType.getHawkBlock(topb.getTypeId());
 		if (hb.isTopBlock()) {
 			hb.logAttachedBlocks(topb, p, type);
-			if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
+			if (hb instanceof SignBlock && DataType.SIGN_BREAK.isLogged())
 				DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(topb)));
 			else DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(topb)));
 		}
@@ -35,7 +34,7 @@ public class Default implements HawkBlock {
 			hb = HawkBlockType.getHawkBlock(attch.getTypeId());
 			if (hb.isAttached()) {
 				hb.logAttachedBlocks(attch, p, type);
-				if (attch.getType() == Material.WALL_SIGN && Config.isLogged(DataType.SIGN_BREAK))
+				if (attch.getType() == Material.WALL_SIGN && DataType.SIGN_BREAK.isLogged())
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
 				else DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(attch)));
 			}

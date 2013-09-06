@@ -9,7 +9,6 @@ import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
-import uk.co.oliwali.HawkEye.util.Config;
 
 public class LeafBlock extends BasicBlock { 
 
@@ -20,7 +19,7 @@ public class LeafBlock extends BasicBlock {
 			HawkBlock hb = HawkBlockType.getHawkBlock(attch.getTypeId());
 			if (hb.isAttached()) {
 				hb.logAttachedBlocks(attch, p, type);
-				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
+				if (hb instanceof SignBlock && DataType.SIGN_BREAK.isLogged())
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));
 				else if (hb instanceof VineBlock) DataManager.addEntry(new BlockEntry(p, type, hb.getCorrectBlock(attch)));
 			}

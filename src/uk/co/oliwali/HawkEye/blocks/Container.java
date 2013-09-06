@@ -9,7 +9,6 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
-import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
 public class Container implements HawkBlock {
@@ -26,7 +25,7 @@ public class Container implements HawkBlock {
 		for(BlockFace face: BlockUtil.faces) {
 			Block attch = b.getRelative(face);
 			if (attch.getType() == Material.WALL_SIGN) {
-				if (Config.isLogged(DataType.SIGN_BREAK))
+				if (DataType.SIGN_BREAK.isLogged())
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, attch));
 			}
 		}

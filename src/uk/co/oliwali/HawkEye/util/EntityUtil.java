@@ -74,7 +74,7 @@ public class EntityUtil {
 			bs = spawn.getState();
 			spawn.setType(Material.STONE);
 		}
-		
+
 		Block b = spawn.getRelative(BlockFace.NORTH);
 		if (face != BlockFace.NORTH && b.getType() == Material.AIR) {
 			north = b.getState();
@@ -145,7 +145,7 @@ public class EntityUtil {
 			Util.warning("Unable to spawn " + data + " at: " + loc.toString());
 		}
 	}
-	
+
 	public static String entityToString(Entity e) {
 		String name = "Unknown";
 		if (e instanceof TNTPrimed) name = "TNT";

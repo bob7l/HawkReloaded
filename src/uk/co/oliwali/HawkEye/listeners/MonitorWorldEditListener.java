@@ -53,7 +53,7 @@ public class MonitorWorldEditListener implements Listener {
 
 				hb.logAttachedBlocks(block, player, DataType.SUPER_PICKAXE);
 
-				if (hb instanceof SignBlock && Config.isLogged(DataType.SIGN_BREAK))
+				if (hb instanceof SignBlock && DataType.SIGN_BREAK.isLogged())
 					DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
 				
 				else DataManager.addEntry(new BlockEntry(player, DataType.SUPER_PICKAXE, block));

@@ -37,6 +37,7 @@ import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorEntityListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorFallingBlockListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorHeroChatListener;
+import uk.co.oliwali.HawkEye.listeners.MonitorLiquidFlow;
 import uk.co.oliwali.HawkEye.listeners.MonitorPlayerListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorWorldEditListener;
 import uk.co.oliwali.HawkEye.listeners.MonitorWorldListener;
@@ -60,6 +61,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
 	public MonitorFallingBlockListener monitorFBListerner = new MonitorFallingBlockListener(this);
 	public MonitorWorldEditListener monitorWorldEditListener = new MonitorWorldEditListener();
+	public MonitorLiquidFlow monitorLiquidFlow;
 	public ToolListener toolListener = new ToolListener();
 	private DataManager dbmanager;
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
@@ -136,6 +138,9 @@ public class HawkEye extends JavaPlugin {
 
 		checkDependencies(pm);
 
+		//This must be created while the plugin is loading as the constructor is dependent
+        monitorLiquidFlow = new MonitorLiquidFlow(this);
+        
 		registerListeners(pm);
 		registerCommands();
 		Util.info("Version " + version + " enabled!");
@@ -163,12 +168,13 @@ public class HawkEye extends JavaPlugin {
 		monitorEntityListener.registerEvents();
 		monitorWorldListener.registerEvents();
 		monitorFBListerner.registerEvents();
+		monitorLiquidFlow.registerEvents();
 		pm.registerEvents(toolListener, this);
 		if (herochat != null) monitorHeroChatListener.registerEvents();
 
 		if (worldEdit != null)  {
-			if (Config.isLogged(DataType.SUPER_PICKAXE)) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
-			if (Config.isLogged(DataType.WORLDEDIT_BREAK) || Config.isLogged(DataType.WORLDEDIT_PLACE)) WESessionFactory.enableWELogging();
+			if (DataType.SUPER_PICKAXE.isLogged()) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
+			if (DataType.WORLDEDIT_BREAK.isLogged() || DataType.WORLDEDIT_PLACE.isLogged()) WESessionFactory.enableWELogging();
 		}
 	}
 
