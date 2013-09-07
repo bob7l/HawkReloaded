@@ -32,7 +32,7 @@ public class Default implements HawkBlock {
 		for(BlockFace face: BlockUtil.faces) {
 			Block attch = b.getRelative(face);
 			hb = HawkBlockType.getHawkBlock(attch.getTypeId());
-			if (hb.isAttached()) {
+			if (hb.isAttached() && BlockUtil.isAttached(b, attch)) {
 				hb.logAttachedBlocks(attch, p, type);
 				if (attch.getType() == Material.WALL_SIGN && DataType.SIGN_BREAK.isLogged())
 					DataManager.addEntry(new SignEntry(p, DataType.SIGN_BREAK, hb.getCorrectBlock(attch)));

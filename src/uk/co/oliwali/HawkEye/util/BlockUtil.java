@@ -5,6 +5,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Attachable;
+import org.bukkit.material.MaterialData;
 
 import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 
@@ -104,5 +106,21 @@ public class BlockUtil {
 	public static byte getDataFromString(String string) {
 		if (string.split(":").length == 1) return 0;
 		return (byte)Integer.parseInt(string.split(":")[1]);
+	}
+
+	/**
+	 * Returns whether or not the item is attached
+	 */
+	public static boolean isAttached(Block base, Block attached) {
+		MaterialData bs = attached.getState().getData();
+
+		if (!(bs instanceof Attachable) || attached.getType() == Material.VINE) return true;
+
+		Attachable at = (Attachable) bs;
+		
+		if (attached.getRelative(at.getAttachedFace()).equals(base))
+			return true;
+		
+		return false;
 	}
 }
