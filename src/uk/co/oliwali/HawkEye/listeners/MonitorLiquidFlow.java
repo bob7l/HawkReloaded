@@ -24,10 +24,10 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	private List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
 	private HashMap<Location, String> playerCache = new HashMap<Location, String>(10);
 	private int cacheRunTime = 10;
+	private int timerId = -1;
 
 	public MonitorLiquidFlow(HawkEye HawkEye) {
 		super(HawkEye);
-		startCacheCleaner();
 	}
 
 	/**
@@ -36,7 +36,8 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	 */
 	public void startCacheCleaner() {
 		if (DataType.PLAYER_LAVA_FLOW.isLogged() || DataType.PLAYER_WATER_FLOW.isLogged()) {
-			Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			Bukkit.getScheduler().cancelTask(timerId);
+			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 				@Override
 				public void run() {
 					cacheRunTime--;

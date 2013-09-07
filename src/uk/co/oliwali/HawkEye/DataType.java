@@ -170,4 +170,11 @@ public enum DataType {
 	public boolean isLogged() {
 		return isLogged;
 	}
+	
+	/**
+	 * Reloads enum's isLogged values from disk
+	 */
+	public void reload() {
+		this.isLogged = HawkEye.instance.getConfig().getBoolean("log." + configName);
+	}
 }

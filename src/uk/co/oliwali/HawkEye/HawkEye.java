@@ -23,6 +23,7 @@ import uk.co.oliwali.HawkEye.commands.PreviewApplyCommand;
 import uk.co.oliwali.HawkEye.commands.PreviewCancelCommand;
 import uk.co.oliwali.HawkEye.commands.PreviewCommand;
 import uk.co.oliwali.HawkEye.commands.RebuildCommand;
+import uk.co.oliwali.HawkEye.commands.ReloadCommand;
 import uk.co.oliwali.HawkEye.commands.RollbackCommand;
 import uk.co.oliwali.HawkEye.commands.SearchCommand;
 import uk.co.oliwali.HawkEye.commands.ToolBindCommand;
@@ -161,7 +162,7 @@ public class HawkEye extends JavaPlugin {
 	 * Registers event listeners
 	 * @param pm PluginManager
 	 */
-	private void registerListeners(PluginManager pm) {
+	public void registerListeners(PluginManager pm) {
 		//Register events
 		monitorBlockListener.registerEvents();
 		monitorPlayerListener.registerEvents();
@@ -169,6 +170,7 @@ public class HawkEye extends JavaPlugin {
 		monitorWorldListener.registerEvents();
 		monitorFBListerner.registerEvents();
 		monitorLiquidFlow.registerEvents();
+		monitorLiquidFlow.startCacheCleaner();
 		pm.registerEvents(toolListener, this);
 		if (herochat != null) monitorHeroChatListener.registerEvents();
 
@@ -201,6 +203,7 @@ public class HawkEye extends JavaPlugin {
 		commands.add(new DeleteCommand());
 		commands.add(new InfoCommand());
 		commands.add(new WriteLogCommand());
+		commands.add(new ReloadCommand());
 	}
 
 	/**
