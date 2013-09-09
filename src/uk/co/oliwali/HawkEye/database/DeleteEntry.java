@@ -1,7 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,28 +31,33 @@ public class DeleteEntry implements Runnable {
 		PreparedStatement stmnt = null;
 		try {
 			conn = DataManager.getConnection();
-			
+
 			conn.setAutoCommit(false); 
-			
+
 			stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?");
-			
+
 			int i = 0;
-			
+
 			for (Integer id : ids) {
 				stmnt.setInt(1, id);
 				stmnt.addBatch();
-                i++;
+				i++;
 				if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
 			}
-			
+
 			stmnt.executeBatch();
 			conn.commit();
 			conn.setAutoCommit(true);
-		} catch (SQLException ex) {
-			Util.severe("Unable to delete data entries from MySQL database: " + ex);
+		} catch (Exception ex) {
+			Util.warning("Unable to purge MySQL:" + ex.getMessage());
 		} finally {
-			conn.close();
+			try {
+				if (stmnt != null)
+					stmnt.close();
+				conn.close();
+			} catch (Exception ex) {
+				Util.severe("Unable to close SQL connection: " + ex);
+			}
 		}
 	}
-
 }
