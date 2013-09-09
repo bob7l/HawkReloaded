@@ -93,12 +93,11 @@ public class MonitorEntityListener extends HawkEyeListener {
 					DataManager.addEntry(new DataEntry(victim, DataType.ITEM_DROP, victim.getLocation(), data));
 				}
 			}
-		} else { //Mob Death
-			if (DataType.ENTITY_KILL.isLogged()) return;
+		} else if (DataType.ENTITY_KILL.isLogged()) { //Mob Death
 
 			Entity killer = ((LivingEntity) entity).getKiller();
 
-			if ((!(killer == null)) && killer instanceof Player) {
+			if (killer != null && killer instanceof Player) {
 				Player kill = (Player)killer;
 
 				DataManager.addEntry(new EntityEntry(kill.getName(), DataType.ENTITY_KILL, entity.getLocation().getBlock().getLocation(), Util.getEntityName(entity)));
