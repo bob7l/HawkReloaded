@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -20,6 +21,7 @@ public class Config {
 	public static List<String> CommandFilter = new ArrayList<String>();
 	public static List<String> IgnoreWorlds = new ArrayList<String>();
 	public static List<Integer> BlockFilter = new ArrayList<Integer>();
+	public static List<String> CleanseActions = new ArrayList<String>();
 	public static int MaxLines = 0;
 	public static int MaxRadius;
 	public static int DefaultHereRadius;
@@ -73,6 +75,7 @@ public class Config {
 		CommandFilter = config.getStringList("command-filter");
 		BlockFilter = config.getIntegerList("block-filter");
 		IgnoreWorlds = config.getStringList("ignore-worlds");
+		CleanseActions = Arrays.asList(config.getString("general.cleanse-actions").split(","));
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");
 		MaxLog = config.getInt("general.max-write-logs");

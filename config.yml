@@ -11,7 +11,7 @@ log:
     quit: false
     door-interact: false
     open-container: false
-    container-transaction: false
+    container-transaction: true
     item-pickup: false
     item-drop: false
     button: false
@@ -53,6 +53,7 @@ general:
     log-item-drops-on-death: false
     cleanse-period: 20m
     cleanse-age: 0
+    cleanse-actions: optional
     delete-data-on-rollback: true
     log-ip-addresses: false
     debug: false

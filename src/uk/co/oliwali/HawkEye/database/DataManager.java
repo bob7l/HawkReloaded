@@ -8,9 +8,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.bukkit.scheduler.BukkitTask;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -24,11 +24,11 @@ import uk.co.oliwali.HawkEye.util.Util;
  * @author oliverw92
  */
 
-public class DataManager extends TimerTask {
+public class DataManager implements Runnable {
 
 	private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<DataEntry>();
 	private static ConnectionManager connections;
-	public static Timer cleanseTimer = null;
+	public static BukkitTask cleanseTimer = null;
 	public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
 
@@ -50,7 +50,7 @@ public class DataManager extends TimerTask {
 
 		//Start cleansing utility
 		try {
-			new CleanseUtil();
+			new CleanseUtil(instance);
 		} catch (Exception e) {
 			Util.severe(e.getMessage());
 			Util.severe("Unable to start cleansing utility - check your cleanse age");
@@ -294,6 +294,9 @@ public class DataManager extends TimerTask {
 								  "KEY `x_y_z` (`x`,`y`,`z`)" +
 								  ");");
 			}
+			
+			//TODO: Some older mysql's still use MyISAM as the Default database
+			//stmnt.execute("ALTER TABLE " + Config.DbHawkEyeTable + " ENGINE = InnoDB;");
 			
 			if(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "date") && !(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "timestamp"))) {
 				Util.info("Attempting to update HawkEye's MySQL tables....");

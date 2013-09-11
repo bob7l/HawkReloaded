@@ -3,12 +3,14 @@ package uk.co.oliwali.HawkEye.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import org.bukkit.Bukkit;
 
+import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -18,9 +20,10 @@ import uk.co.oliwali.HawkEye.util.Util;
  * This class should be run on a {Timer} in a separate thread
  * @author oliverw92
  */
-public class CleanseUtil extends TimerTask {
+public class CleanseUtil implements Runnable {
 
 	private String date = null;
+	private String actions = "";
 	private int interval = 1200;
 
 	/**
@@ -28,7 +31,7 @@ public class CleanseUtil extends TimerTask {
 	 * Throws exception if there are any errors processing the config time value
 	 * @throws Exception
 	 */
-	public CleanseUtil() throws Exception {
+	public CleanseUtil(HawkEye hawk) throws Exception {
 
 		//Check for invalid ages/periods
 		List<String> arr = Arrays.asList(new String[]{"0", "0s"});
@@ -59,11 +62,18 @@ public class CleanseUtil extends TimerTask {
 		}
 		if (temp > 0) interval = temp;
 
+		if (!Config.CleanseActions.isEmpty()) {
+			List<Integer> acs = new ArrayList<Integer>();
+			for (String st : Config.CleanseActions) {
+				DataType dt = DataType.fromName(st);
+				if (dt != null) acs.add(dt.getId());
+			}
+			if (acs.size() >= 1) actions = " AND action IN (" + Util.join(acs, ",") + ");";
+		}
+
 		//Start timer
 		Util.info("Starting database cleanse thread with a period of " + interval + " seconds");
-		DataManager.cleanseTimer = new Timer();
-		DataManager.cleanseTimer.scheduleAtFixedRate(this, 0, interval * 1000);
-
+        DataManager.cleanseTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(HawkEye.instance, this, interval * 20L, interval * 20L);
 	}
 
 	/**
@@ -75,7 +85,7 @@ public class CleanseUtil extends TimerTask {
 		Util.info("Running cleanse utility for logs older than " + date);
 		JDCConnection conn = null;
 		PreparedStatement stmnt = null;
-		String sql = "DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'";
+		String sql = "DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'" + actions;
 		try {
 			ageToDate();
 			conn = DataManager.getConnection();
@@ -85,8 +95,7 @@ public class CleanseUtil extends TimerTask {
 			Util.info("Deleted " + stmnt.executeUpdate() + " row(s) from database");
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
-		}
-		finally {
+		} finally {
 			try {
 				if (stmnt != null)
 					stmnt.close();
