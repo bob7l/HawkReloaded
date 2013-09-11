@@ -141,13 +141,20 @@ public class SearchParser {
 							worldedit = true;
 							minLoc = new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(), sel.getMinimumPoint().getZ());
 							maxLoc = new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(), sel.getMaximumPoint().getZ());
+						} else if (values[0].equals("*")) {
+							if (!player.hasPermission("hawkeye.override"))
+								throw new IllegalArgumentException("You do not have permission to override the MaxRadius!");
+							radius = -1;
 						} else {
 							throw new IllegalArgumentException("Invalid radius supplied: &7" + values[0]);
 						}
+
 					} else {
 						radius = Integer.parseInt(values[0]);
 						if (Config.MaxRadius != 0 && radius > Config.MaxRadius)
 							throw new IllegalArgumentException("Radius too large, max allowed: &7" + Config.MaxRadius);
+						if (radius < 0)
+							throw new IllegalArgumentException("Radius too small");
 					}
 				}
 				//Time
@@ -248,7 +255,7 @@ public class SearchParser {
 		if (radius == null && Config.MaxRadius != 0) radius = Config.MaxRadius;
 
 		//If the radius is set we need to format the min and max locations
-		if (radius != null) {
+		if (radius != null && radius > 0) {
 
 			//Check if location and world are supplied
 			if (loc == null) loc = ((Player) player).getLocation().toVector();
