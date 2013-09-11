@@ -27,7 +27,6 @@ public class SearchQuery extends Thread {
 	private final SearchDir dir;
 	private final BaseCallback callBack;
 	private final boolean delete;
-	private final long time = System.currentTimeMillis();
 
 	public SearchQuery(BaseCallback callBack, SearchParser parser, SearchDir dir) {
 		this.callBack = callBack;
@@ -196,7 +195,6 @@ public class SearchQuery extends Thread {
 				DataEntry entry = null;
 
 				//Retrieve results
-				Util.info("Time: " + (System.currentTimeMillis() - time));
 				while (res.next()) {
 					type = DataType.fromId(res.getInt(4));
 					entry = (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3),
@@ -243,7 +241,6 @@ public class SearchQuery extends Thread {
 
 		callBack.execute();
 
-		Util.info("Time: " + (System.currentTimeMillis() - time));
 		Util.debug("Search complete");
 
 	}
