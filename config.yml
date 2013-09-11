@@ -68,6 +68,8 @@ general:
     simplify-time: true
     log-delay: 2
     max-write-logs: 5000
+    default-edit-speed: 200
+    max-edit-speed: 1000
 mysql:
     hawkeye-table: hawkeye
     port: 3306

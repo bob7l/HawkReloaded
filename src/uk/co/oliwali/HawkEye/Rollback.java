@@ -27,6 +27,7 @@ public class Rollback implements Runnable {
 	private Iterator<DataEntry> rollbackQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
 	private int timerID;
+	private int speed = Config.DefaultEditSpeed;
 	private RollbackType rollbackType = RollbackType.GLOBAL;
 
 	/**
@@ -36,9 +37,10 @@ public class Rollback implements Runnable {
 
 		this.rollbackType = rollbackType;
 		this.session = session;
+		this.speed = session.getEditSpeed();
 		session.setRollbackType(rollbackType);
 		rollbackQueue = session.getRollbackResults().iterator();
-
+		
 		//Check that we actually have results
 		if (!rollbackQueue.hasNext()) {
 			Util.sendMessage(session.getSender(), "&cNo results found to rollback");
@@ -62,7 +64,7 @@ public class Rollback implements Runnable {
 
 		//Start rollback process
 		int i = 0;
-		while (i < 200 && rollbackQueue.hasNext()) {
+		while (i < speed && rollbackQueue.hasNext()) {
 			i++;
 
 			DataEntry entry = rollbackQueue.next();
@@ -101,6 +103,7 @@ public class Rollback implements Runnable {
 			Collections.reverse(undo); //Reverse the order so we properly undo the rollback!
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
+			session.setEditSpeed(Config.DefaultEditSpeed);
 
 			//Store undo results and notify player
 			if (rollbackType == RollbackType.GLOBAL) {

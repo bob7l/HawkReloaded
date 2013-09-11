@@ -23,6 +23,8 @@ public class PlayerSession {
 	private boolean doingRollback = false;
 	private String[] toolCommand = Config.DefaultToolCommand;
 	private boolean inPreview = false;
+	private int editspeed = Config.DefaultEditSpeed;
+
 
 	public PlayerSession(CommandSender sender) {
 		this.sender = sender;
@@ -85,5 +87,10 @@ public class PlayerSession {
 	public void setInPreview(boolean inPreview) {
 		this.inPreview = inPreview;
 	}
-
+	public void setEditSpeed(int editspeed) {
+		this.editspeed = editspeed;
+	}
+	public int getEditSpeed() {
+		return editspeed;
+	}
 }

@@ -13,6 +13,7 @@ import org.bukkit.block.BlockState;
 
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
+import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
@@ -26,6 +27,7 @@ public class Rebuild implements Runnable {
 	private Iterator<DataEntry> rebuildQueue;
 	private final List<DataEntry> undo = new ArrayList<DataEntry>();
 	private int timerID;
+    private int speed = Config.DefaultEditSpeed;
 	private int counter = 0;
 
 	/**
@@ -34,6 +36,7 @@ public class Rebuild implements Runnable {
 	public Rebuild(PlayerSession session) {
 
 		this.session = session;
+		this.speed = session.getEditSpeed();
 		session.setRollbackType(RollbackType.REBUILD);
 		rebuildQueue = session.getRollbackResults().iterator();
 
@@ -59,7 +62,7 @@ public class Rebuild implements Runnable {
 
 		//Start rebuild process
 		int i = 0;
-		while (i < 200 && rebuildQueue.hasNext()) {
+		while (i < speed && rebuildQueue.hasNext()) {
 			i++;
 
 			DataEntry entry = rebuildQueue.next();
@@ -79,8 +82,9 @@ public class Rebuild implements Runnable {
             BlockState state = block.getState();
             
 			undo.add(entry);
-			entry.rebuild(block);
 			entry.setUndoState(state);
+			
+			entry.rebuild(block);
 			
 			counter++;
 		}
@@ -94,6 +98,7 @@ public class Rebuild implements Runnable {
 			Collections.reverse(undo); //Reverse the order so we properly undo the rollback!
 			session.setDoingRollback(false);
 			session.setRollbackResults(undo);
+			session.setEditSpeed(Config.DefaultEditSpeed);
 
 			Util.sendMessage(session.getSender(), "&cRebuild complete, &7" + counter + "&c edits performed");
 			Util.sendMessage(session.getSender(), "&cUndo this rebuild using &7/hawk undo");

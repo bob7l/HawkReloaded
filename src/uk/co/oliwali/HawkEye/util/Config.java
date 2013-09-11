@@ -25,6 +25,8 @@ public class Config {
 	public static int MaxLines = 0;
 	public static int MaxRadius;
 	public static int DefaultHereRadius;
+	public static int DefaultEditSpeed;
+	public static int MaxEditSpeed;
 	public static ItemStack ToolBlock;
 	public static String[] DefaultToolCommand;
 	public static String CleanseAge;
@@ -79,6 +81,8 @@ public class Config {
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");
 		MaxLog = config.getInt("general.max-write-logs");
+		DefaultEditSpeed = config.getInt("general.default-edit-speed");
+		MaxEditSpeed = config.getInt("general.max-edit-speed");
 		DefaultHereRadius = config.getInt("general.default-here-radius");
 		ToolBlock = BlockUtil.itemStringToStack(config.getString("general.tool-block"), 1);
 		DefaultToolCommand = config.getString("general.default-tool-command").split(" ");
