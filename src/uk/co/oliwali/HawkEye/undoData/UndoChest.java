@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye.undoData;
 
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,9 @@ public class UndoChest extends UndoBlock {
 
 	public UndoChest(BlockState state) {
 		super(state);
+		
 		ItemStack[] tmp = ((InventoryHolder) state).getInventory().getContents();
+		if (state instanceof Chest) ((Chest) state).getBlockInventory(); //Chests are special!
 
 		final int len = tmp.length;
 
@@ -28,7 +31,8 @@ public class UndoChest extends UndoBlock {
 		if (is != null && state != null) {
 			state.update(true);
 			Inventory inv2 = ((InventoryHolder) state.getBlock().getState()).getInventory();
-			inv2.setContents(is);
+			if (state instanceof Chest) ((Chest) state).getBlockInventory().setContents(is); //Chests are special!
+			else inv2.setContents(is);
 		}
 	}
 }
