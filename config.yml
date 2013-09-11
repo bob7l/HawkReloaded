@@ -11,7 +11,7 @@ log:
     quit: false
     door-interact: false
     open-container: false
-    container-transaction: true
+    container-transaction: false
     item-pickup: false
     item-drop: false
     button: false
