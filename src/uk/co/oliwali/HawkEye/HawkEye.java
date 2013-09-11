@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -176,7 +177,16 @@ public class HawkEye extends JavaPlugin {
 
 		if (worldEdit != null)  {
 			if (DataType.SUPER_PICKAXE.isLogged()) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
-			if (DataType.WORLDEDIT_BREAK.isLogged() || DataType.WORLDEDIT_PLACE.isLogged()) WESessionFactory.enableWELogging();
+			
+			//This makes sure we OVERRIDE any other plugin that tried to register a EditSessionFactory!
+			if (DataType.WORLDEDIT_BREAK.isLogged() || DataType.WORLDEDIT_PLACE.isLogged()) {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+					@Override
+					public void run() {
+						WESessionFactory.enableWELogging();
+					}
+				}, 2L);
+			}
 		}
 	}
 
