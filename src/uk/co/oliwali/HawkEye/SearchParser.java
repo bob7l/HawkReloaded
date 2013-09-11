@@ -115,6 +115,15 @@ public class SearchParser {
 						actions.add(type);
 					}
 				}
+				// EditSpeed
+				else if (lastParam.equals("s")) {
+					if (!Util.isInteger(values[0])) throw new IllegalArgumentException("Invalid edit-speed supplied: &7" + values[0]);
+					
+					int speed = Integer.parseInt(values[0]);
+					
+					if (speed > Config.MaxEditSpeed) throw new IllegalArgumentException("Max edit-speed: &7" + Config.MaxEditSpeed);
+					SessionManager.getSession(player).setEditSpeed(speed);
+				}
 				// Location
 				else if (lastParam.equals("l") && player instanceof Player) {
 					if (values[0].equalsIgnoreCase("here"))
