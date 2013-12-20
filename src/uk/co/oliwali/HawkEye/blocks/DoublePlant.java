@@ -15,7 +15,7 @@ public class DoublePlant extends Default {
 	public void logAttachedBlocks(Block b, Player p, DataType type) {
 		Block b2 = b.getRelative(BlockFace.UP);
 
-		if (b.getType() == Material.DOUBLE_PLANT) {
+		if (b2.getType() == Material.DOUBLE_PLANT) {
 			DataManager.addEntry(new BlockEntry(p, type, b2));
 		} else {
 			b2 = b.getRelative(BlockFace.DOWN);
