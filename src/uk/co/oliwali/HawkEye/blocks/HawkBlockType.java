@@ -15,6 +15,7 @@ public class HawkBlockType {
 	public static final SignBlock sign = new SignBlock();
 	public static final PistonBlock piston = new PistonBlock();
 	public static final LeafBlock leaf = new LeafBlock();
+	public static final DoublePlant doubleplant = new DoublePlant();
 
 	public static HawkBlock getHawkBlock(int i) {
 		switch (i) {
@@ -130,6 +131,8 @@ public class HawkBlockType {
 		case 33:
 		case 34:
 			return piston;
+		case 175:
+			return doubleplant;
 
 		default: return Default;
 		}
