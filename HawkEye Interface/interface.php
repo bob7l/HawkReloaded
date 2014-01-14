@@ -137,13 +137,9 @@
 			$data["keywords"][$key] = "'%" . $val . "%'";
 		}
 		if($data["block"] != "00") //again, if a block, do a REGEXP
-        {
             array_push($args, "`data` REGEXP " . join(" OR `data` REGEXP ", $data["keywords"]));
-        }
 		else //if dealing with an entered string, do a LIKE seach with the already completed %% request
-        {
             array_push($args, "`data` LIKE " . join(" OR `data` LIKE ", $data["keywords"]));
-        }
 	}
 	if ($data["exclude"][0] != "") {
 		foreach ($data["exclude"] as $key => $val)
