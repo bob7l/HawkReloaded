@@ -119,8 +119,7 @@
 		array_push($args, "`timestamp` <= '" . $data["dateTo"] . "'");
 	if ($data["keywords"][0] != "") {
 		foreach ($data["keywords"] as $key => $val)
-		//check if dealing with a block, or an entered string
-		if($data["block"] != "00")
+		if($data["block"] != "00") //check if dealing with a block, or an entered string
 		{
 			//In SQL syntax, %SEARCH_STRING%, % matches everything, even digits.
 			//regexp is needed to avoid matching 156 for a 56 search.
@@ -137,11 +136,14 @@
 		{
 			$data["keywords"][$key] = "'%" . $val . "%'";
 		}
-		if($data["block"] != "00")
-		{ //again, if a block, do a REGEXP
-		array_push($args, "`data` REGEXP " . join(" OR `data` REGEXP ", $data["keywords"]));
-		} //if dealing with an entered string, do a LIKE seach with the already completed %% request
-		else array_push($args, "`data` LIKE " . join(" OR `data` LIKE ", $data["keywords"]));
+		if($data["block"] != "00") //again, if a block, do a REGEXP
+        {
+            array_push($args, "`data` REGEXP " . join(" OR `data` REGEXP ", $data["keywords"]));
+        }
+		else //if dealing with an entered string, do a LIKE seach with the already completed %% request
+        {
+            array_push($args, "`data` LIKE " . join(" OR `data` LIKE ", $data["keywords"]));
+        }
 	}
 	if ($data["exclude"][0] != "") {
 		foreach ($data["exclude"] as $key => $val)
