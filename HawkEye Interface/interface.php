@@ -137,7 +137,6 @@
 		{
 			$data["keywords"][$key] = "'%" . $val . "%'";
 		}
-		
 		if($data["block"] != "00")
 		{ //again, if a block, do a REGEXP
 		array_push($args, "`data` REGEXP " . join(" OR `data` REGEXP ", $data["keywords"]));
