@@ -23,7 +23,7 @@ public class ToolListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (event.getItemInHand().equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
+		if (event.getItemInHand().getType().equals(Config.ToolBlock.getType()) && SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, event.getBlock());
 			if (player.getGameMode() == GameMode.SURVIVAL)
 				player.updateInventory();
