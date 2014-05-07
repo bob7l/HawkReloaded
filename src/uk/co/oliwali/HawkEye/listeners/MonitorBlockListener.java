@@ -52,27 +52,19 @@ public class MonitorBlockListener extends HawkEyeListener {
 
 		if (hb instanceof SignBlock && DataType.SIGN_BREAK.isLogged())
 			DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
-		
+
 		else DataManager.addEntry(new BlockEntry(player, DataType.BLOCK_BREAK, block));
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Block block = event.getBlock();
-		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST || Config.BlockFilter.contains(block.getTypeId())) return;
+		Block b = event.getBlock();
+		
+		if (b.getType() == Material.WALL_SIGN || b.getType() == Material.SIGN_POST || Config.BlockFilter.contains(b.getTypeId())) return;
 
-		// Temporary Stair Fix (Delays the storing of the block until the actual data has been applied to the block)
-		final BlockPlaceEvent finalEvent = event;
-		HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
-			@Override
-			public void run() {
-				Block b = finalEvent.getBlock();
-				DataManager.addEntry(new BlockChangeEntry(finalEvent.getPlayer(), (b.getType().equals(Material.FIRE)) ? DataType.FLINT_AND_STEEL : DataType.BLOCK_PLACE, b.getLocation(), finalEvent.getBlockReplacedState(), b.getState()));
-			}
-		}, 1L);
-		return;
+		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), (b.getType().equals(Material.FIRE)) ? DataType.FLINT_AND_STEEL : DataType.BLOCK_PLACE, b.getLocation(), event.getBlockReplacedState(), b.getState()));
 	}
-	
+
 	@HawkEvent(dataType = DataType.SIGN_PLACE)
 	public void onSignChange(SignChangeEvent event) {
 		DataManager.addEntry(new SignEntry(event.getPlayer().getName(), DataType.SIGN_PLACE, event.getBlock(), event.getLines()));
