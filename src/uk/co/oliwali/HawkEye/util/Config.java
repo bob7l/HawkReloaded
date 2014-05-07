@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
@@ -27,7 +24,7 @@ public class Config {
 	public static int DefaultHereRadius;
 	public static int DefaultEditSpeed;
 	public static int MaxEditSpeed;
-	public static ItemStack ToolBlock;
+	public static Material ToolBlock;
 	public static String[] DefaultToolCommand;
 	public static String CleanseAge;
 	public static String CleansePeriod;
@@ -84,7 +81,7 @@ public class Config {
 		DefaultEditSpeed = config.getInt("general.default-edit-speed");
 		MaxEditSpeed = config.getInt("general.max-edit-speed");
 		DefaultHereRadius = config.getInt("general.default-here-radius");
-		ToolBlock = BlockUtil.itemStringToStack(config.getString("general.tool-block"), 1);
+		ToolBlock = Material.getMaterial(Integer.parseInt(config.getString("general.tool-block")));
 		DefaultToolCommand = config.getString("general.default-tool-command").split(" ");
 		CleanseAge = config.getString("general.cleanse-age");
 		CleansePeriod = config.getString("general.cleanse-period");
@@ -112,9 +109,6 @@ public class Config {
 		logDoubleChest = config.getBoolean("containertransaction-filter.doublechest");
 		logFurnace = config.getBoolean("containertransaction-filter.furnace");
 		logDispenser = config.getBoolean("containertransaction-filter.dispenser");
-        ItemMeta m = ToolBlock.getItemMeta();
-        m.setDisplayName(ChatColor.GOLD + "HawkEye Tool");
-        ToolBlock.setItemMeta(m);
 		try {
 			DebugLevel = Util.DebugLevel.valueOf(config.getString("general.debug-level").toUpperCase());
 		} catch (Exception ex) {

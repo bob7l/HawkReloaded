@@ -34,7 +34,7 @@ public class ToolManager {
 
 		Inventory inv = player.getInventory();
 		session.setUsingTool(true);
-		ItemStack stack = Config.ToolBlock;
+		ItemStack stack = new ItemStack(Config.ToolBlock);
 
 		//If player doesn't have a tool, give them one if enabled in config
 		if (!inv.contains(stack) && Config.GiveTool) {
@@ -44,9 +44,10 @@ public class ToolManager {
 			else inv.setItem(first, stack);
 		}
 
+
 		//If they aren't holding a tool, move the tool to their hand
 		int first = inv.first(stack);
-		if (!player.getItemInHand().equals(stack) && first != -1){
+		if (player.getItemInHand().getType() != Config.ToolBlock && first != -1){
 			ItemStack back = player.getItemInHand().clone();
 			player.setItemInHand(inv.getItem(first));
 			if (back.getAmount() == 0) inv.clear(first);
@@ -64,7 +65,6 @@ public class ToolManager {
 	 */
 	public static void disableTool(PlayerSession session, Player player) {
 		session.setUsingTool(false);
-		player.getInventory().remove(Config.ToolBlock);
 		Util.sendMessage(player, "&cHawkEye tool disabled");
 	}
 
