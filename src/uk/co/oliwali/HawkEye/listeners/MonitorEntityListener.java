@@ -7,9 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.TNTPrimed;
@@ -32,7 +30,6 @@ import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.EntityEntry;
-import uk.co.oliwali.HawkEye.entry.HangingEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.EntityUtil;
@@ -127,48 +124,18 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
 	public void onPaintingBreak(HangingBreakEvent event) {
+		
 		if (event.getCause().equals(RemoveCause.ENTITY)) return;
-		Entity e = event.getEntity();
-		int face = 0;
-		int type = 0;
-		int extra = 0;
-
-		if (e instanceof ItemFrame) {
-			ItemFrame frame = (ItemFrame) e;
-			type = 389;
-			face = EntityUtil.getFace(frame.getAttachedFace());
-			
-			extra = frame.getItem().getTypeId();
-		} else if (e instanceof Painting) {
-			Painting paint = (Painting) e;
-			type = 321;
-			face = EntityUtil.getFace(paint.getAttachedFace());
-			extra = paint.getArt().getId();
-		} else return;
-		DataManager.addEntry(new HangingEntry(event.getCause().name(), DataType.ITEM_BREAK, e.getLocation().getBlock().getLocation(), type, face, extra));
+		
+		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), event.getCause().name()));
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
 	public void onPaintingBreak(HangingBreakByEntityEvent event) {
-		Entity e = event.getEntity();
-		int face = 0;
-		int type = 0;
-		int extra = 0;
-
+		
 		if (!(event.getRemover() instanceof Player)) return;
-
-		if (e instanceof ItemFrame) {
-			ItemFrame frame = (ItemFrame) e;
-			type = 389;
-			face = EntityUtil.getFace(frame.getAttachedFace());
-			extra = frame.getItem().getTypeId();
-		} else if (e instanceof Painting) {
-			Painting paint = (Painting) e;
-			type = 321;
-			face = EntityUtil.getFace(paint.getAttachedFace());
-			extra = paint.getArt().getId();
-		} else return;
-		DataManager.addEntry(new HangingEntry((Player) event.getRemover(), DataType.ITEM_BREAK, e.getLocation().getBlock().getLocation(), type, face, extra));
+		
+		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), EntityUtil.entityToString(event.getRemover())));
 	}
 
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
@@ -187,23 +154,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ITEM_PLACE)
 	public void onHangingPlace(HangingPlaceEvent event) {
-		Entity e = event.getEntity();
-		int face = 0;
-		int type = 0;
-		int extra = 0;
-		
-		if (e instanceof ItemFrame) {
-			ItemFrame frame = (ItemFrame) e;
-			type = 389;
-			face = EntityUtil.getFace(frame.getAttachedFace());
-			extra = frame.getItem().getTypeId();
-		} else if (e instanceof Painting) {
-			Painting paint = (Painting) e;
-			type = 321;
-			face = EntityUtil.getFace(paint.getAttachedFace());
-			extra = paint.getArt().getId();
-		} else return;
-		DataManager.addEntry(new HangingEntry(event.getPlayer(), DataType.ITEM_PLACE, e.getLocation().getBlock().getLocation(), type, face, extra));
+		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_PLACE, event.getEntity(), EntityUtil.entityToString(event.getPlayer())));
 	}
 
 	@HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})
