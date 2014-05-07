@@ -97,7 +97,7 @@ public class JDCConnection implements Connection
 		return conn.createStruct(typeName, attributes);
 	}
 
-	@Override
+    @Override
 	public boolean getAutoCommit() throws SQLException {
 		return conn.getAutoCommit();
 	}
