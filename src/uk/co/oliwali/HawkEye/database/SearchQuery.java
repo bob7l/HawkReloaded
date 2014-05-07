@@ -167,7 +167,7 @@ public class SearchQuery extends Thread {
 
 		//Set up some stuff for the search
 		ResultSet res = null;
-		List<DataEntry> results = new ArrayList<DataEntry>();
+		ArrayList<DataEntry> results = new ArrayList<DataEntry>();
 		JDCConnection conn = DataManager.getConnection();
 		PreparedStatement stmnt = null;
 		int deleted = 0;
