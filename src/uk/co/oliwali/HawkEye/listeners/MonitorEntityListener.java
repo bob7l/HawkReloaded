@@ -30,6 +30,7 @@ import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.entry.EntityEntry;
+import uk.co.oliwali.HawkEye.entry.HangingEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.EntityUtil;
@@ -124,18 +125,24 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
 	public void onPaintingBreak(HangingBreakEvent event) {
-		
+
 		if (event.getCause().equals(RemoveCause.ENTITY)) return;
-		
-		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), event.getCause().name()));
+
+		HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), event.getCause().name());
+
+		if (he != null)
+			DataManager.addEntry(he);
 	}
 
 	@HawkEvent(dataType = DataType.ITEM_BREAK) 
 	public void onPaintingBreak(HangingBreakByEntityEvent event) {
-		
+
 		if (!(event.getRemover() instanceof Player)) return;
-		
-		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), EntityUtil.entityToString(event.getRemover())));
+
+		HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), EntityUtil.entityToString(event.getRemover()));
+
+		if (he != null)
+			DataManager.addEntry(he);
 	}
 
 	@HawkEvent(dataType = DataType.ENTITY_MODIFY) 
@@ -154,7 +161,10 @@ public class MonitorEntityListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.ITEM_PLACE)
 	public void onHangingPlace(HangingPlaceEvent event) {
-		DataManager.addEntry(EntityUtil.getHangingEntry(DataType.ITEM_PLACE, event.getEntity(), EntityUtil.entityToString(event.getPlayer())));
+		HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_PLACE, event.getEntity(), EntityUtil.entityToString(event.getPlayer()));
+
+		if (he != null)
+			DataManager.addEntry(he);
 	}
 
 	@HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})
