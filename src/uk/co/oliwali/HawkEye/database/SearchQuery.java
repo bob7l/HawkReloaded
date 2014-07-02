@@ -64,9 +64,11 @@ public class SearchQuery extends Thread {
 				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
 					String name = entry.getKey().toLowerCase();
 
-					if (name.equals(player.replace("*", ""))) 
+					if (name.equals(player))
 						pids.add(entry.getValue());
-					else if (name.contains(player))
+					else if (name.equals(player.replace("!", "").replace("*", "")))
+						npids.add(entry.getValue());
+					else if (name.contains(player.replace("*", "")))
 						pids.add(entry.getValue());
 					else if (name.contains(player.replace("!", "")))
 						npids.add(entry.getValue());
