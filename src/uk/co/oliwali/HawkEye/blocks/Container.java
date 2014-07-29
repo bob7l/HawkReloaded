@@ -43,6 +43,6 @@ public class Container implements HawkBlock {
 	
 	@Override
 	public boolean isAttached() {
-		return true;
+		return false;
 	}
 }
