@@ -89,9 +89,10 @@ command-filter:
 - /register
 - /spawn
 block-filter:
-- 567
+- 0
 containertransaction-filter:
     chest: true
     doublechest: true
     furnace: true
     dispenser: true
+    hopper: true

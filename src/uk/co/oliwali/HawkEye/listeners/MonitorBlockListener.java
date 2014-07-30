@@ -3,6 +3,7 @@ package uk.co.oliwali.HawkEye.listeners;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -13,6 +14,10 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -22,9 +27,11 @@ import uk.co.oliwali.HawkEye.blocks.SignBlock;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
+import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
 /**
  * Block listener class for HawkEye
@@ -98,5 +105,24 @@ public class MonitorBlockListener extends HawkEyeListener {
 		Location loc = event.getBlock().getLocation();
 		if (ig.equals(IgniteCause.FLINT_AND_STEEL)) return;
 		DataManager.addEntry(new SimpleRollbackEntry("Environment", DataType.BLOCK_IGNITE, loc, ig.name()));
+	}
+
+	@HawkEvent(dataType = DataType.CONTAINER_TRANSACTION) 
+	public void onHopperTransfer(InventoryMoveItemEvent event) {
+		
+		if (!Config.LogHopper) return;
+		
+		InventoryHolder from =  event.getSource().getHolder();
+		InventoryHolder to = event.getDestination().getHolder();
+		ItemStack item = event.getItem();
+
+		if (!(from instanceof Hopper) && InventoryUtil.isHolderValid(from)) { //Items being removed from inventory block
+			DataManager.addEntry(new ContainerEntry("Environment", InventoryUtil.getHolderLoc(from), InventoryUtil.compressItem(item, false)));
+		}
+
+		if (!(to instanceof Hopper) && InventoryUtil.isHolderValid(to)) { //Items being added to inventory block
+			DataManager.addEntry(new ContainerEntry("Environment", InventoryUtil.getHolderLoc(to), InventoryUtil.compressItem(item, true)));
+		}
+		
 	}
 }

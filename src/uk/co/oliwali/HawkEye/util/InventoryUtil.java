@@ -9,7 +9,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.Hopper;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +21,7 @@ import uk.co.oliwali.HawkEye.entry.ContainerEntry;
 
 public class InventoryUtil {
 
-	public static HashMap<String,Integer> compressInventory(ItemStack[] inventory) {
+	public static HashMap<String,Integer> compressInventory(ItemStack... inventory) {
 		HashMap<String,Integer> items = new HashMap<String,Integer>();
 		for (ItemStack item : inventory) {
 			if (item == null) continue;
@@ -36,6 +38,18 @@ public class InventoryUtil {
 		}
 		return items;
 	}
+
+	public static String compressItem(ItemStack item, boolean isPositive) {
+		String enchantments = "";
+		Map<Enchantment, Integer> enchants = item.getEnchantments();
+		if (!enchants.isEmpty()) {
+			for (Entry<Enchantment, Integer> entry : enchants.entrySet()) {
+				enchantments = enchantments + "-" + Enchantment.getByName(entry.getKey().getName()).getId() + "x" + entry.getValue();
+			}
+		}
+		return (isPositive?"+":"-") + BlockUtil.getItemString(item) + enchantments + "~" + item.getAmount();
+	}
+
 
 	public static ItemStack uncompressItem(String data) {
 		data = data.substring(1);
@@ -125,6 +139,7 @@ public class InventoryUtil {
 		if (holder instanceof DoubleChest) return ((DoubleChest)holder).getLocation().getBlock().getLocation(); //Need the block location
 		if (holder instanceof Furnace) return ((Furnace)holder).getLocation();
 		if (holder instanceof Dispenser) return ((Dispenser)holder).getLocation();
+		if (holder instanceof Hopper) return ((Hopper)holder).getLocation();
 		return null;
 	}
 
@@ -132,7 +147,8 @@ public class InventoryUtil {
 		if (holder instanceof Chest) return Config.logChest;
 		if (holder instanceof DoubleChest) return Config.logDoubleChest;
 		if (holder instanceof Furnace) return Config.logFurnace;
-		if (holder instanceof Dispenser)return Config.logDispenser;
+		if (holder instanceof Dispenser || holder instanceof Dropper) return Config.logDispenser;
+		if (holder instanceof Hopper) return Config.LogHopper;
 		return false;
 	}
 

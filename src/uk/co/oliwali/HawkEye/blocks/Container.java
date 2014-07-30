@@ -38,7 +38,7 @@ public class Container implements HawkBlock {
 
 	@Override
 	public boolean isTopBlock() {
-		return true;
+		return false;
 	}
 	
 	@Override
