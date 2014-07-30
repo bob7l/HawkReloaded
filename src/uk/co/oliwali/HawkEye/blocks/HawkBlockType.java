@@ -26,6 +26,8 @@ public class HawkBlockType {
 		case 61:
 		case 62:
 		case 23:
+		case 158:
+		case 154:
 			return container;
 		case 63:
 		case 68:
@@ -118,9 +120,7 @@ public class HawkBlockType {
 		case 138:
 		case 144:
 		case 151:
-		case 154:
 		case 156:
-		case 158:
 		case 397:
 		case 380:
 		case 379:
