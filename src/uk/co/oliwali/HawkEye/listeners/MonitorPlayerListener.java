@@ -193,7 +193,6 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		String player = event.getPlayer().getName();
 		InventoryHolder holder = event.getInventory().getHolder();
 		if (InventoryUtil.isHolderValid(holder)) {
-			if (HawkEye.InvSession.containsKey(player)) HawkEye.InvSession.remove(player);
 			HawkEye.InvSession.put(player, InventoryUtil.compressInventory(holder.getInventory().getContents()));
 		}
 	}
