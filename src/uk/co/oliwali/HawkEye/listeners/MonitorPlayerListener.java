@@ -180,11 +180,13 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	public void onInventoryClose(InventoryCloseEvent event) {
 		String player = event.getPlayer().getName();
 		InventoryHolder holder = event.getInventory().getHolder();
+		
 		if (InventoryUtil.isHolderValid(holder) && HawkEye.InvSession.containsKey(player)) {
 			String data = InventoryUtil.compareInvs(HawkEye.InvSession.get(player), InventoryUtil.compressInventory(holder.getInventory().getContents()));
+			HawkEye.InvSession.remove(player);
+			
 			if (data == null) return;
 			DataManager.addEntry(new ContainerEntry(event.getPlayer().getName(), InventoryUtil.getHolderLoc(holder), data));
-			HawkEye.InvSession.remove(player);
 		}
 	}
 
@@ -192,6 +194,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	public void onInventoryClose(InventoryOpenEvent event) {
 		String player = event.getPlayer().getName();
 		InventoryHolder holder = event.getInventory().getHolder();
+		
 		if (InventoryUtil.isHolderValid(holder)) {
 			HawkEye.InvSession.put(player, InventoryUtil.compressInventory(holder.getInventory().getContents()));
 		}
