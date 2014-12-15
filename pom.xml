@@ -8,13 +8,7 @@
 	<description>Bukkit data logging plugin with web-based data browser</description>
 
 	<repositories>
-		<!-- Bukkit -->
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-
-		<!-- WorldEdit -->
+		<!-- WorldEdit / Bukkit -->
 		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
@@ -25,7 +19,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.9-R0.1-SNAPSHOT</version>
+			<version>1.7.10-R0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
