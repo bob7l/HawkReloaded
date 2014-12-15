@@ -12,7 +12,6 @@ public class BedBlock implements HawkBlock {
 	public void Restore(Block b, int id, int data) {
 		if (data > 7) return;
 		
-		b.setTypeIdAndData(id, ((byte)data), false);
 		int beddata = 0;
 		Block bed = null;
 
@@ -35,6 +34,8 @@ public class BedBlock implements HawkBlock {
 		if (bed != null) {
 			bed.setTypeIdAndData(id, ((byte)beddata), false);
 		}
+		
+		b.setTypeIdAndData(id, ((byte)data), false);
 	}
 
 	@Override
