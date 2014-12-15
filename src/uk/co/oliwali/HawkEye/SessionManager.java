@@ -51,4 +51,10 @@ public class SessionManager {
 		return session;
 	}
 
+	/**
+	 * Removes a PlayerSession to avoid memory leaks
+	 */
+	public static void removeSession(CommandSender player) {
+		playerSessions.remove(player.getName());
+	}
 }
