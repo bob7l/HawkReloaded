@@ -240,7 +240,7 @@ public class HawkEye extends JavaPlugin {
 						if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) continue outer;
 					return command.run(this, sender, args, commandLabel);
 				}
-			new HelpCommand().run(this, sender, args, commandLabel);
+			commands.get(0).run(this, sender, args, commandLabel);
 			return true;
 		}
 		return false;
