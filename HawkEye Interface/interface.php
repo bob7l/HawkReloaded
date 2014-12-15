@@ -210,10 +210,14 @@
 						$item = explode("~", $change);
 						$itemblock = substr($item[0], 1);
 						
-						if (strpos($itemblock,"-") !== false) {
-                         $itemblock = explode("-", $itemblock);
-                        }
-						$change = $item[1] . "x " . getBlockName($itemblock[0]);
+                                               if (strpos($itemblock,"-") !== false) {
+                                                        $itemblock = explode("-", $itemblock);
+                                                        $change = $item[1] . "x " . getBlockName($itemblock[0]);
+                                                }
+                                                else {
+                                                        $change = $item[1] . "x " . getBlockName($itemblock);
+                                                }
+                                                
 						if (substr($item[0], 0, 1) == "-") $changeString = $changeString.", ".'<span style="color: red">'.$change.'</span>';
 						else  $changeString = $changeString.", ".'<span style="color: green">'.$change.'</span>';
 					
