@@ -45,6 +45,7 @@ public class Config {
 	public static boolean logFurnace;
 	public static boolean logDispenser;
 	public static boolean LogHopper;
+	public static boolean LogDropper;
 	public static int LogDelay;
 	public static int MaxLog;
 	public static String DbUrl;
@@ -111,6 +112,7 @@ public class Config {
 		logFurnace = config.getBoolean("containertransaction-filter.furnace");
 		logDispenser = config.getBoolean("containertransaction-filter.dispenser");
 		LogHopper = config.getBoolean("containertransaction-filter.hopper");
+		LogDropper = config.getBoolean("containertransaction-filter.dropper");
 		try {
 			DebugLevel = Util.DebugLevel.valueOf(config.getString("general.debug-level").toUpperCase());
 		} catch (Exception ex) {

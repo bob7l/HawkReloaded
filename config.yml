@@ -96,3 +96,4 @@ containertransaction-filter:
     furnace: true
     dispenser: true
     hopper: true
+    dropper: true

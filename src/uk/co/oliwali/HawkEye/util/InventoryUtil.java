@@ -135,11 +135,12 @@ public class InventoryUtil {
 	}
 
 	public static Location getHolderLoc(InventoryHolder holder) {
-		if (holder instanceof Chest) return ((Chest)holder).getLocation();
 		if (holder instanceof DoubleChest) return ((DoubleChest)holder).getLocation().getBlock().getLocation(); //Need the block location
-		if (holder instanceof Furnace) return ((Furnace)holder).getLocation();
-		if (holder instanceof Dispenser) return ((Dispenser)holder).getLocation();
-		if (holder instanceof Hopper) return ((Hopper)holder).getLocation();
+
+		if (holder instanceof BlockState) {
+			return ((BlockState)holder).getLocation();
+		}
+
 		return null;
 	}
 
@@ -147,8 +148,9 @@ public class InventoryUtil {
 		if (holder instanceof Chest) return Config.logChest;
 		if (holder instanceof DoubleChest) return Config.logDoubleChest;
 		if (holder instanceof Furnace) return Config.logFurnace;
-		if (holder instanceof Dispenser || holder instanceof Dropper) return Config.logDispenser;
+		if (holder instanceof Dispenser) return Config.logDispenser;
 		if (holder instanceof Hopper) return Config.LogHopper;
+		if (holder instanceof Dropper) return Config.LogDropper;
 		return false;
 	}
 
