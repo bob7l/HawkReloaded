@@ -49,8 +49,7 @@ public class HawkEyeAPI {
 
 		if (entry.getClass() != entry.getType().getEntryClass()) return false;
 		if (entry.getPlayer() == null) return false;
-
-		entry.setPlugin(plugin.getDescription().getName());
+		
 		DataManager.addEntry(entry);
 		return true;
 

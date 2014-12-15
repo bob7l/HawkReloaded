@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
@@ -52,24 +54,33 @@ public class SearchQuery extends Thread {
 			sql = "SELECT * FROM ";
 
 		sql += "`" + Config.DbHawkEyeTable + "` WHERE ";
+		
 		List<String> args = new LinkedList<String>();
 		List<Object> binds = new LinkedList<Object>();
 
 		//Match players from database list
 		Util.debug("Building players");
 		if (parser.players.size() >= 1) {
+			
 			List<Integer> pids = new ArrayList<Integer>();
 			List<Integer> npids = new ArrayList<Integer>();
+			
 			for (String player : parser.players) {
+				
+				boolean ignoredUser = player.contains("!");
+				boolean specificUser = player.contains("*");
+				
+				player = player.replace("!", "").replace("*", "");
+				
 				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
-					String name = entry.getKey().toLowerCase();
-
-					if (name.equals(player.replace("*", ""))) 
-						pids.add(entry.getValue());
-					else if (name.contains(player))
-						pids.add(entry.getValue());
-					else if (name.contains(player.replace("!", "")))
-						npids.add(entry.getValue());
+					
+					 if ( (specificUser ? entry.getKey().equalsIgnoreCase(player) : StringUtils.containsIgnoreCase(entry.getKey(), player)) ) {
+						 
+						 if (ignoredUser)
+							 npids.add(entry.getValue());
+						 else
+							 pids.add(entry.getValue()); 
+					 }
 				}
 			}
 			//Include players
@@ -202,7 +213,6 @@ public class SearchQuery extends Thread {
 																		res.getInt(1),
 																		res.getInt(4),
 																		res.getString(9),
-																		res.getString(10),
 																		res.getInt(5),
 																		res.getInt(6),
 																		res.getInt(7),

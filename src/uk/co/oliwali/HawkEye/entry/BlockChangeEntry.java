@@ -21,8 +21,8 @@ public class BlockChangeEntry extends DataEntry {
 	private String from = null;
 	private String to = null;
 	
-	public BlockChangeEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
-		super(playerId, timestamp, dataId, typeId, plugin, worldId, x, y ,z);
+	public BlockChangeEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
+		super(playerId, timestamp, dataId, typeId, worldId, x, y ,z);
 		interpretSqlData(data);
 	}
 
@@ -116,6 +116,7 @@ public class BlockChangeEntry extends DataEntry {
 		if (data.indexOf("-") == -1) {
 			from = null;
 			to = data;
+			System.out.print("test");
 		}
 		else {
 			from = data.substring(0, data.indexOf("-"));

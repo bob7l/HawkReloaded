@@ -18,10 +18,10 @@ public class BlockEntry extends DataEntry {
 
 	public BlockEntry() { }
 
-	public BlockEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) { 
-		super(playerId, timestamp, dataId, typeId, data, plugin, worldId, x, y ,z);
+	public BlockEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
+		super(playerId, timestamp, dataId, typeId, data, worldId, x, y ,z);
 	}
-
+	
 	public BlockEntry(String player, DataType type, Block block) {
 		setInfo(player, type, block.getLocation());
 		data = BlockUtil.getBlockString(block);

@@ -9,7 +9,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.database.DataManager;
@@ -24,7 +23,6 @@ import uk.co.oliwali.HawkEye.util.Util;
  * @author oliverw92
  */
 public class DataEntry {
-	private String plugin = null;
 
     private int dataId;
 
@@ -48,13 +46,12 @@ public class DataEntry {
 
     public DataEntry() { }
 
-    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, String plugin, int worldId, int x, int y, int z) {
+    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) {
     	// TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
     	this.player = DataManager.getPlayer(playerId);
     	this.timestamp = timestamp;
     	this.dataId = dataId;
     	this.type = DataType.fromId(typeId);;
-    	this.plugin = plugin;
     	this.world = DataManager.getWorld(worldId);
     	this.x = x;
     	this.y = y;
@@ -62,12 +59,11 @@ public class DataEntry {
     	this.data = data;
     }
 
-    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String plugin, int worldId, int x, int y, int z) {
+    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, int worldId, int x, int y, int z) {
     	this.player = DataManager.getPlayer(playerId);
     	this.timestamp = timestamp;
     	this.dataId = dataId;
     	this.type = DataType.fromId(typeId);;
-    	this.plugin = plugin;
     	this.world = DataManager.getWorld(worldId);
     	this.x = x;
     	this.y = y;
@@ -82,13 +78,6 @@ public class DataEntry {
     	setInfo(player, type, loc);
     	setData(data);
     }
-
-	public void setPlugin(String plugin) {
-		this.plugin = plugin;
-	}
-    public String getPlugin() {
-		return plugin;
-	}
 
 	public void setDataId(int dataId) {
 		this.dataId = dataId;
@@ -241,16 +230,10 @@ public class DataEntry {
 	public void setInfo(Player player, DataType type, Location loc) {
 		setInfo(player.getName(), type, loc);
 	}
+	
 	public void setInfo(String player, DataType type, Location loc) {
-		setInfo(player, "HawkEye", type, loc);
-	}
-	public void setInfo(String player, JavaPlugin instance, DataType type, Location loc) {
-		setInfo(player, instance.getDescription().getName(), type, loc);
-	}
-	public void setInfo(String player, String instance, DataType type, Location loc) {
 		loc = Util.getSimpleLocation(loc);
 	    setTimestamp(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-	    setPlugin(instance);
 		setPlayer(player);
 		setType(type);
 		setWorld(loc.getWorld().getName());

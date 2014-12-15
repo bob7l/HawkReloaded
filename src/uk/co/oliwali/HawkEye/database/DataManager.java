@@ -242,6 +242,20 @@ public class DataManager implements Runnable {
 	}
 
 	/**
+	 * Updates a table based on params - Only use on mass changes 
+	 */
+	private void updateTables(String table, String columns, Statement stmnt, String sql) {
+		try {
+			stmnt.execute(sql);//This is where you create the table - use new + tablename! 
+			stmnt.execute("INSERT INTO `new" + table + "` (" + columns + ") SELECT " + columns + " FROM `" + table + "`;");
+			stmnt.execute("RENAME TABLE `" + table + "` TO `old" + table + "`, `new" + table + "` TO `" + table + "`;");
+			stmnt.execute("DROP TABLE `old" + table + "`;");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Checks that all tables are up to date and exist
 	 * @return true on success, false on failure
 	 */
@@ -258,58 +272,95 @@ public class DataManager implements Runnable {
 			if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
 				Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable + "` (" +
-						"`player_id` int(11) NOT NULL AUTO_INCREMENT, " +
-						"`player` varchar(255) NOT NULL, " +
+						"`player_id` int(6) NOT NULL AUTO_INCREMENT, " +
+						"`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
 						"PRIMARY KEY (`player_id`), " +
 						"UNIQUE KEY `player` (`player`)" +
-						");");
+						") COLLATE latin1_general_ci, ENGINE = INNODB;");
 			}
+			
 			if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
 				Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable + "` (" +
-								"`world_id` int(11) NOT NULL AUTO_INCREMENT, " +
-								"`world` varchar(255) NOT NULL, " +
+								"`world_id` int(3) NOT NULL AUTO_INCREMENT, " +
+								"`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
 								"PRIMARY KEY (`world_id`), " +
 								"UNIQUE KEY `world` (`world`)" +
-								");");
+								") COLLATE latin1_general_ci, ENGINE = INNODB;");
 			}
+				
 			if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE `" + Config.DbHawkEyeTable + "` (" +
-								  "`data_id` int(11) NOT NULL AUTO_INCREMENT," +
+								  "`data_id` int(10) NOT NULL AUTO_INCREMENT," +
 								  "`timestamp` datetime NOT NULL," +
-								  "`player_id` int(11) NOT NULL," +
-								  "`action` int(11) NOT NULL," +
-								  "`world_id` varchar(255) NOT NULL," +
-								  "`x` double NOT NULL," +
-								  "`y` double NOT NULL," +
-								  "`z` double NOT NULL," +
-								  "`data` varchar(500) DEFAULT NULL," +
-								  "`plugin` varchar(255) DEFAULT 'HawkEye'," +
+								  "`player_id` int(6) NOT NULL," +
+								  "`action` int(3) NOT NULL," +
+								  "`world_id` int(3) NOT NULL," +
+								  "`x` int(11) NOT NULL," +
+								  "`y` int(11) NOT NULL," +
+								  "`z` int(11) NOT NULL," +
+								  "`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
 								  "PRIMARY KEY (`data_id`)," +
 								  "KEY `timestamp` (`timestamp`)," +
 								  "KEY `player` (`player_id`)," +
 								  "KEY `action` (`action`)," +
 								  "KEY `world_id` (`world_id`)," +
 								  "KEY `x_y_z` (`x`,`y`,`z`)" +
-								  ");");
-			}
-			
-			//TODO: Some older mysql's still use MyISAM as the Default database
-			//stmnt.execute("ALTER TABLE " + Config.DbHawkEyeTable + " ENGINE = InnoDB;");
-			
-			if(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "date") && !(JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "timestamp"))) {
-				Util.info("Attempting to update HawkEye's MySQL tables....");
-				Util.info("This could take 1-30 minutes! Do not restart!");
-				stmnt.execute("ALTER TABLE `" + Config.DbHawkEyeTable + "`" +
-								" CHANGE COLUMN `date` `timestamp` TIMESTAMP NOT NULL" +  
-								", ADD INDEX `timestamp` (`timestamp` DESC)" +
-								", ADD INDEX `player` (`player_id` ASC)" + 
-								", ADD INDEX `action` (`action` ASC)" + 
-								", ADD INDEX `world_id` (`world_id` ASC)" + 
-								", DROP INDEX `player_action_world`;");
+						") COLLATE latin1_general_ci, ENGINE = INNODB;");
 			}
 
+			//Here is were the table alterations take place (Aside from alters from making tables)
+
+			ResultSet rs = stmnt.executeQuery("SHOW FIELDS FROM `" + Config.DbHawkEyeTable + "` where Field ='x'");
+
+			//Older hawkeye versions x = double, and contains the column "plugin"
+			if (rs.next() && !rs.getString(2).contains("int") || JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "plugin")) {
+
+				Util.info("Updating " + Config.DbPlayerTable + "...");
+
+				updateTables(Config.DbPlayerTable, "`player_id`,`player`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbPlayerTable + "` (" +
+						"`player_id` int(6) NOT NULL AUTO_INCREMENT, " +
+						"`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+						"PRIMARY KEY (`player_id`), " +
+						"UNIQUE KEY `player` (`player`)" +
+						");");
+
+
+				Util.info("Updating " + Config.DbWorldTable + "...");
+
+				updateTables(Config.DbWorldTable, "`world_id`,`world`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbWorldTable + "` (" +
+						"`world_id` int(3) NOT NULL AUTO_INCREMENT, " +
+						"`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+						"PRIMARY KEY (`world_id`), " +
+						"UNIQUE KEY `world` (`world`)" +
+						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+
+
+				Util.info("Updating " + Config.DbHawkEyeTable + "...");
+
+				updateTables(Config.DbHawkEyeTable, "`data_id`,`timestamp`,`player_id`,`action`,`world_id`,`x`,`y`,`z`,`data`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbHawkEyeTable + "` (" +
+						"`data_id` int(10) NOT NULL AUTO_INCREMENT," +
+						"`timestamp` datetime NOT NULL," +
+						"`player_id` int(6) NOT NULL," +
+						"`action` int(3) NOT NULL," +
+						"`world_id` int(3) NOT NULL," +
+						"`x` int(11) NOT NULL," +
+						"`y` int(11) NOT NULL," +
+						"`z` int(11) NOT NULL," +
+						"`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
+						"PRIMARY KEY (`data_id`)," +
+						"KEY `timestamp` (`timestamp`)," +
+						"KEY `player` (`player_id`)," +
+						"KEY `action` (`action`)," +
+						"KEY `world_id` (`world_id`)," +
+						"KEY `x_y_z` (`x`,`y`,`z`)" +
+						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+				
+				Util.info("Finished!");
+
+			}
+			
 		} catch (SQLException ex) {
 			Util.severe("Error checking HawkEye tables: " + ex);
 			return false;
@@ -326,21 +377,22 @@ public class DataManager implements Runnable {
 		return true;
 
 	}
-
 	/**
 	 * Empty the {@link DataEntry} queue into the database
 	 */
 	@Override
 	public void run() {
 		if (queue.isEmpty()) return;
+		
 		if (queue.size() > 70000)
 			Util.info("The queue is almost overloaded! Queue: " + queue.size());
+		
 		JDCConnection conn = getConnection();
 		PreparedStatement stmnt = null;
 		try {
 			conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
 			
-			stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			
 			for (int i = 0; i < queue.size(); i++) {
 				DataEntry entry = queue.poll();
@@ -368,13 +420,13 @@ public class DataManager implements Runnable {
 				stmnt.setDouble(6, entry.getY());
 				stmnt.setDouble(7, entry.getZ());
 				stmnt.setString(8, entry.getSqlData());
-				stmnt.setString(9, entry.getPlugin());
-				if (entry.getDataId() > 0) stmnt.setInt(10, entry.getDataId());
-				else stmnt.setInt(10, 0); //0 is better then setting it to null, like before
+				if (entry.getDataId() > 0) stmnt.setInt(9, entry.getDataId());
+				else stmnt.setInt(9, 0); //0 is better then setting it to null, like before
 				stmnt.addBatch();
 
 				if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
 			}
+			
 			stmnt.executeBatch();
 			conn.commit();
 			conn.setAutoCommit(true); //Enable when commit is over (We need this to properly use batch!)
