@@ -165,7 +165,7 @@ public class DataManager implements Runnable {
 	 */
 	public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
 		DataType type = DataType.fromId(res.getInt(4));
-		return (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getString(10), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
+		return (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
 	}
 
 	/**
