@@ -309,7 +309,10 @@ public class DataManager implements Runnable {
 								  "KEY `x_y_z` (`x`,`y`,`z`)" +
 						") COLLATE latin1_general_ci, ENGINE = INNODB;");
 			}
-
+			
+			stmnt.execute("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
+			stmnt.execute("SET GLOBAL sync_binlog = 0");
+			
 			//Here is were the table alterations take place (Aside from alters from making tables)
 
 			ResultSet rs = stmnt.executeQuery("SHOW FIELDS FROM `" + Config.DbHawkEyeTable + "` where Field ='x'");
