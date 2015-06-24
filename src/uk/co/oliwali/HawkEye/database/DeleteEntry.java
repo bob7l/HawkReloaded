@@ -8,6 +8,15 @@ import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//TODO: Optimize this class ~bob7l                                                     //
+//Atm the deletions are done completely on a single thread and the process is          //
+//pretty resource intensive. Need to find a better way to delete data/index's without  //
+//the resource hog. Will more then likely take the easy route and implement a sleeper  //
+//or timer to space out batch executions.                                              //
+/////////////////////////////////////////////////////////////////////////////////////////
+
 public class DeleteEntry implements Runnable {
 
 	private final List<Integer> ids = new ArrayList<Integer>();
