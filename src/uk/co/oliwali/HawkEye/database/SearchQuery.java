@@ -44,16 +44,14 @@ public class SearchQuery extends Thread {
 	 */
 	@Override
 	public void run() {
-
+		
 		Util.debug("Beginning search query");
-		String sql;
+		
+		StringBuilder sql = new StringBuilder();
 
-		if (delete)
-			sql = "DELETE FROM ";
-		else
-			sql = "SELECT * FROM ";
-
-		sql += "`" + Config.DbHawkEyeTable + "` WHERE ";
+		sql.append( (delete ? "DELETE FROM " : "SELECT * FROM ") );
+		
+		sql.append("`" + Config.DbHawkEyeTable + "` WHERE ");
 		
 		List<String> args = new LinkedList<String>();
 		List<Object> binds = new LinkedList<Object>();
@@ -163,16 +161,16 @@ public class SearchQuery extends Thread {
 		}
 
 		//Build WHERE clause
-		sql += Util.join(args, " AND ");
+		sql.append(Util.join(args, " AND "));
 
 		//Add order by
 		Util.debug("Ordering by data_id");
-		sql += " ORDER BY `data_id` " + (dir == SearchDir.DESC ? "DESC" : "ASC");
+		sql.append(" ORDER BY `data_id` ").append(dir == SearchDir.DESC ? "DESC" : "ASC");
 
 		//Check the limits
 		Util.debug("Building limits");
 		if (Config.MaxLines > 0)
-			sql += " LIMIT " + Config.MaxLines;
+			sql.append(" LIMIT ").append(Config.MaxLines);
 
 		//Util.debug("Searching: " + sql);
 
@@ -184,9 +182,10 @@ public class SearchQuery extends Thread {
 		int deleted = 0;
 
 		try {
+			
 			conn.setAutoCommit(false);
 			//Execute query
-			stmnt = conn.prepareStatement(sql);
+			stmnt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
 			Util.debug("Preparing statement");
 			for (int i = 0; i < binds.size(); i++)
@@ -204,7 +203,7 @@ public class SearchQuery extends Thread {
 
 				DataType type = null;
 				DataEntry entry = null;
-
+				
 				//Retrieve results
 				while (res.next()) {
 					type = DataType.fromId(res.getInt(4));
@@ -222,6 +221,7 @@ public class SearchQuery extends Thread {
 			}
 			 conn.commit();
 			conn.setAutoCommit(true);
+
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
 			ex.printStackTrace();
@@ -263,7 +263,7 @@ public class SearchQuery extends Thread {
 		ASC,
 		DESC
 	}
-
+	
 	/**
 	 * Enumeration for query errors
 	 */
