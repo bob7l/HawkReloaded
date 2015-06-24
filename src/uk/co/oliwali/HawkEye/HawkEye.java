@@ -81,8 +81,9 @@ public class HawkEye extends JavaPlugin {
 		if (dbmanager != null) {
 			
 			dbmanager.run();
+			
 			if (!ConnectionManager.getConnections().isEmpty()) {
-				while (ConnectionManager.areConsOpen()) {
+				while (dbmanager.isInsertThreadBusy() || ConnectionManager.areConsOpen()) {
 					Util.debug("Not ready");
 					if (DataManager.getQueue().size() != 0) {
 						dbmanager.run();
