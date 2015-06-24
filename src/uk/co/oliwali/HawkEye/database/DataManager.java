@@ -32,6 +32,8 @@ public class DataManager implements Runnable {
 	public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
 
+	private boolean threadbusy = false;
+	
 	/**
 	 * Initiates database connection pool, checks tables, starts cleansing utility
 	 * Throws an exception if it is unable to complete setup
@@ -310,9 +312,13 @@ public class DataManager implements Runnable {
 						") COLLATE latin1_general_ci, ENGINE = INNODB;");
 			}
 			
-			stmnt.execute("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
-			stmnt.execute("SET GLOBAL sync_binlog = 0");
-			
+			//This will print an error if the user does not have SUPER privilege
+			try {
+				stmnt.execute("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
+				stmnt.execute("SET GLOBAL sync_binlog = 0");
+			} catch (Exception e) { }
+
+
 			//Here is were the table alterations take place (Aside from alters from making tables)
 
 			ResultSet rs = stmnt.executeQuery("SHOW FIELDS FROM `" + Config.DbHawkEyeTable + "` where Field ='x'");
@@ -385,7 +391,9 @@ public class DataManager implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (queue.isEmpty()) return;
+		if (threadbusy || queue.isEmpty()) return;
+		
+		threadbusy = true;
 		
 		if (queue.size() > 70000)
 			Util.info("The queue is almost overloaded! Queue: " + queue.size());
@@ -396,7 +404,7 @@ public class DataManager implements Runnable {
 			conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
 			
 			stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-			
+
 			for (int i = 0; i < queue.size(); i++) {
 				DataEntry entry = queue.poll();
 				
@@ -444,6 +452,12 @@ public class DataManager implements Runnable {
 			} catch (Exception ex) {
 				Util.severe("Unable to close SQL connection: " + ex);
 			}
+			
+			threadbusy = false;
 		}
+	}
+	
+	public boolean isInsertThreadBusy() {
+		return threadbusy;
 	}
 }
