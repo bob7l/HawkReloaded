@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Properties;
 
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -76,7 +77,12 @@ public class ConnectionManager implements Closeable {
 			}
 		}
 		Util.debug("No available MySQL connections, attempting to create new one");
-		conn = new JDCConnection(DriverManager.getConnection(url, user, password));
+		Properties info = new Properties();
+		info.put("user", user);
+		info.put("password", password);
+		info.put("useUnicode", "true");
+		info.put("characterEncoding", "utf8");
+		conn = new JDCConnection(DriverManager.getConnection(url, info));
 		conn.lease();
 		if (!conn.isValid()) {
 			conn.terminate();
