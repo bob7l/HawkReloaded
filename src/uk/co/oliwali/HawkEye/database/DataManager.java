@@ -275,20 +275,20 @@ public class DataManager implements Runnable {
 				Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable + "` (" +
 						"`player_id` int(6) NOT NULL AUTO_INCREMENT, " +
-						"`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+						"`player` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, " +
 						"PRIMARY KEY (`player_id`), " +
 						"UNIQUE KEY `player` (`player`)" +
-						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+						") COLLATE utf8_general_ci, ENGINE = INNODB;");
 			}
 			
 			if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
 				Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable + "` (" +
 								"`world_id` int(3) NOT NULL AUTO_INCREMENT, " +
-								"`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+								"`world` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, " +
 								"PRIMARY KEY (`world_id`), " +
 								"UNIQUE KEY `world` (`world`)" +
-								") COLLATE latin1_general_ci, ENGINE = INNODB;");
+								") COLLATE utf8_general_ci, ENGINE = INNODB;");
 			}
 				
 			if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
@@ -302,14 +302,14 @@ public class DataManager implements Runnable {
 								  "`x` int(11) NOT NULL," +
 								  "`y` int(11) NOT NULL," +
 								  "`z` int(11) NOT NULL," +
-								  "`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
+								  "`data` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL," +
 								  "PRIMARY KEY (`data_id`)," +
 								  "KEY `timestamp` (`timestamp`)," +
 								  "KEY `player` (`player_id`)," +
 								  "KEY `action` (`action`)," +
 								  "KEY `world_id` (`world_id`)," +
 								  "KEY `x_y_z` (`x`,`y`,`z`)" +
-						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+						") COLLATE utf8_general_ci, ENGINE = INNODB;");
 			}
 			
 			//This will print an error if the user does not have SUPER privilege
@@ -330,7 +330,7 @@ public class DataManager implements Runnable {
 
 				updateTables(Config.DbPlayerTable, "`player_id`,`player`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbPlayerTable + "` (" +
 						"`player_id` int(6) NOT NULL AUTO_INCREMENT, " +
-						"`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+						"`player` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, " +
 						"PRIMARY KEY (`player_id`), " +
 						"UNIQUE KEY `player` (`player`)" +
 						");");
@@ -340,10 +340,10 @@ public class DataManager implements Runnable {
 
 				updateTables(Config.DbWorldTable, "`world_id`,`world`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbWorldTable + "` (" +
 						"`world_id` int(3) NOT NULL AUTO_INCREMENT, " +
-						"`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
+						"`world` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, " +
 						"PRIMARY KEY (`world_id`), " +
 						"UNIQUE KEY `world` (`world`)" +
-						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+						") COLLATE utf8_general_ci, ENGINE = INNODB;");
 
 
 				Util.info("Updating " + Config.DbHawkEyeTable + "...");
@@ -357,14 +357,14 @@ public class DataManager implements Runnable {
 						"`x` int(11) NOT NULL," +
 						"`y` int(11) NOT NULL," +
 						"`z` int(11) NOT NULL," +
-						"`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
+						"`data` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL," +
 						"PRIMARY KEY (`data_id`)," +
 						"KEY `timestamp` (`timestamp`)," +
 						"KEY `player` (`player_id`)," +
 						"KEY `action` (`action`)," +
 						"KEY `world_id` (`world_id`)," +
 						"KEY `x_y_z` (`x`,`y`,`z`)" +
-						") COLLATE latin1_general_ci, ENGINE = INNODB;");
+						") COLLATE utf8_general_ci, ENGINE = INNODB;");
 				
 				Util.info("Finished!");
 
