@@ -189,7 +189,13 @@ public class HawkEye extends JavaPlugin {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 					@Override
 					public void run() {
-						WESessionFactory.enableWELogging();
+						try {
+							Class.forName("com.sk89q.worldedit.extent.logging.AbstractLoggingExtent");
+							new WESessionFactory();
+						} catch (ClassNotFoundException ex) {
+							Util.warning("[!] Failed to initialize WorldEdit logging [!]");
+							Util.warning("[!] Please upgrade WorldEdit to 6.0+       [!]");
+						}
 					}
 				}, 2L);
 			}
