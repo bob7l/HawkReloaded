@@ -403,7 +403,7 @@ public class DataManager implements Runnable {
 		try {
 			conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
 			
-			stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			for (int i = 0; i < queue.size(); i++) {
 				DataEntry entry = queue.poll();
@@ -444,6 +444,7 @@ public class DataManager implements Runnable {
 
 		} catch (Exception ex) {
 			Util.warning(ex.getMessage());
+			ex.printStackTrace();
 		} finally {
 			try {
 				if (stmnt != null)
@@ -451,6 +452,7 @@ public class DataManager implements Runnable {
 				conn.close();
 			} catch (Exception ex) {
 				Util.severe("Unable to close SQL connection: " + ex);
+				ex.printStackTrace();
 			}
 			
 			threadbusy = false;

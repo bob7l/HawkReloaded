@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
 
 import uk.co.oliwali.HawkEye.util.Config;
@@ -22,8 +23,7 @@ public class ConnectionManager implements Closeable {
 	private static Vector<JDCConnection> connections;
 	private final ConnectionReaper reaper;
 	private final String url;
-	private final String user;
-	private final String password;
+	private final Properties prop;
 
 	/**
 	 * Creates the connection manager and starts the reaper
@@ -36,8 +36,16 @@ public class ConnectionManager implements Closeable {
 		Class.forName("com.mysql.jdbc.Driver");
 		Util.debug("Attempting to connecting to database at: " + url);
 		this.url = url;
-		this.user = user;
-		this.password = password;
+		
+		this.prop = new Properties();
+		
+		prop.put("user", user);
+		prop.put("password", password);
+		prop.put("rewriteBatchedStatements", "true");
+		prop.put("prepStmtCacheSize", "275");
+		prop.put("prepStmtCacheSqlLimit", "2048");
+		prop.put("cachePrepStmts", "true");
+		
 		poolsize = Config.PoolSize;
 		connections = new Vector<JDCConnection>(poolsize);
 		reaper = new ConnectionReaper();
@@ -76,7 +84,7 @@ public class ConnectionManager implements Closeable {
 			}
 		}
 		Util.debug("No available MySQL connections, attempting to create new one");
-		conn = new JDCConnection(DriverManager.getConnection(url, user, password));
+		conn = new JDCConnection(DriverManager.getConnection(url, prop));
 		conn.lease();
 		if (!conn.isValid()) {
 			conn.terminate();
