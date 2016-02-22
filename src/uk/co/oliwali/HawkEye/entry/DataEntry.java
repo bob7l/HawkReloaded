@@ -7,7 +7,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import uk.co.oliwali.HawkEye.DataType;
-import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.undoData.UndoBlock;
 import uk.co.oliwali.HawkEye.undoData.UndoChest;
 import uk.co.oliwali.HawkEye.undoData.UndoSign;
@@ -60,14 +59,17 @@ public class DataEntry {
         this(player, new Timestamp(Calendar.getInstance().getTimeInMillis()), type, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
 
-    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) {
-        this(playerId, timestamp, dataId, typeId, worldId, x, y, z);
+    /**
+     * Used to construct a DataEntry using information obtained from the database
+     * This constructor is currently only used by DataType (Cached this constructor using reflection)
+     */
+    public DataEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
+        this(player, timestamp, dataId, type, world, x, y, z);
         this.data = data;
     }
 
-    public DataEntry(int playerId, Timestamp timestamp, int dataId, int typeId, int worldId, int x, int y, int z) {
-        // TODO: Optimize DataType.fromId(), DataManager.getPlayer(), DataManager.getWorld();
-        this(DataManager.getPlayer(playerId), timestamp, DataType.fromId(typeId), DataManager.getWorld(worldId), x, y, z);
+    public DataEntry(String player, Timestamp timestamp, int dataId, DataType type, String world, int x, int y, int z) {
+        this(player, timestamp, type, world, x, y, z);
         this.dataId = dataId;
     }
 

@@ -14,8 +14,8 @@ import java.sql.Timestamp;
  */
 public class HangingEntry extends DataEntry {
 
-	public HangingEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
-		super(playerId, timestamp, dataId, typeId, data, worldId, x, y ,z);
+	public HangingEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
+		super(player, timestamp, dataId, type, data, world, x, y, z);
 	}
 
 	public HangingEntry() { }

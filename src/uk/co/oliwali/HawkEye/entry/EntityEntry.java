@@ -15,8 +15,8 @@ public class EntityEntry extends DataEntry {
 
 	public EntityEntry() { }
 
-	public EntityEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
-		super(playerId, timestamp, dataId, typeId, data, worldId, x, y ,z);
+	public EntityEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
+		super(player, timestamp, dataId, type, data, world, x, y, z);
 	}
 	
 	public EntityEntry(String player, DataType type, Location loc, String data) {

@@ -1,15 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
@@ -17,6 +8,11 @@ import uk.co.oliwali.HawkEye.callbacks.DeleteCallback;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Threadable class for performing a search query
@@ -165,7 +161,7 @@ public class SearchQuery extends Thread {
 
 		//Add order by
 		Util.debug("Ordering by data_id");
-		sql.append(" ORDER BY `data_id` ").append(dir == SearchDir.DESC ? "DESC" : "ASC");
+		sql.append(" ORDER BY `data_id` ").append(dir.toString());
 
 		//Check the limits
 		Util.debug("Building limits");
@@ -201,25 +197,54 @@ public class SearchQuery extends Thread {
 
 				Util.debug("Getting results");
 
-				DataType type = null;
+				//Results are cached to prevent constant massive hashmap lookups from DataManager
+				HashMap<Integer, String> dbPlayers = new HashMap<Integer, String>();
+				HashMap<Integer, String> dbWorlds = new HashMap<Integer, String>();
+
+				//Default to BLOCK_BREAK, it's the first and most likely to be used so why not
+				DataType type = DataType.BLOCK_BREAK;
 				DataEntry entry = null;
+
+				String name = null;
+				String world = null;
 				
 				//Retrieve results
 				while (res.next()) {
-					type = DataType.fromId(res.getInt(4));
-					entry = (DataEntry)type.getEntryConstructor().newInstance(res.getInt(3),
-																		res.getTimestamp(2),
-																		res.getInt(1),
-																		res.getInt(4),
-																		res.getString(9),
-																		res.getInt(5),
-																		res.getInt(6),
-																		res.getInt(7),
-																		res.getInt(8));
+
+					if (type.getId() != res.getInt(4)) {
+						type = DataType.fromId(res.getInt(4));
+					}
+
+					name = dbPlayers.get(res.getInt(3));
+
+					world = dbWorlds.get(res.getInt(5));
+
+					if (name == null) {
+						name = DataManager.getPlayer(res.getInt(3));
+						dbPlayers.put(res.getInt(3), name);
+					}
+
+					if (world == null) {
+						world = DataManager.getWorld(res.getInt(5));
+						dbPlayers.put(res.getInt(5), world);
+					}
+
+					entry = (DataEntry) type.getEntryConstructor().newInstance(
+							name,
+							res.getTimestamp(2),
+							res.getInt(1),
+							type,
+							res.getString(9),
+							world,
+							res.getInt(6),
+							res.getInt(7),
+							res.getInt(8)
+					);
+
 					results.add(entry);
 				}
 			}
-			 conn.commit();
+			conn.commit();
 			conn.setAutoCommit(true);
 
 		} catch (Exception ex) {

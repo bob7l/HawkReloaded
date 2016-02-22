@@ -20,8 +20,9 @@ public class BlockChangeEntry extends DataEntry {
     private String from = null;
     private String to = null;
 
-    public BlockChangeEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) {
-        super(playerId, timestamp, dataId, typeId, worldId, x, y, z);
+
+    public BlockChangeEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
+        super(player, timestamp, dataId, type, world, x, y, z);
 
         String[] info = data.split("-");
 

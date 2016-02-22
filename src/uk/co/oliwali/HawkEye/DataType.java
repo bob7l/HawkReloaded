@@ -1,19 +1,12 @@
 package uk.co.oliwali.HawkEye;
 
+import uk.co.oliwali.HawkEye.entry.*;
+
 import java.lang.reflect.Constructor;
 import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
-import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
-import uk.co.oliwali.HawkEye.entry.BlockEntry;
-import uk.co.oliwali.HawkEye.entry.ContainerEntry;
-import uk.co.oliwali.HawkEye.entry.DataEntry;
-import uk.co.oliwali.HawkEye.entry.EntityEntry;
-import uk.co.oliwali.HawkEye.entry.HangingEntry;
-import uk.co.oliwali.HawkEye.entry.SignEntry;
-import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 
 /**
  * Enumeration class representing all the different actions that HawkEye can handle
@@ -92,7 +85,7 @@ public enum DataType {
 		}
 	}
 
-	private DataType(int id, Class<?> entryClass, String configName, boolean canHere, boolean canRollback) {
+	DataType(int id, Class<?> entryClass, String configName, boolean canHere, boolean canRollback) {
 		this.id = id;
 		this.entryClass = entryClass;
 		this.canHere = canHere;
@@ -101,7 +94,7 @@ public enum DataType {
 		this.isLogged = HawkEye.instance.getConfig().getBoolean("log." + configName);
 
 		try {
-			this.entryConstructor = entryClass.getConstructor(int.class, Timestamp.class, int.class, int.class, String.class, int.class, int.class, int.class, int.class);
+			this.entryConstructor = entryClass.getConstructor(String.class, Timestamp.class, int.class, DataType.class, String.class, String.class, int.class, int.class, int.class);
 		} catch (Exception e) { }  //This wont ever throw so no point in printing!
 	}
 

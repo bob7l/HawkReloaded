@@ -26,8 +26,8 @@ public class SignEntry extends DataEntry {
 	private boolean wallSign = true;
 	private String[] lines = new String[4];
 
-	public SignEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) {
-		super(playerId, timestamp, dataId, typeId, worldId, x, y ,z);
+	public SignEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
+        super(player, timestamp, dataId, type, world, x, y, z);
 
 		if (!data.contains("@")) return;
 
