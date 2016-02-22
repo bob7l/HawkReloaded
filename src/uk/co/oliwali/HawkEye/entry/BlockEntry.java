@@ -22,25 +22,25 @@ public class BlockEntry extends DataEntry {
 	}
 	
 	public BlockEntry(String player, DataType type, Block block) {
-		setInfo(player, type, block.getLocation());
-		data = BlockUtil.getBlockString(block);
+		this(player, type, block.getLocation(), BlockUtil.getBlockString(block));
 	}
+
 	public BlockEntry(Player player, DataType type, Block block) {
-		setInfo(player, type, block.getLocation());
-		data = BlockUtil.getBlockString(block);
+		this(player, type, block, block.getLocation());
 	}
 
-	public BlockEntry(Player player, DataType type, Block block, Location loc) {
-		setInfo(player, type, loc);
-		data = BlockUtil.getBlockString(block);
+	public BlockEntry(Player player, DataType type, Block block, Location l) {
+		this(player.getName(), type, l, BlockUtil.getBlockString(block));
 	}
 
-	public BlockEntry(String player, DataType type, int block, int blockdata, Location loc) {
-		setInfo(player, type, loc);
-        if (blockdata != 0) data = block + ":" + blockdata;
-        else data = Integer.toString(block);
+	public BlockEntry(String player, DataType type, int block, int blockdata, Location l) {
+		this(player, type, l, (blockdata > 0 ? block + ":" + blockdata : Integer.toString(block)));
 	}
-	
+
+	public BlockEntry(String player, DataType type, Location l,  String data) {
+		super(player, type, l, data);
+	}
+
 	@Override
 	public String getStringData() {
 		return BlockUtil.getBlockStringName(data);

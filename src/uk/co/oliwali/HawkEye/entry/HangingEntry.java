@@ -21,8 +21,7 @@ public class HangingEntry extends DataEntry {
 	public HangingEntry() { }
 
 	public HangingEntry(String player, DataType type, Location loc, int en, int da, int extra) {
-		setInfo(player, type, loc);
-		data = en + ":" + da + ":" + extra;
+		super(player, type, loc, (en + ":" + da + ":" + extra) );
 	}
 
 	@Override
@@ -47,4 +46,5 @@ public class HangingEntry extends DataEntry {
 	public boolean rebuild(Block block) {
 		return true;
 	}
+
 }

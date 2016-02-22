@@ -53,24 +53,21 @@ public class SignEntry extends DataEntry {
 	public SignEntry() { }
 
 	public SignEntry(Player player, DataType type, Block block) {
-		interpretSignBlock(block.getState());
-		setInfo(player, type, block.getLocation());
+		this(player.getName(), type, block);
 	}
 
 	public SignEntry(String player, DataType type, Block block) {
-		interpretSignBlock(block.getState());
-		setInfo(player, type, block.getLocation());
-	}
-	
-	public SignEntry(String player, DataType type, BlockState state) {
-		interpretSignBlock(state);
-		setInfo(player, type, state.getLocation());
+		this(player, type, block.getState());
 	}
 
-	public SignEntry(String player, DataType type, Block block, String[] lines) {
-		interpretSignBlock(block.getState());
-		this.lines = lines;
-		setInfo(player, type, block.getLocation());
+    public SignEntry(String player, DataType type, Block block, String[] lines) {
+        this(player, type, block.getState());
+        this.lines = lines;
+    }
+
+	public SignEntry(String player, DataType type, BlockState state) {
+		super(player, type, state.getLocation());
+		interpretSignBlock(state);
 	}
 
 	/**
@@ -96,8 +93,8 @@ public class SignEntry extends DataEntry {
 	@Override
 	public String getSqlData() {
 		if (data != null) return data;
-		List<String> encoded = new ArrayList<String>();
-		for (int i = 0; i < 4; i++) encoded.add((lines[i] == null)?"":Base64.encode(lines[i].getBytes()));
+		List<String> encoded = new ArrayList<String>(4);
+		for (int i = 0; i < 4; i++) encoded.add((lines[i] == null) ? "" : Base64.encode(lines[i].getBytes()));
 		return wallSign + "@" + facing + "@" + Util.join(encoded, ",");
 	}
 

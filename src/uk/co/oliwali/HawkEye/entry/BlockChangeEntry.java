@@ -44,6 +44,7 @@ public class BlockChangeEntry extends DataEntry {
     public BlockChangeEntry(Player player, DataType type, Location loc, String from, String to) {
         this(player.getName(), type, loc, from, to);
     }
+
     public BlockChangeEntry(String player, DataType type, Location loc, int blockfrom, int blockfromdata, int blockto, int blockdatato) {
         this(player, type, loc,
                 (blockfromdata > 0 ? blockfrom + ":" + blockfromdata : Integer.toString(blockfrom)),
@@ -55,7 +56,7 @@ public class BlockChangeEntry extends DataEntry {
     }
 
     public BlockChangeEntry(String player, DataType type, Location loc, String from, String to) {
-        setInfo(player, type, loc);
+        super(player, type, loc);
         this.from = from;
         this.to = to;
     }

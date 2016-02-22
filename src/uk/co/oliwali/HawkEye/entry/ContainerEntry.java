@@ -23,13 +23,12 @@ public class ContainerEntry extends DataEntry {
 
 	public ContainerEntry() { }
 
-	public ContainerEntry(Player player, Location location, String diff) {
-		data = diff;
-		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
+	public ContainerEntry(Player player, Location l, String data) {
+		this(player.getName(), l, data);
 	}
-	public ContainerEntry(String player, Location location, String diff) {
-		data = diff;
-		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
+
+	public ContainerEntry(String player, Location l, String data) {
+		super(player, DataType.CONTAINER_TRANSACTION, l, data);
 	}
 
 	@Override
@@ -41,9 +40,14 @@ public class ContainerEntry extends DataEntry {
 	@Override
 	public boolean rollback(Block block) {
 		BlockState blockState = block.getState();
+
 		if (!(blockState instanceof InventoryHolder)) return false;
+
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
-		if (data.contains("&")) data = InventoryUtil.updateInv(data); //For OLD entries
+
+		if (data.contains("&"))
+			data = InventoryUtil.updateInv(data); //For OLD entries
+
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.removeItem(InventoryUtil.uncompressItem(s));
@@ -51,15 +55,21 @@ public class ContainerEntry extends DataEntry {
 				inv.addItem(InventoryUtil.uncompressItem(s));
 			} else return false;
 		}
+
 		return true;
 	}
 
 	@Override
 	public boolean rebuild(Block block) {
 		BlockState blockState = block.getState();
+
 		if (!(blockState instanceof InventoryHolder)) return false;
+
 		Inventory inv = ((InventoryHolder) blockState).getInventory();
-		if (data.contains("&")) data = InventoryUtil.updateInv(data); //For OLD entries
+
+		if (data.contains("&"))
+			data = InventoryUtil.updateInv(data); //For OLD entries
+
 		for (String s : data.split("@")) {
 			if (s.startsWith("+")) {
 				inv.addItem(InventoryUtil.uncompressItem(s));
@@ -67,6 +77,7 @@ public class ContainerEntry extends DataEntry {
 				inv.removeItem(InventoryUtil.uncompressItem(s));
 			} else return false;
 		}
+
 		return true;
 	}
 }
