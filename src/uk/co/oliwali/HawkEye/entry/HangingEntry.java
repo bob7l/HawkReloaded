@@ -1,13 +1,12 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.sql.Timestamp;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.EntityUtil;
+
+import java.sql.Timestamp;
 /**
  * Represents a hanging-type entry in the database
  * Rollbacks will set the block to the data value
@@ -20,11 +19,6 @@ public class HangingEntry extends DataEntry {
 	}
 
 	public HangingEntry() { }
-
-	public HangingEntry(Player player, DataType type, Location loc, int en, int da, int extra) {
-		setInfo(player, type, loc);
-		data = en + ":" + da + ":" + extra;
-	}
 
 	public HangingEntry(String player, DataType type, Location loc, int en, int da, int extra) {
 		setInfo(player, type, loc);

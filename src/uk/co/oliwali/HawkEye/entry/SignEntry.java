@@ -26,9 +26,28 @@ public class SignEntry extends DataEntry {
 	private boolean wallSign = true;
 	private String[] lines = new String[4];
 
-	public SignEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
+	public SignEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) {
 		super(playerId, timestamp, dataId, typeId, worldId, x, y ,z);
-		interpretSqlData(data);
+
+		if (!data.contains("@")) return;
+
+		String[] arr = data.split("@");
+
+		//Parse wall sign or not
+		if (!arr[0].equals("true")) wallSign = false;
+
+		//Parse sign direction
+		for (BlockFace face : BlockFace.values())
+			if (face.toString().equalsIgnoreCase(arr[1])) facing = face;
+
+		//Parse lines
+		if (arr.length != 3) return;
+
+		String[] encLines = arr[2].split(",");
+
+		for (int i = 0; i < encLines.length; i++)
+			if (encLines[i] != null && !encLines[i].equals("")) lines[i] = new String(Base64.decode(encLines[i]));
+
 	}
 	
 	public SignEntry() { }
@@ -128,25 +147,4 @@ public class SignEntry extends DataEntry {
 
 	}
 
-	@Override
-	public void interpretSqlData(String data) {
-		if (!data.contains("@")) return;
-
-		String[] arr = data.split("@");
-
-		//Parse wall sign or not
-		if (!arr[0].equals("true")) wallSign = false;
-
-		//Parse sign direction
-		for (BlockFace face : BlockFace.values())
-			if (face.toString().equalsIgnoreCase(arr[1])) facing = face;
-
-		//Parse lines
-		if (arr.length != 3) return;
-
-		String[] encLines = arr[2].split(",");
-
-		for (int i = 0; i < encLines.length; i++)
-			if (encLines[i] != null && !encLines[i].equals("")) lines[i] = new String(Base64.decode(encLines[i]));
-	}
 }

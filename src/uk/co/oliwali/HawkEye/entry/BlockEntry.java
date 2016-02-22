@@ -1,13 +1,12 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.sql.Timestamp;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
+
+import java.sql.Timestamp;
 
 /**
  * Represents a block-type entry in the database
@@ -61,8 +60,7 @@ public class BlockEntry extends DataEntry {
 
 	@Override
 	public boolean rebuild(Block block) {
-		if (data == null) return false;
-		else block.setTypeId(0);
+		block.setTypeId(0);
 		return true;
 	}
 

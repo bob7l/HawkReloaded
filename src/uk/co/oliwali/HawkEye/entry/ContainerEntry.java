@@ -1,7 +1,5 @@
 package uk.co.oliwali.HawkEye.entry;
 
-import java.sql.Timestamp;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -11,6 +9,8 @@ import org.bukkit.inventory.InventoryHolder;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
+import java.sql.Timestamp;
+
 /**
  * Represents a container transaction as created in {@MonitorInventoryListener}
  * @author oliverw92
@@ -18,8 +18,7 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
 public class ContainerEntry extends DataEntry {
 	
 	public ContainerEntry(int playerId, Timestamp timestamp, int dataId, int typeId, String data, int worldId, int x, int y, int z) { 
-		super(playerId, timestamp, dataId, typeId, worldId, x, y ,z);
-		interpretSqlData(data);
+		super(playerId, timestamp, dataId, typeId, data, worldId, x, y ,z);
 	}
 
 	public ContainerEntry() { }
