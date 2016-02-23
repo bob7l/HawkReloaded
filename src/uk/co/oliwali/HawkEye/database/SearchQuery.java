@@ -29,49 +29,49 @@ public class SearchQuery extends Thread {
 	public SearchQuery(BaseCallback callBack, SearchParser parser, SearchDir dir) {
 		this.callBack = callBack;
 		this.parser = parser;
-		this.dir = dir;
-		this.delete = (callBack instanceof DeleteCallback);
-		//Start thread
-		this.start();
-	}
+        this.dir = dir;
+        this.delete = (callBack instanceof DeleteCallback);
+        //Start thread
+        this.start();
+    }
 
-	/**
-	 * Run the search query
-	 */
-	@Override
-	public void run() {
-		
-		Util.debug("Beginning search query");
-		
-		StringBuilder sql = new StringBuilder();
+    /**
+     * Run the search query
+     */
+    @Override
+    public void run() {
 
-		sql.append( (delete ? "DELETE FROM " : "SELECT * FROM ") );
-		
-		sql.append("`" + Config.DbHawkEyeTable + "` WHERE ");
-		
-		List<String> args = new LinkedList<String>();
-		List<Object> binds = new LinkedList<Object>();
+        Util.debug("Beginning search query");
 
-		//Match players from database list
-		Util.debug("Building players");
-		if (parser.players.size() >= 1) {
-			
-			List<Integer> pids = new ArrayList<Integer>();
-			List<Integer> npids = new ArrayList<Integer>();
-			
-			for (String player : parser.players) {
-				
-				boolean ignoredUser = player.contains("!");
-				boolean specificUser = player.contains("*");
-				
-				player = player.replace("!", "").replace("*", "");
-				
-				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
-					
-					 if ( (specificUser ? entry.getKey().equalsIgnoreCase(player) : StringUtils.containsIgnoreCase(entry.getKey(), player)) ) {
-						 
-						 if (ignoredUser)
-							 npids.add(entry.getValue());
+        StringBuilder sql = new StringBuilder();
+
+        sql.append((delete ? "DELETE FROM " : "SELECT * FROM "));
+
+        sql.append("`" + Config.DbHawkEyeTable + "` WHERE ");
+
+        List<String> args = new LinkedList<String>();
+        List<Object> binds = new LinkedList<Object>();
+
+        //Match players from database list
+        Util.debug("Building players");
+        if (parser.players.size() >= 1) {
+
+            List<Integer> pids = new ArrayList<Integer>();
+            List<Integer> npids = new ArrayList<Integer>();
+
+            for (String player : parser.players) {
+
+                boolean ignoredUser = player.contains("!");
+                boolean specificUser = player.contains("*");
+
+                player = player.replace("!", "").replace("*", "");
+
+                for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
+
+                    if ((specificUser ? entry.getKey().equalsIgnoreCase(player) : StringUtils.containsIgnoreCase(entry.getKey(), player))) {
+
+                        if (ignoredUser)
+                            npids.add(entry.getValue());
 						 else
 							 pids.add(entry.getValue()); 
 					 }
@@ -198,8 +198,8 @@ public class SearchQuery extends Thread {
 				Util.debug("Getting results");
 
 				//Results are cached to prevent constant massive hashmap lookups from DataManager
-				HashMap<Integer, String> dbPlayers = new HashMap<Integer, String>();
-				HashMap<Integer, String> dbWorlds = new HashMap<Integer, String>();
+				HashMap<Integer, String> playerCache = new HashMap<Integer, String>();
+				HashMap<Integer, String> worldCache = new HashMap<Integer, String>();
 
 				//Default to BLOCK_BREAK, it's the first and most likely to be used so why not
 				DataType type = DataType.BLOCK_BREAK;
@@ -215,18 +215,18 @@ public class SearchQuery extends Thread {
 						type = DataType.fromId(res.getInt(4));
 					}
 
-					name = dbPlayers.get(res.getInt(3));
+					name = playerCache.get(res.getInt(3));
 
-					world = dbWorlds.get(res.getInt(5));
+					world = worldCache.get(res.getInt(5));
 
 					if (name == null) {
 						name = DataManager.getPlayer(res.getInt(3));
-						dbPlayers.put(res.getInt(3), name);
+						playerCache.put(res.getInt(3), name);
 					}
 
 					if (world == null) {
 						world = DataManager.getWorld(res.getInt(5));
-						dbPlayers.put(res.getInt(5), world);
+						worldCache.put(res.getInt(5), world);
 					}
 
 					entry = (DataEntry) type.getEntryConstructor().newInstance(
