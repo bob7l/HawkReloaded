@@ -1,20 +1,16 @@
 package uk.co.oliwali.HawkEye.util;
 
-import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
+import org.bukkit.entity.*;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.entry.HangingEntry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityUtil {
 
@@ -40,24 +36,7 @@ public class EntityUtil {
 		}
 	}
 
-	public static String getStringName(String data) {
-		String[] args = data.split(":");
-		if (args[0].equals("389")) {
-			Material mat = Material.getMaterial(Integer.parseInt(args[2]));
-			return "ItemFrame" + (mat.equals(Material.AIR) ? "" : " with " + mat.toString());
-		}
-		return "Painting";
-	}
-
-	public static void setBlockString(Block b, String blockData) {
-		String[] args = blockData.split(":");
-		int type = Integer.parseInt(args[0]);
-		int faceint = Integer.parseInt(args[1]);
-		BlockFace face = getFaceFromInt(faceint);
-		spawnFrame(b, face, Integer.parseInt(args[2]), (type == 389) ? true : false);
-	}
-
-	public static void spawnFrame(Block l, BlockFace face, int stack, boolean isFrame) {
+	public static void spawnFrame(Block l, BlockFace face, boolean isFrame) {
 
 		Block spawn = l.getRelative(face.getOppositeFace());
 
@@ -107,17 +86,16 @@ public class EntityUtil {
 			west = b.getState();
 			b.setType(Material.AIR);
 		}
-		ItemFrame itemframe = null;
-		Painting painting = null;
+		ItemFrame itemframe;
+		Painting painting;
+
 		try {
 			if (isFrame) {
 				itemframe = spawn.getWorld().spawn(spawn.getLocation(), ItemFrame.class);
 				itemframe.setFacingDirection(face.getOppositeFace(), true);
-				itemframe.setItem(new ItemStack(stack));
 			} else {
 				painting = spawn.getWorld().spawn(spawn.getLocation(), Painting.class);
 				painting.setFacingDirection(face.getOppositeFace(), true);
-				painting.setArt(Art.getById(stack));
 			}
 		} catch(IllegalArgumentException ex) {
 			//Do nothing
@@ -150,11 +128,30 @@ public class EntityUtil {
 		
 		if (e instanceof ItemFrame) {
 			ItemFrame frame = (ItemFrame) e;
-			return new HangingEntry(remover, type, e.getLocation().getBlock().getLocation(), 389, getFace(frame.getAttachedFace()), frame.getItem().getTypeId());
+			return new HangingEntry(remover, type, e.getLocation().getBlock().getLocation(), 389, getFace(frame.getAttachedFace()), frame.getItem());
 		} else if (e instanceof Painting) {
 			Painting paint = (Painting) e;
-			return new HangingEntry(remover, type, e.getLocation().getBlock().getLocation(), 321, getFace(paint.getAttachedFace()), paint.getArt().getId());
+			return new HangingEntry(remover, type, e.getLocation().getBlock().getLocation(), 321, getFace(paint.getAttachedFace()), Integer.toString(paint.getArt().getId()));
 		}
 		return null;
 	}
+
+	public static List<Entity> getEntitiesAtLoc(Location l) {
+		List<Entity> entities = new ArrayList<Entity>(1);
+
+		int x = l.getBlockX();
+		int y = l.getBlockY();
+		int z = l.getBlockZ();
+
+		for (Entity e : l.getChunk().getEntities()) {
+			Location el = e.getLocation();
+
+			if (el.getBlockX() == x && el.getBlockZ() == z && el.getBlockY() == y) {
+				 entities.add(e);
+			}
+		}
+
+		return entities;
+	}
+
 }

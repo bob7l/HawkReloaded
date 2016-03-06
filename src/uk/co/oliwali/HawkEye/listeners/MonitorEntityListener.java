@@ -9,6 +9,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
@@ -108,7 +109,7 @@ public class MonitorEntityListener extends HawkEyeListener {
     }
 
     @HawkEvent(dataType = DataType.ITEM_BREAK)
-    public void onPaintingBreak(HangingBreakEvent event) {
+    public void onHangingBreak(HangingBreakEvent event) {
 
         if (event.getCause().equals(RemoveCause.ENTITY)) return;
 
@@ -119,7 +120,7 @@ public class MonitorEntityListener extends HawkEyeListener {
     }
 
     @HawkEvent(dataType = DataType.ITEM_BREAK)
-    public void onPaintingBreak(HangingBreakByEntityEvent event) {
+    public void onHangingBreak(HangingBreakByEntityEvent event) {
 
         if (!(event.getRemover() instanceof Player)) return;
 
@@ -149,6 +150,35 @@ public class MonitorEntityListener extends HawkEyeListener {
 
         if (he != null)
             DataManager.addEntry(he);
+    }
+
+    @HawkEvent(dataType = DataType.FRAME_EXTRACT)
+    public void onItemFrameExtract(EntityDamageByEntityEvent event) {
+
+        if (event.getEntity() instanceof ItemFrame && event.getDamager() instanceof HumanEntity) {
+            ItemFrame frame = (ItemFrame) event.getEntity();
+
+            if (frame.getItem().getType() != Material.AIR) {
+                DataManager.addEntry(new ItemFrameModifyEntry(((HumanEntity)event.getDamager()).getName(), DataType.FRAME_EXTRACT, frame.getLocation(), frame.getItem()));
+            }
+        }
+    }
+
+
+    @HawkEvent(dataType = DataType.FRAME_INSERT)
+    public void onItemFrameInsert(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof ItemFrame) {
+            ItemFrame frame = (ItemFrame) event.getRightClicked();
+            Player p = event.getPlayer();
+
+            if (frame.getItem().getType() == Material.AIR && p.getItemInHand() != null) {
+                ItemStack item = p.getItemInHand().clone();
+
+                item.setAmount(1);
+
+                DataManager.addEntry(new ItemFrameModifyEntry(p.getName(), DataType.FRAME_INSERT, frame.getLocation(), item));
+            }
+        }
     }
 
     @HawkEvent(dataType = {DataType.ENDERMAN_PICKUP, DataType.ENDERMAN_PLACE})

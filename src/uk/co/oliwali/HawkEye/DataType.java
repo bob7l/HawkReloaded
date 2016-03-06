@@ -62,7 +62,9 @@ public enum DataType {
 	BLOCK_IGNITE(45, SimpleRollbackEntry.class, "block-ignite", true, true),
 	FALLING_BLOCK(46, BlockChangeEntry.class, "fallingblock-place", true, true),
 	PLAYER_LAVA_FLOW(47, BlockChangeEntry.class, "player-lava-flow", true, true),
-	PLAYER_WATER_FLOW(48, BlockChangeEntry.class, "player-water-flow", true, true);
+	PLAYER_WATER_FLOW(48, BlockChangeEntry.class, "player-water-flow", true, true),
+	FRAME_INSERT(49, ItemFrameModifyEntry.class, "frame-insert", true, true),
+	FRAME_EXTRACT(50, ItemFrameModifyEntry.class, "frame-extract", true, true);
 
 	private int id;
 	private boolean canHere;
