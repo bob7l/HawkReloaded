@@ -48,6 +48,8 @@ log:
     fallingblock-place: true
     player-water-flow: false
     player-lava-flow: false
+    frame-insert: false
+    frame-extract: false
 general:
     max-lines: 0
     log-item-drops-on-death: false
@@ -81,15 +83,15 @@ mysql:
     password: ''
     database: minecraft
 ignore-worlds:
-- thisworldisignored
-- soisthisone
+#- thisworldisignored
+#- soisthisone
 command-filter:
 - /login
 - /restartsrv
 - /register
 - /spawn
 block-filter:
-- 0
+#- 0
 containertransaction-filter:
     chest: true
     doublechest: true

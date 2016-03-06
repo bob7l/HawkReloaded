@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.util;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -7,7 +8,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
-
 import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 
 /**
@@ -27,6 +27,7 @@ public class BlockUtil {
 	public static String getBlockString(Block block) {
 		return getBlockString(block.getState());
 	}
+
 	public static String getBlockString(BlockState block) {
 		if (block.getRawData() != 0)
 			return block.getTypeId() + ":" + block.getRawData();
@@ -39,13 +40,40 @@ public class BlockUtil {
 	 * @return string representing the item
 	 */
 	public static String getItemString(ItemStack stack) {
-		int data = stack.getData().getData();
+		short data = stack.getDurability();
 		int type = stack.getTypeId();
-		if (type == 373) 
-			data = stack.getDurability();
-		if (stack.getData() != null && data != 0)
+
+		if (data > 0)
 			return type + ":" + data;
+
 		return Integer.toString(type);
+	}
+
+	public static ItemStack getItemFromString(String data) {
+		String[] bits = data.split(":");
+
+		if (bits.length > 1)
+			return new ItemStack(Integer.parseInt(bits[0]), 1, Short.parseShort(bits[1]));
+
+		return new ItemStack(Integer.parseInt(bits[0]));
+	}
+
+	public static String formatItemStack(ItemStack itemStack) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("x").append(itemStack.getAmount()).append(" ");
+
+		sb.append(WordUtils.capitalizeFully(itemStack.getType().name()));
+
+		if (itemStack.getDurability() > 0 && itemStack.getType().getMaxDurability() == 0) {
+			sb.append(":").append(itemStack.getDurability());
+		}
+
+		if (itemStack.getEnchantments().size() > 0) {
+			sb.append(" (x").append(itemStack.getEnchantments().size()).append(" Enchants)");
+		}
+
+		return sb.toString();
 	}
 
 	/**
