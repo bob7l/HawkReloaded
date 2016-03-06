@@ -1,22 +1,9 @@
 package uk.co.oliwali.HawkEye.database;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 public class JDCConnection implements Connection
 {
@@ -97,7 +84,32 @@ public class JDCConnection implements Connection
 		return conn.createStruct(typeName, attributes);
 	}
 
-    @Override
+	@Override
+	public void setSchema(String schema) throws SQLException {
+		conn.setSchema(schema);
+	}
+
+	@Override
+	public String getSchema() throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public void abort(Executor executor) throws SQLException {
+		conn.abort(executor);
+	}
+
+	@Override
+	public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		conn.setNetworkTimeout(executor, milliseconds);
+	}
+
+	@Override
+	public int getNetworkTimeout() throws SQLException {
+		return conn.getNetworkTimeout();
+	}
+
+	@Override
 	public boolean getAutoCommit() throws SQLException {
 		return conn.getAutoCommit();
 	}
