@@ -47,17 +47,17 @@ public class SearchQuery extends Thread {
 
         sql.append((delete ? "DELETE FROM " : "SELECT * FROM "));
 
-        sql.append("`" + Config.DbHawkEyeTable + "` WHERE ");
+        sql.append("`").append(Config.DbHawkEyeTable).append("` WHERE ");
 
-        List<String> args = new LinkedList<String>();
-        List<Object> binds = new LinkedList<Object>();
+        List<String> args = new LinkedList<>();
+        List<Object> binds = new LinkedList<>();
 
         //Match players from database list
         Util.debug("Building players");
         if (parser.players.size() >= 1) {
 
-            List<Integer> pids = new ArrayList<Integer>();
-            List<Integer> npids = new ArrayList<Integer>();
+            List<Integer> pids = new ArrayList<>();
+            List<Integer> npids = new ArrayList<>();
 
             for (String player : parser.players) {
 
@@ -92,8 +92,8 @@ public class SearchQuery extends Thread {
 		//Match worlds from database list
 		Util.debug("Building worlds");
 		if (parser.worlds != null) {
-			List<Integer> wids = new ArrayList<Integer>();
-			List<Integer> nwids = new ArrayList<Integer>();
+			List<Integer> wids = new ArrayList<>();
+			List<Integer> nwids = new ArrayList<>();
 			for (String world : parser.worlds) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbWorlds.entrySet()) {
 					if (entry.getKey().toLowerCase().contains(world.toLowerCase()))
@@ -117,7 +117,7 @@ public class SearchQuery extends Thread {
 		//Compile actions into SQL form
 		Util.debug("Building actions");
 		if (parser.actions != null && parser.actions.size() > 0) {
-			List<Integer> acs = new ArrayList<Integer>();
+			List<Integer> acs = new ArrayList<>();
 			for (DataType act : parser.actions)
 				acs.add(act.getId());
 					args.add("action IN (" + Util.join(acs, ",") + ")");
@@ -138,13 +138,13 @@ public class SearchQuery extends Thread {
 		Util.debug("Building location");
 		if (parser.minLoc != null) {
 			args.add("(x BETWEEN " + parser.minLoc.getBlockX() + " AND " + parser.maxLoc.getBlockX() + ")");
-			args.add("(y BETWEEN " + parser.minLoc.getBlockY() + " AND " + parser.maxLoc.getBlockY() + ")");
 			args.add("(z BETWEEN " + parser.minLoc.getBlockZ() + " AND " + parser.maxLoc.getBlockZ() + ")");
+			args.add("(y BETWEEN " + parser.minLoc.getBlockY() + " AND " + parser.maxLoc.getBlockY() + ")");
 		}
 		else if (parser.loc != null) {
 			args.add("x = " + parser.loc.getX());
-			args.add("y = " + parser.loc.getY());
 			args.add("z = " + parser.loc.getZ());
+			args.add("y = " + parser.loc.getY());
 		}
 
 		//Build the filters into SQL form
@@ -198,15 +198,15 @@ public class SearchQuery extends Thread {
 				Util.debug("Getting results");
 
 				//Results are cached to prevent constant massive hashmap lookups from DataManager
-				HashMap<Integer, String> playerCache = new HashMap<Integer, String>();
-				HashMap<Integer, String> worldCache = new HashMap<Integer, String>();
+				HashMap<Integer, String> playerCache = new HashMap<>();
+				HashMap<Integer, String> worldCache = new HashMap<>();
 
 				//Default to BLOCK_BREAK, it's the first and most likely to be used so why not
 				DataType type = DataType.BLOCK_BREAK;
-				DataEntry entry = null;
+				DataEntry entry;
 
-				String name = null;
-				String world = null;
+				String name;
+				String world;
 				
 				//Retrieve results
 				while (res.next()) {

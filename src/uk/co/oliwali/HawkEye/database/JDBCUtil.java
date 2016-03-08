@@ -19,12 +19,12 @@ package uk.co.oliwali.HawkEye.database;
  * under the License.                                           *
  ****************************************************************/
 
+import uk.co.oliwali.HawkEye.util.Util;
+
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
-
-import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * <p>Helper class for managing common JDBC tasks.</p>
@@ -74,8 +74,7 @@ abstract public class JDBCUtil
         throws SQLException {
         ResultSet rsTables = dbMetaData.getTables(null, null, tableName, null);
         try {
-            boolean found = rsTables.next();
-            return found;
+            return rsTables.next();
         } finally {
             closeJDBCResultSet(rsTables);
         }
@@ -118,8 +117,7 @@ abstract public class JDBCUtil
         throws SQLException {
         ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
         try {
-            boolean found = rsTables.next();
-            return found;
+            return rsTables.next();
         } finally {
             closeJDBCResultSet(rsTables);
         }

@@ -1,7 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
@@ -24,7 +23,6 @@ public class DataManager implements Runnable {
 
     private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<DataEntry>();
     private static ConnectionManager connections;
-    private static BukkitTask cleanseTimer = null;
 
     public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
     public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
@@ -102,16 +100,12 @@ public class DataManager implements Runnable {
      * @return
      */
     public static DataEntry getEntry(int id) {
-        JDCConnection conn = null;
-        try {
-            conn = getConnection();
+        try (JDCConnection conn = getConnection()) {
             ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
             res.next();
             return createEntryFromRes(res);
         } catch (Exception ex) {
             Util.severe("Unable to retrieve data entry from MySQL Server: " + ex);
-        } finally {
-            conn.close();
         }
         return null;
     }
@@ -172,17 +166,13 @@ public class DataManager implements Runnable {
      * Adds a player to the database
      */
     private boolean addPlayer(String name) {
-        JDCConnection conn = null;
-        try {
-            Util.debug("Attempting to add player '" + name + "' to database");
-            conn = getConnection();
-            //Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
+        Util.debug("Attempting to add player '" + name + "' to database");
+
+        try (JDCConnection conn = getConnection()) {//Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
             conn.createStatement().execute("INSERT INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "') ON DUPLICATE KEY UPDATE player='" + name + "';");
         } catch (SQLException ex) {
             Util.severe("Unable to add player to database: " + ex);
             return false;
-        } finally {
-            conn.close();
         }
         return updateDbLists();
     }
@@ -191,17 +181,15 @@ public class DataManager implements Runnable {
      * Adds a world to the database
      */
     private boolean addWorld(String name) {
-        JDCConnection conn = null;
-        try {
-            Util.debug("Attempting to add world '" + name + "' to database");
-            conn = getConnection();
+        Util.debug("Attempting to add world '" + name + "' to database");
+
+        try (JDCConnection conn = getConnection()) {
             conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
         } catch (SQLException ex) {
             Util.severe("Unable to add world to database: " + ex);
             return false;
-        } finally {
-            conn.close();
         }
+
         return updateDbLists();
     }
 
