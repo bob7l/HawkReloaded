@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -9,7 +10,6 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 import java.sql.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -24,9 +24,12 @@ public class DataManager implements Runnable {
 
     private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<DataEntry>();
     private static ConnectionManager connections;
-    public static BukkitTask cleanseTimer = null;
+    private static BukkitTask cleanseTimer = null;
+
     public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
     public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
+
+    private static DeleteManager deleteManager = new DeleteManager();
 
     private boolean threadbusy = false;
 
@@ -47,6 +50,8 @@ public class DataManager implements Runnable {
         if (!updateDbLists())
             throw new Exception();
 
+        Bukkit.getScheduler().runTaskTimerAsynchronously(instance, deleteManager, 20 * 15, 20 * 5);
+
         //Start cleansing utility
         try {
             new CleanseUtil(instance);
@@ -54,6 +59,10 @@ public class DataManager implements Runnable {
             Util.severe(e.getMessage());
             Util.severe("Unable to start cleansing utility - check your cleanse age");
         }
+    }
+
+    public static DeleteManager getDeleteManager() {
+        return deleteManager;
     }
 
     /**
@@ -68,7 +77,6 @@ public class DataManager implements Runnable {
      */
     public static void close() {
         connections.close();
-        if (cleanseTimer != null) cleanseTimer.cancel();
     }
 
     /**
@@ -106,21 +114,6 @@ public class DataManager implements Runnable {
             conn.close();
         }
         return null;
-    }
-
-    /**
-     * Deletes an entry from the database
-     *
-     * @param dataid id to delete
-     */
-    public static void deleteEntry(int dataid) {
-        Thread thread = new Thread(new DeleteEntry(dataid));
-        thread.start();
-    }
-
-    public static void deleteEntries(List<?> entries) {
-        Thread thread = new Thread(new DeleteEntry(entries));
-        thread.start();
     }
 
     /**
@@ -402,7 +395,7 @@ public class DataManager implements Runnable {
         threadbusy = true;
 
         if (queue.size() > 70000)
-            Util.info("The queue is almost overloaded! Queue: " + queue.size());
+            Util.info("HawkEye can't keep up! Current Queue: " + queue.size());
 
         JDCConnection conn = getConnection();
         PreparedStatement stmnt = null;
@@ -468,4 +461,5 @@ public class DataManager implements Runnable {
     public boolean isInsertThreadBusy() {
         return threadbusy;
     }
+
 }

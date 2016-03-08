@@ -1,5 +1,11 @@
 package uk.co.oliwali.HawkEye.database;
 
+import org.bukkit.Bukkit;
+import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.HawkEye;
+import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.Util;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -7,12 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import org.bukkit.Bukkit;
-
-import uk.co.oliwali.HawkEye.DataType;
-import uk.co.oliwali.HawkEye.HawkEye;
-import uk.co.oliwali.HawkEye.util.Config;
-import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * DataBase cleansing utility.
@@ -24,7 +24,6 @@ public class CleanseUtil implements Runnable {
 
 	private String date = null;
 	private String actions = "";
-	private int interval = 1200;
 
 	/**
 	 * Initiates utility.
@@ -34,7 +33,7 @@ public class CleanseUtil implements Runnable {
 	public CleanseUtil(HawkEye hawk) throws Exception {
 
 		//Check for invalid ages/periods
-		List<String> arr = Arrays.asList(new String[]{"0", "0s"});
+		List<String> arr = Arrays.asList("0", "0s");
 		if (Config.CleanseAge == null || Config.CleansePeriod == null || arr.contains(Config.CleanseAge) || arr.contains(Config.CleansePeriod)) {
 			return;
 		}
@@ -60,6 +59,9 @@ public class CleanseUtil implements Runnable {
 			else throw new Exception();
 			nums = "";
 		}
+
+		int interval = 1200;
+
 		if (temp > 0) interval = temp;
 
 		if (!Config.CleanseActions.isEmpty()) {
@@ -73,7 +75,8 @@ public class CleanseUtil implements Runnable {
 
 		//Start timer
 		Util.info("Starting database cleanse thread with a period of " + interval + " seconds");
-        DataManager.cleanseTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(HawkEye.instance, this, interval * 20L, interval * 20L);
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(HawkEye.instance, this, interval * 20L, interval * 20L);
 	}
 
 	/**

@@ -1,10 +1,5 @@
 package uk.co.oliwali.HawkEye;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,9 +7,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.database.DeleteQueue;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Runnable class for performing a data rollback.
@@ -111,7 +112,7 @@ public class Rollback implements Runnable {
 				Util.sendMessage(session.getSender(), "&cUndo this rollback using &7/hawk undo");
 				//Delete data if told to
 				if (Config.DeleteDataOnRollback)
-					DataManager.deleteEntries(undo);
+					DataManager.getDeleteManager().addDeleteQueue(new DeleteQueue(undo));
 			} else {
 				Util.sendMessage(session.getSender(), "&cRollback preview complete, &7" + undo.size() + "&c edits performed to you");
 				Util.sendMessage(session.getSender(), "&cType &7/hawk preview apply&c to make these changes permanent or &7/hawk preview cancel&c to cancel");
