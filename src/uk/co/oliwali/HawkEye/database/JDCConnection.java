@@ -4,16 +4,19 @@ import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JDCConnection implements Connection
-{
+public class JDCConnection implements Connection {
+
 	private final Connection conn;
-	private boolean inuse;
+
+	private AtomicBoolean inuse;
+
 	private long timestamp;
 
 	JDCConnection(Connection connection) {
 		conn = connection;
-		inuse = false;
+		inuse = new AtomicBoolean(false);
 		timestamp = 0;
 	}
 
@@ -24,7 +27,8 @@ public class JDCConnection implements Connection
 
 	@Override
 	public void close() {
-		inuse = false;
+		inuse.set(false);
+
 		try {
 			if (!conn.getAutoCommit())
 				conn.setAutoCommit(true);
@@ -32,6 +36,7 @@ public class JDCConnection implements Connection
 			terminate();
 			ConnectionManager.removeConn(conn);
 		}
+
 	}
 
 	@Override
@@ -299,7 +304,7 @@ public class JDCConnection implements Connection
 	}
 
 	boolean inUse() {
-		return inuse;
+		return inuse.get();
 	}
 
 	boolean isValid() {
@@ -311,9 +316,11 @@ public class JDCConnection implements Connection
 	}
 
 	synchronized boolean lease() {
-		if (inuse)
+		if (inuse.get())
 			return false;
-		inuse = true;
+
+		inuse.set(true);
+
 		timestamp = System.currentTimeMillis();
 		return true;
 	}
