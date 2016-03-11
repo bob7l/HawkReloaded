@@ -4,6 +4,7 @@ package uk.co.oliwali.HawkEye.database;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -42,7 +43,7 @@ public class DeleteManager implements Runnable {
     @Override
     public void run() {
         if (!deletions.isEmpty()) {
-            JDCConnection conn = null;
+            Connection conn = null;
             PreparedStatement stmnt = null;
 
             try {
@@ -52,8 +53,6 @@ public class DeleteManager implements Runnable {
                 Util.debug("Running DeleteQueue, key: " + deleteQueue.hashCode() + ", size: " + deleteQueue.getSize());
 
                 conn = DataManager.getConnection();
-
-                conn.setAutoCommit(false);
 
                 stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?");
 
@@ -72,8 +71,6 @@ public class DeleteManager implements Runnable {
                 stmnt.executeBatch();
 
                 conn.commit();
-
-                conn.setAutoCommit(true);
 
                 if (deleteQueue.isFinished()) {
                     deletions.poll();

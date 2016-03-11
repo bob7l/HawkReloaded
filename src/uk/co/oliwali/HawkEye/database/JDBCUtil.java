@@ -8,9 +8,9 @@ package uk.co.oliwali.HawkEye.database;
  * to you under the Apache License, Version 2.0 (the            *
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
- *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
- *                                                              *
+ * *
+ * http://www.apache.org/licenses/LICENSE-2.0                 *
+ * *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
@@ -35,8 +35,7 @@ import java.util.Locale;
  *
  * @version CVS $Revision: 494012 $ $Date: 2007-01-08 11:23:58 +0100 (Mo, 08 Jan 2007) $
  */
-abstract public class JDBCUtil
-{
+abstract public class JDBCUtil {
     /**
      * An abstract method which child classes override to handle logging of
      * errors in their particular environments.
@@ -55,10 +54,10 @@ abstract public class JDBCUtil
      * @throws SQLException if an exception is encountered while accessing the database
      */
     public static boolean tableExists(DatabaseMetaData dbMetaData, String tableName)
-        throws SQLException {
-        return ( tableExistsCaseSensitive(dbMetaData, tableName) ||
-                 tableExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US)) ||
-                 tableExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US)) );
+            throws SQLException {
+        return (tableExistsCaseSensitive(dbMetaData, tableName) ||
+                tableExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US)) ||
+                tableExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US)));
     }
 
     /**
@@ -71,7 +70,7 @@ abstract public class JDBCUtil
      * @throws SQLException if an exception is encountered while accessing the database
      */
     public static boolean tableExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName)
-        throws SQLException {
+            throws SQLException {
         ResultSet rsTables = dbMetaData.getTables(null, null, tableName, null);
         try {
             return rsTables.next();
@@ -91,16 +90,16 @@ abstract public class JDBCUtil
      * @throws SQLException if an exception is encountered while accessing the database
      */
     public static boolean columnExists(DatabaseMetaData dbMetaData, String tableName, String columnName)
-        throws SQLException {
-        return ( columnExistsCaseSensitive(dbMetaData, tableName, columnName) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName, columnName.toUpperCase(Locale.US)) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName, columnName.toLowerCase(Locale.US)) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName.toUpperCase(Locale.US)) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName.toLowerCase(Locale.US)) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName.toUpperCase(Locale.US)) ||
-                 columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName.toLowerCase(Locale.US)) );
+            throws SQLException {
+        return (columnExistsCaseSensitive(dbMetaData, tableName, columnName) ||
+                columnExistsCaseSensitive(dbMetaData, tableName, columnName.toUpperCase(Locale.US)) ||
+                columnExistsCaseSensitive(dbMetaData, tableName, columnName.toLowerCase(Locale.US)) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName.toUpperCase(Locale.US)) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName.toLowerCase(Locale.US)) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName.toUpperCase(Locale.US)) ||
+                columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName.toLowerCase(Locale.US)));
     }
 
     /**
@@ -114,7 +113,7 @@ abstract public class JDBCUtil
      * @throws SQLException if an exception is encountered while accessing the database
      */
     public static boolean columnExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName, String columnName)
-        throws SQLException {
+            throws SQLException {
         ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
         try {
             return rsTables.next();
@@ -130,7 +129,7 @@ abstract public class JDBCUtil
      *
      * @param aResultSet the result set to be closed
      */
-    public static void closeJDBCResultSet(ResultSet aResultSet ) {
+    public static void closeJDBCResultSet(ResultSet aResultSet) {
         try {
             if (aResultSet != null) {
                 aResultSet.close();
@@ -140,4 +139,15 @@ abstract public class JDBCUtil
         }
     }
 
+    public static void close(AutoCloseable... closeables) {
+        for (AutoCloseable close : closeables) {
+            if (close != null) {
+                try {
+                    close.close();
+                } catch (Exception e) {
+                    Util.warning("Failed to close " + closeables.getClass().getSimpleName() + ": " + e.getMessage());
+                }
+            }
+        }
+    }
 }

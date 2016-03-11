@@ -19,10 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author oliverw92
  */
 
-public class DataManager implements Runnable {
+public class DataManager implements Runnable, AutoCloseable {
 
     private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<DataEntry>();
-    private static ConnectionManager connections;
+    private static ConnectionManager connectionManager;
 
     public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
     public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
@@ -40,8 +40,8 @@ public class DataManager implements Runnable {
      */
     public DataManager(HawkEye instance) throws Exception {
 
-        connections = new ConnectionManager(Config.DbUrl, Config.DbUser, Config.DbPassword);
-        getConnection().close();
+        connectionManager = new ConnectionManager();
+
         //Check tables and update player/world lists
         if (!checkTables())
             throw new Exception();
@@ -73,8 +73,16 @@ public class DataManager implements Runnable {
     /**
      * Closes down all connections
      */
-    public static void close() {
-        connections.close();
+    public void close() throws Exception {
+        if (connectionManager != null) {
+
+            while (!queue.isEmpty()) {
+                threadbusy = false;
+                run();
+            }
+
+            connectionManager.close();
+        }
     }
 
     /**
@@ -100,7 +108,7 @@ public class DataManager implements Runnable {
      * @return
      */
     public static DataEntry getEntry(int id) {
-        try (JDCConnection conn = getConnection()) {
+        try (Connection conn = getConnection()) {
             ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
             res.next();
             return createEntryFromRes(res);
@@ -141,13 +149,8 @@ public class DataManager implements Runnable {
      *
      * @return {JDCConnection}
      */
-    public static JDCConnection getConnection() {
-        try {
-            return connections.getConnection();
-        } catch (final SQLException ex) {
-            Util.severe("Error whilst attempting to get connection: " + ex);
-            return null;
-        }
+    public static Connection getConnection() throws SQLException {
+        return connectionManager.getConnection();
     }
 
     /**
@@ -168,8 +171,9 @@ public class DataManager implements Runnable {
     private boolean addPlayer(String name) {
         Util.debug("Attempting to add player '" + name + "' to database");
 
-        try (JDCConnection conn = getConnection()) {//Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
+        try (Connection conn = getConnection()) {//Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
             conn.createStatement().execute("INSERT INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "') ON DUPLICATE KEY UPDATE player='" + name + "';");
+            conn.commit();
         } catch (SQLException ex) {
             Util.severe("Unable to add player to database: " + ex);
             return false;
@@ -183,8 +187,9 @@ public class DataManager implements Runnable {
     private boolean addWorld(String name) {
         Util.debug("Attempting to add world '" + name + "' to database");
 
-        try (JDCConnection conn = getConnection()) {
+        try (Connection conn = getConnection()) {
             conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
+            conn.commit();
         } catch (SQLException ex) {
             Util.severe("Unable to add world to database: " + ex);
             return false;
@@ -199,7 +204,7 @@ public class DataManager implements Runnable {
      * @return true on success, false on failure
      */
     private boolean updateDbLists() {
-        JDCConnection conn = null;
+        Connection conn = null;
         Statement stmnt = null;
         try {
             conn = getConnection();
@@ -214,14 +219,7 @@ public class DataManager implements Runnable {
             Util.severe("Unable to update local data lists from database: " + ex);
             return false;
         } finally {
-            try {
-                if (stmnt != null)
-                    stmnt.close();
-                conn.close();
-            } catch (SQLException ex) {
-                Util.severe("Unable to close SQL connection: " + ex);
-            }
-
+            JDBCUtil.close(conn, stmnt);
         }
         return true;
     }
@@ -247,7 +245,7 @@ public class DataManager implements Runnable {
      */
     private boolean checkTables() {
 
-        JDCConnection conn = null;
+        Connection conn = null;
         Statement stmnt = null;
         try {
             conn = getConnection();
@@ -356,6 +354,8 @@ public class DataManager implements Runnable {
 
             }
 
+            conn.commit();
+
         } catch (SQLException ex) {
             Util.severe("Error checking HawkEye tables: " + ex);
             return false;
@@ -385,10 +385,11 @@ public class DataManager implements Runnable {
         if (queue.size() > 70000)
             Util.info("HawkEye can't keep up! Current Queue: " + queue.size());
 
-        JDCConnection conn = getConnection();
+        Connection conn = null;
         PreparedStatement stmnt = null;
         try {
-            conn.setAutoCommit(false); //Disable when process starts (We need this to properly use batch!)
+
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -426,8 +427,8 @@ public class DataManager implements Runnable {
             }
 
             stmnt.executeBatch();
+
             conn.commit();
-            conn.setAutoCommit(true); //Enable when commit is over (We need this to properly use batch!)
 
         } catch (Exception ex) {
             Util.warning(ex.getMessage());

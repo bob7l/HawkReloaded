@@ -6,6 +6,7 @@ import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -86,7 +87,7 @@ public class CleanseUtil implements Runnable {
 	public void run() {
 
 		Util.info("Running cleanse utility for logs older than " + date);
-		JDCConnection conn = null;
+		Connection conn = null;
 		PreparedStatement stmnt = null;
 		String sql = "DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'" + actions;
 		try {
@@ -96,6 +97,8 @@ public class CleanseUtil implements Runnable {
 			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
 
 			Util.info("Deleted " + stmnt.executeUpdate() + " row(s) from database");
+
+			conn.commit();
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
 		} finally {

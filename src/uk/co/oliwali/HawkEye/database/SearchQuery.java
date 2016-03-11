@@ -9,6 +9,7 @@ import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -173,13 +174,13 @@ public class SearchQuery extends Thread {
 		//Set up some stuff for the search
 		ResultSet res = null;
 		ArrayList<DataEntry> results = new ArrayList<DataEntry>();
-		JDCConnection conn = DataManager.getConnection();
+		Connection conn = null;
 		PreparedStatement stmnt = null;
 		int deleted = 0;
 
 		try {
-			
-			conn.setAutoCommit(false);
+			conn = DataManager.getConnection();
+
 			//Execute query
 			stmnt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -244,8 +245,6 @@ public class SearchQuery extends Thread {
 					results.add(entry);
 				}
 			}
-			conn.commit();
-			conn.setAutoCommit(true);
 
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
