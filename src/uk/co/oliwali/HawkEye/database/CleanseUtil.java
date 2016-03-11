@@ -8,7 +8,6 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,30 +86,21 @@ public class CleanseUtil implements Runnable {
 	public void run() {
 
 		Util.info("Running cleanse utility for logs older than " + date);
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		String sql = "DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'" + actions;
-		try {
+
+		try (Connection conn = DataManager.getConnection()) {
 			ageToDate();
-			conn = DataManager.getConnection();
-			stmnt = conn.prepareStatement(sql);
-			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
 
-			Util.info("Deleted " + stmnt.executeUpdate() + " row(s) from database");
+			try (PreparedStatement stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'" + actions)) {
 
-			conn.commit();
+				Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'");
+
+				Util.info("Deleted " + stmnt.executeUpdate() + " row(s) from database");
+
+				conn.commit();
+			}
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
-		} finally {
-			try {
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (SQLException e) {
-				Util.warning(e.getMessage());
-			}
 		}
-
 	}
 
 	/**

@@ -45,6 +45,7 @@ public class DataManager implements Runnable, AutoCloseable {
         //Check tables and update player/world lists
         if (!checkTables())
             throw new Exception();
+
         if (!updateDbLists())
             throw new Exception();
 
@@ -109,9 +110,13 @@ public class DataManager implements Runnable, AutoCloseable {
      */
     public static DataEntry getEntry(int id) {
         try (Connection conn = getConnection()) {
-            ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
-            res.next();
-            return createEntryFromRes(res);
+            try (ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id)) {
+
+                if (res.next()) {
+                    DataType type = DataType.fromId(res.getInt(4));
+                    return (DataEntry) type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
+                }
+            }
         } catch (Exception ex) {
             Util.severe("Unable to retrieve data entry from MySQL Server: " + ex);
         }
@@ -154,18 +159,6 @@ public class DataManager implements Runnable, AutoCloseable {
     }
 
     /**
-     * Creates a {@link DataEntry} from the inputted {ResultSet}
-     *
-     * @param res
-     * @return returns a {@link DataEntry}
-     * @throws SQLException
-     */
-    public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
-        DataType type = DataType.fromId(res.getInt(4));
-        return (DataEntry) type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
-    }
-
-    /**
      * Adds a player to the database
      */
     private boolean addPlayer(String name) {
@@ -204,22 +197,23 @@ public class DataManager implements Runnable, AutoCloseable {
      * @return true on success, false on failure
      */
     private boolean updateDbLists() {
-        Connection conn = null;
-        Statement stmnt = null;
-        try {
-            conn = getConnection();
-            stmnt = conn.createStatement();
-            ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;");
-            while (res.next())
-                dbPlayers.put(res.getString("player"), res.getInt("player_id"));
-            res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;");
-            while (res.next())
-                dbWorlds.put(res.getString("world"), res.getInt("world_id"));
+        try (Connection conn = getConnection()) {
+            try (Statement stmnt = conn.createStatement()) {
+
+                try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;")) {
+                    while (res.next())
+                        dbPlayers.put(res.getString("player"), res.getInt("player_id"));
+                }
+
+                try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;")) {
+                    while (res.next())
+                        dbWorlds.put(res.getString("world"), res.getInt("world_id"));
+                }
+
+            }
         } catch (SQLException ex) {
             Util.severe("Unable to update local data lists from database: " + ex);
             return false;
-        } finally {
-            JDBCUtil.close(conn, stmnt);
         }
         return true;
     }
@@ -245,37 +239,24 @@ public class DataManager implements Runnable, AutoCloseable {
      */
     private boolean checkTables() {
 
-        Connection conn = null;
-        Statement stmnt = null;
-        try {
-            conn = getConnection();
-            stmnt = conn.createStatement();
-            DatabaseMetaData dbm = conn.getMetaData();
+        try (Connection conn = getConnection()) {
+            try (Statement stmnt = conn.createStatement()) {
 
-            //Check if tables exist
-            if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
-                Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
-                stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable + "` (" +
+                String playerTable = "CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable + "` (" +
                         "`player_id` SMALLINT(6) UNSIGNED NOT NULL AUTO_INCREMENT, " +
                         "`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
                         "PRIMARY KEY (`player_id`), " +
                         "UNIQUE KEY `player` (`player`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
-            }
+                        ") COLLATE latin1_general_ci, ENGINE = INNODB;";
 
-            if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
-                Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");
-                stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable + "` (" +
+                String worldTable = "CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable + "` (" +
                         "`world_id` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT, " +
                         "`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
                         "PRIMARY KEY (`world_id`), " +
                         "UNIQUE KEY `world` (`world`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
-            }
+                        ") COLLATE latin1_general_ci, ENGINE = INNODB;";
 
-            if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
-                Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
-                stmnt.execute("CREATE TABLE `" + Config.DbHawkEyeTable + "` (" +
+                String dataTable = "CREATE TABLE `" + Config.DbHawkEyeTable + "` (" +
                         "`data_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
                         "`timestamp` datetime NOT NULL," +
                         "`player_id` SMALLINT(6) UNSIGNED NOT NULL," +
@@ -291,86 +272,66 @@ public class DataManager implements Runnable, AutoCloseable {
                         "KEY `action` (`action`)," +
                         "KEY `world_id` (`world_id`)," +
                         "KEY `x_y_z` (`x`,`y`,`z`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
+                        ") COLLATE latin1_general_ci, ENGINE = INNODB;";
+
+                DatabaseMetaData dbm = conn.getMetaData();
+
+                //Check if tables exist
+                if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
+                    Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
+                    stmnt.execute(playerTable);
+                }
+
+                if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
+                    Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");
+                    stmnt.execute(worldTable);
+                }
+
+                if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
+                    Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
+                    stmnt.execute(dataTable);
+                }
+
+                //This will print an error if the user does not have SUPER privilege
+                try {
+                    stmnt.execute("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
+                    stmnt.execute("SET GLOBAL sync_binlog = 0");
+                } catch (Exception e) {
+                    Util.debug("HawkEye does not have enough privileges for setting global settings");
+                }
+
+                //Here is were the table alterations take place (Aside from alters from making tables)
+
+                ResultSet rs = stmnt.executeQuery("SHOW FIELDS FROM `" + Config.DbHawkEyeTable + "` where Field ='action'");
+
+                //Older hawkeye versions x = double, and contains the column "plugin"
+                if (rs.next() && !rs.getString(2).contains("tinyint") || JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "plugin")) {
+
+                    Util.info("Updating " + Config.DbPlayerTable + "...");
+
+                    updateTables(Config.DbPlayerTable, "`player_id`,`player`", stmnt, playerTable.replace(Config.DbPlayerTable, "new" + Config.DbPlayerTable));
+
+
+                    Util.info("Updating " + Config.DbWorldTable + "...");
+
+                    updateTables(Config.DbWorldTable, "`world_id`,`world`", stmnt, worldTable.replace(Config.DbWorldTable, "new" + Config.DbWorldTable));
+
+                    Util.info("Updating " + Config.DbHawkEyeTable + "...");
+
+                    updateTables(Config.DbHawkEyeTable, "`data_id`,`timestamp`,`player_id`,`action`,`world_id`,`x`,`y`,`z`,`data`", stmnt,
+                            dataTable.replace(Config.DbHawkEyeTable, "new" + Config.DbHawkEyeTable));
+
+                    Util.info("Finished!");
+
+                }
+
+                conn.commit();
             }
-
-            //This will print an error if the user does not have SUPER privilege
-            try {
-                stmnt.execute("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
-                stmnt.execute("SET GLOBAL sync_binlog = 0");
-            } catch (Exception e) {
-                Util.debug("HawkEye does not have enough privileges for setting global settings");
-            }
-
-
-            //Here is were the table alterations take place (Aside from alters from making tables)
-
-            ResultSet rs = stmnt.executeQuery("SHOW FIELDS FROM `" + Config.DbHawkEyeTable + "` where Field ='action'");
-
-            //Older hawkeye versions x = double, and contains the column "plugin"
-            if (rs.next() && !rs.getString(2).contains("tinyint") || JDBCUtil.columnExists(dbm, Config.DbHawkEyeTable, "plugin")) {
-
-                Util.info("Updating " + Config.DbPlayerTable + "...");
-
-                updateTables(Config.DbPlayerTable, "`player_id`,`player`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbPlayerTable + "` (" +
-                        "`player_id` SMALLINT(6) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                        "`player` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
-                        "PRIMARY KEY (`player_id`), " +
-                        "UNIQUE KEY `player` (`player`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
-
-
-                Util.info("Updating " + Config.DbWorldTable + "...");
-
-                updateTables(Config.DbWorldTable, "`world_id`,`world`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbWorldTable + "` (" +
-                        "`world_id` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                        "`world` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL, " +
-                        "PRIMARY KEY (`world_id`), " +
-                        "UNIQUE KEY `world` (`world`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
-
-
-                Util.info("Updating " + Config.DbHawkEyeTable + "...");
-
-                updateTables(Config.DbHawkEyeTable, "`data_id`,`timestamp`,`player_id`,`action`,`world_id`,`x`,`y`,`z`,`data`", stmnt, "CREATE TABLE IF NOT EXISTS `new" + Config.DbHawkEyeTable + "` (" +
-                        "`data_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
-                        "`timestamp` datetime NOT NULL," +
-                        "`player_id` MEDIUMINT(6) UNSIGNED NOT NULL," +
-                        "`action` TINYINT(3) UNSIGNED NOT NULL," +
-                        "`world_id` TINYINT(3) UNSIGNED NOT NULL," +
-                        "`x` int(11) NOT NULL," +
-                        "`y` int(11) NOT NULL," +
-                        "`z` int(11) NOT NULL," +
-                        "`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
-                        "PRIMARY KEY (`data_id`)," +
-                        "KEY `timestamp` (`timestamp`)," +
-                        "KEY `player` (`player_id`)," +
-                        "KEY `action` (`action`)," +
-                        "KEY `world_id` (`world_id`)," +
-                        "KEY `x_y_z` (`x`,`y`,`z`)" +
-                        ") COLLATE latin1_general_ci, ENGINE = INNODB;");
-
-                Util.info("Finished!");
-
-            }
-
-            conn.commit();
-
         } catch (SQLException ex) {
             Util.severe("Error checking HawkEye tables: " + ex);
             return false;
-        } finally {
-            try {
-                if (stmnt != null)
-                    stmnt.close();
-                conn.close();
-            } catch (SQLException ex) {
-                Util.severe("Unable to close SQL connection: " + ex);
-            }
-
         }
         return true;
-
     }
 
     /**
@@ -385,64 +346,50 @@ public class DataManager implements Runnable, AutoCloseable {
         if (queue.size() > 70000)
             Util.info("HawkEye can't keep up! Current Queue: " + queue.size());
 
-        Connection conn = null;
-        PreparedStatement stmnt = null;
-        try {
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-            conn = getConnection();
+                for (int i = 0; i < queue.size(); i++) {
+                    DataEntry entry = queue.poll();
 
-            stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
+                        Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
+                        continue;
+                    }
+                    if (!dbWorlds.containsKey(entry.getWorld()) && !addWorld(entry.getWorld())) {
+                        Util.debug("World '" + entry.getWorld() + "' not found, skipping entry");
+                        continue;
+                    }
 
-            for (int i = 0; i < queue.size(); i++) {
-                DataEntry entry = queue.poll();
+                    //If player ID is unable to be found, continue
+                    if (entry.getPlayer() == null || dbPlayers.get(entry.getPlayer()) == null) {
+                        Util.debug("No player found, skipping entry");
+                        continue;
+                    }
 
-                if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
-                    Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
-                    continue;
+                    stmnt.setTimestamp(1, entry.getTimestamp());
+                    stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
+                    stmnt.setInt(3, entry.getType().getId());
+                    stmnt.setInt(4, dbWorlds.get(entry.getWorld()));
+                    stmnt.setDouble(5, entry.getX());
+                    stmnt.setDouble(6, entry.getY());
+                    stmnt.setDouble(7, entry.getZ());
+                    stmnt.setString(8, entry.getSqlData());
+                    if (entry.getDataId() > 0) stmnt.setInt(9, entry.getDataId());
+                    else stmnt.setInt(9, 0); //0 is better then setting it to null, like before
+                    stmnt.addBatch();
+
+                    if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
                 }
-                if (!dbWorlds.containsKey(entry.getWorld()) && !addWorld(entry.getWorld())) {
-                    Util.debug("World '" + entry.getWorld() + "' not found, skipping entry");
-                    continue;
-                }
 
-                //If player ID is unable to be found, continue
-                if (entry.getPlayer() == null || dbPlayers.get(entry.getPlayer()) == null) {
-                    Util.debug("No player found, skipping entry");
-                    continue;
-                }
+                stmnt.executeBatch();
 
-                stmnt.setTimestamp(1, entry.getTimestamp());
-                stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
-                stmnt.setInt(3, entry.getType().getId());
-                stmnt.setInt(4, dbWorlds.get(entry.getWorld()));
-                stmnt.setDouble(5, entry.getX());
-                stmnt.setDouble(6, entry.getY());
-                stmnt.setDouble(7, entry.getZ());
-                stmnt.setString(8, entry.getSqlData());
-                if (entry.getDataId() > 0) stmnt.setInt(9, entry.getDataId());
-                else stmnt.setInt(9, 0); //0 is better then setting it to null, like before
-                stmnt.addBatch();
-
-                if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
+                conn.commit();
             }
-
-            stmnt.executeBatch();
-
-            conn.commit();
-
         } catch (Exception ex) {
             Util.warning(ex.getMessage());
             ex.printStackTrace();
         } finally {
-            try {
-                if (stmnt != null)
-                    stmnt.close();
-                conn.close();
-            } catch (Exception ex) {
-                Util.severe("Unable to close SQL connection: " + ex);
-                ex.printStackTrace();
-            }
-
             threadbusy = false;
         }
     }

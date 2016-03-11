@@ -12,7 +12,6 @@ import uk.co.oliwali.HawkEye.util.Util;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -139,13 +138,13 @@ public class SearchQuery extends Thread {
 		Util.debug("Building location");
 		if (parser.minLoc != null) {
 			args.add("(x BETWEEN " + parser.minLoc.getBlockX() + " AND " + parser.maxLoc.getBlockX() + ")");
-			args.add("(z BETWEEN " + parser.minLoc.getBlockZ() + " AND " + parser.maxLoc.getBlockZ() + ")");
 			args.add("(y BETWEEN " + parser.minLoc.getBlockY() + " AND " + parser.maxLoc.getBlockY() + ")");
+			args.add("(z BETWEEN " + parser.minLoc.getBlockZ() + " AND " + parser.maxLoc.getBlockZ() + ")");
 		}
 		else if (parser.loc != null) {
 			args.add("x = " + parser.loc.getX());
-			args.add("z = " + parser.loc.getZ());
 			args.add("y = " + parser.loc.getY());
+			args.add("z = " + parser.loc.getZ());
 		}
 
 		//Build the filters into SQL form
@@ -172,97 +171,81 @@ public class SearchQuery extends Thread {
 		//Util.debug("Searching: " + sql);
 
 		//Set up some stuff for the search
-		ResultSet res = null;
 		ArrayList<DataEntry> results = new ArrayList<DataEntry>();
-		Connection conn = null;
-		PreparedStatement stmnt = null;
 		int deleted = 0;
 
-		try {
-			conn = DataManager.getConnection();
+		try (Connection conn = DataManager.getConnection()) {
+			try (PreparedStatement stmnt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+				//Execute query
 
-			//Execute query
-			stmnt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				Util.debug("Preparing statement");
+				for (int i = 0; i < binds.size(); i++)
+					stmnt.setObject(i + 1, binds.get(i));
 
-			Util.debug("Preparing statement");
-			for (int i = 0; i < binds.size(); i++)
-				stmnt.setObject(i + 1, binds.get(i));
+				Util.debug("Searching: " + stmnt.toString());
 
-			Util.debug("Searching: " + stmnt.toString());
+				if (delete) {
+					Util.debug("Deleting entries");
+					deleted = stmnt.executeUpdate();
+				} else {
+					try (ResultSet res = stmnt.executeQuery()) {
 
-			if (delete) {
-				Util.debug("Deleting entries");
-				deleted = stmnt.executeUpdate();
-			} else {
-				res = stmnt.executeQuery();
+						Util.debug("Getting results");
 
-				Util.debug("Getting results");
+						//Results are cached to prevent constant massive hashmap lookups from DataManager
+						HashMap<Integer, String> playerCache = new HashMap<>();
+						HashMap<Integer, String> worldCache = new HashMap<>();
 
-				//Results are cached to prevent constant massive hashmap lookups from DataManager
-				HashMap<Integer, String> playerCache = new HashMap<>();
-				HashMap<Integer, String> worldCache = new HashMap<>();
+						//Default to BLOCK_BREAK, it's the first and most likely to be used so why not
+						DataType type = DataType.BLOCK_BREAK;
+						DataEntry entry;
 
-				//Default to BLOCK_BREAK, it's the first and most likely to be used so why not
-				DataType type = DataType.BLOCK_BREAK;
-				DataEntry entry;
+						String name;
+						String world;
 
-				String name;
-				String world;
-				
-				//Retrieve results
-				while (res.next()) {
+						//Retrieve results
+						while (res.next()) {
 
-					if (type.getId() != res.getInt(4)) {
-						type = DataType.fromId(res.getInt(4));
+							if (type.getId() != res.getInt(4)) {
+								type = DataType.fromId(res.getInt(4));
+							}
+
+							name = playerCache.get(res.getInt(3));
+
+							world = worldCache.get(res.getInt(5));
+
+							if (name == null) {
+								name = DataManager.getPlayer(res.getInt(3));
+								playerCache.put(res.getInt(3), name);
+							}
+
+							if (world == null) {
+								world = DataManager.getWorld(res.getInt(5));
+								worldCache.put(res.getInt(5), world);
+							}
+
+							entry = (DataEntry) type.getEntryConstructor().newInstance(
+									name,               //Username
+									res.getTimestamp(2),//Timestamp of entry
+									res.getInt(1),      //dataId
+									type,               //Data-Type
+									res.getString(9),   //Raw-Data
+									world,              //World Name
+									res.getInt(6),      //X
+									res.getInt(7),      //Y
+									res.getInt(8)       //Z
+							);
+
+							results.add(entry);
+						}
 					}
-
-					name = playerCache.get(res.getInt(3));
-
-					world = worldCache.get(res.getInt(5));
-
-					if (name == null) {
-						name = DataManager.getPlayer(res.getInt(3));
-						playerCache.put(res.getInt(3), name);
-					}
-
-					if (world == null) {
-						world = DataManager.getWorld(res.getInt(5));
-						worldCache.put(res.getInt(5), world);
-					}
-
-					entry = (DataEntry) type.getEntryConstructor().newInstance(
-							name,
-							res.getTimestamp(2),
-							res.getInt(1),
-							type,
-							res.getString(9),
-							world,
-							res.getInt(6),
-							res.getInt(7),
-							res.getInt(8)
-					);
-
-					results.add(entry);
 				}
 			}
-
 		} catch (Exception ex) {
 			Util.severe("Error executing MySQL query: " + ex);
 			ex.printStackTrace();
 			callBack.error(SearchError.MYSQL_ERROR, "Error executing MySQL query: " + ex);
 			return;
-		} finally {
-			try {
-				if (res != null)
-					res.close();
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (SQLException ex) {
-				Util.severe("Unable to close SQL connection: " + ex);
-				callBack.error(SearchError.MYSQL_ERROR, "Unable to close SQL connection: " + ex);
-			}
-
 		}
 
 		Util.debug(results.size() + " results found");

@@ -43,51 +43,37 @@ public class DeleteManager implements Runnable {
     @Override
     public void run() {
         if (!deletions.isEmpty()) {
-            Connection conn = null;
-            PreparedStatement stmnt = null;
 
-            try {
+            try (Connection conn = DataManager.getConnection()) {
 
                 DeleteQueue deleteQueue = deletions.peek();
 
                 Util.debug("Running DeleteQueue, key: " + deleteQueue.hashCode() + ", size: " + deleteQueue.getSize());
 
-                conn = DataManager.getConnection();
+                try (PreparedStatement stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?")) {
 
-                stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?");
+                    int removeAmount = (deleteQueue.getSize() > 10000 ? 10000 : deleteQueue.getSize());
 
-                int removeAmount = (deleteQueue.getSize() > 10000 ? 10000 : deleteQueue.getSize());
+                    for (int i = 0; i < removeAmount; i++) {
 
-                for (int i = 0; i < removeAmount; i++) {
+                        stmnt.setInt(1, deleteQueue.poll());
+                        stmnt.addBatch();
 
-                    stmnt.setInt(1, deleteQueue.poll());
-                    stmnt.addBatch();
+                        if (i % 1000 == 0)
+                            stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
 
-                    if (i % 1000 == 0)
-                        stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!
+                    }
 
+                    stmnt.executeBatch();
+
+                    conn.commit();
+
+                    if (deleteQueue.isFinished()) {
+                        deletions.poll();
+                    }
                 }
-
-                stmnt.executeBatch();
-
-                conn.commit();
-
-                if (deleteQueue.isFinished()) {
-                    deletions.poll();
-                }
-
             } catch (Exception ex) {
                 Util.warning("Unable to purge MySQL:" + ex.getMessage());
-            } finally {
-                try {
-
-                    if (stmnt != null)
-                        stmnt.close();
-
-                    conn.close();
-                } catch (Exception ex) {
-                    Util.severe("Unable to close SQL connection: " + ex);
-                }
             }
         }
     }
