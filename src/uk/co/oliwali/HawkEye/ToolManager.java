@@ -1,8 +1,5 @@
 package uk.co.oliwali.HawkEye;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,13 +8,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
 import uk.co.oliwali.HawkEye.callbacks.SearchCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.util.Arrays;
 
 /**
  * Contains methods for controlling the HawkEye tool
@@ -71,7 +69,7 @@ public class ToolManager {
 	/**
 	 * Performs a HawkEye tool search at the specified location
 	 * @param player
-	 * @param loc
+	 * @param b
 	 */
 	public static void toolSearch(Player player, Block b) {
 
@@ -88,7 +86,7 @@ public class ToolManager {
 		}
 		//Else use the default ones
 		else {
-			parser = new SearchParser(player, Arrays.asList(session.getToolCommand()));
+			parser = new SearchParser(player, session.getToolCommand());
 		}
 
 		Vector vec = Util.getSimpleLocation(loc).toVector();
@@ -120,7 +118,7 @@ public class ToolManager {
 	 * @param session session to save args to
 	 * @param args parameters
 	 */
-	public static void bindTool(Player player, PlayerSession session, List<String> args) {
+	public static void bindTool(Player player, PlayerSession session, String[] args) {
 
 		try {
 			new SearchParser(player, args);
@@ -129,8 +127,8 @@ public class ToolManager {
 			return;
 		}
 
-		Util.sendMessage(player, "&cParameters bound to tool: &7" + Util.join(args, " "));
-		session.setToolCommand(args.toArray(new String[0]));
+		Util.sendMessage(player, "&cParameters bound to tool: &7" + Util.join(Arrays.asList(args), " "));
+		session.setToolCommand(args);
 		if (!session.isUsingTool()) enableTool(session, player);
 
 	}

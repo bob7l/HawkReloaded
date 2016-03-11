@@ -1,99 +1,47 @@
 package uk.co.oliwali.HawkEye.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import uk.co.oliwali.HawkEye.HawkEye;
-import uk.co.oliwali.HawkEye.PlayerSession;
-import uk.co.oliwali.HawkEye.SessionManager;
-import uk.co.oliwali.HawkEye.util.Util;
-
 /**
- * Abstract class representing a command.
- * When run by the command manager ({@link HawkEye}), it pre-processes all the data into more useful forms.
- * Extending classes should adjust required fields in their constructor
- * @author Oli
- *
+ * @author bob7l
  */
 public abstract class BaseCommand {
 
-	public CommandSender sender;
-	public List<String> args = new ArrayList<String>();
-	public String name;
-	public int argLength = 0;
-	public String usage;
-	public boolean bePlayer = true;
-	public Player player;
-	public String permission;
-	public String usedCommand;
-	public PlayerSession session;
-	public HawkEye plugin;
+    protected String name;
+    protected int argLength = 0;
+    protected String usage;
+    protected String permission;
 
-	/**
-	 * Method called by the command manager in {@link HawkEye} to run the command.
-	 * Arguments are processed into a list for easier manipulating.
-	 * Argument lengths, permissions and sender types are all handled.
-	 * @param csender {@link CommandSender} to send data to
-	 * @param preArgs arguments to be processed
-	 * @param cmd command being executed
-	 * @return true on success, false if there is an error in the checks or if the extending command returns false
-	 */
-	public boolean run(HawkEye instace, CommandSender csender, String[] preArgs, String cmd) {
+    public boolean execute(CommandSender sender, String[] args) {
+        sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
+        return true;
+    }
 
-		plugin = instace;
-		sender = csender;
-		session = SessionManager.getSession(sender);
-		usedCommand = cmd;
+    public boolean execute(Player player, String[] args) {
+        return execute(((CommandSender)player), args);
+    }
 
-		//Sort out arguments
-		args.clear();
-		for (String arg : preArgs)
-			args.add(arg);
+    /**
+     * Sends advanced help to the sender
+     */
+    public abstract void moreHelp(CommandSender sender);
 
-		//Remove commands from arguments
-		for (int i = 0; i < name.split(" ").length && i < args.size(); i++)
-			args.remove(0);
+    public String getName() {
+        return name;
+    }
 
-		//Check arg lengths
-		if (argLength > args.size()) {
-			sendUsage();
-			return true;
-		}
+    public int getArgLength() {
+        return argLength;
+    }
 
-		//Check if sender should be a player
-		if (bePlayer && !(sender instanceof Player))
-			return false;
-		if (sender instanceof Player)
-			player = (Player)sender;
-		
-		if (!(Util.hasPerm(sender, permission))) {
-			Util.sendMessage(sender, "&cYou do not have permission to do that!");
-			return true;
-		}
+    public String getUsage() {
+        return usage;
+    }
 
-		return execute();
-	}
-
-	/**
-	 * Runs the extending command.
-	 * Should only be run by the BaseCommand after all pre-processing is done
-	 * @return true on success, false otherwise
-	 */
-	public abstract boolean execute();
-
-	/**
-	 * Sends advanced help to the sender
-	 */
-	public abstract void moreHelp();
-
-	/**
-	 * Displays the help information for this command
-	 */
-	public void sendUsage() {
-		Util.sendMessage(sender, "&c/"+usedCommand+" " + name + " " + usage);
-	}
+    public String getPermission() {
+        return permission;
+    }
 
 }

@@ -1,15 +1,19 @@
 package uk.co.oliwali.HawkEye.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.PlayerSession;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.SearchParser;
+import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rolls back actions according to the player's specified input.
@@ -26,7 +30,9 @@ public class RollbackCommand extends BaseCommand {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean execute(Player sender, String[] args) {
+
+		PlayerSession session = SessionManager.getSession(sender);
 
 		//Check if player already has a rollback processing
 		if (session.doingRollback()) {
@@ -38,7 +44,7 @@ public class RollbackCommand extends BaseCommand {
 		SearchParser parser = null;
 		try {
 
-			parser = new SearchParser(player, args);
+			parser = new SearchParser(sender, args);
 			parser.loc = null;
 
 			//Check that supplied actions can rollback
@@ -64,8 +70,8 @@ public class RollbackCommand extends BaseCommand {
 	}
 
 	@Override
-	public void moreHelp() {
-		List<String> acs = new ArrayList<String>();
+	public void moreHelp(CommandSender sender) {
+		List<String> acs = new ArrayList<>();
 		for (DataType type : DataType.values()) if (type.canRollback()) acs.add(type.getConfigName());
 		Util.sendMessage(sender, "&7There are 6 parameters you can use - &ca: p: w: r: f: t:");
 		Util.sendMessage(sender, "&6Action &ca:&7 - list of actions separated by commas. Select from the following: &8" + Util.join(acs, " "));

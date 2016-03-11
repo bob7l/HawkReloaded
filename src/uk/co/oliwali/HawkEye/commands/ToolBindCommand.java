@@ -1,5 +1,8 @@
 package uk.co.oliwali.HawkEye.commands;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.ToolManager;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -13,13 +16,13 @@ public class ToolBindCommand extends BaseCommand {
 	}
 
 	@Override
-	public boolean execute() {
-		ToolManager.bindTool(player, session, args);
+	public boolean execute(Player sender, String[] args) {
+		ToolManager.bindTool(sender, SessionManager.getSession(sender), args);
 		return true;
 	}
 
 	@Override
-	public void moreHelp() {
+	public void moreHelp(CommandSender sender) {
 		Util.sendMessage(sender, "&cAllows you to bind custom search parameters onto the tool");
 		Util.sendMessage(sender, "&cSee &7/hawk search help for info on parameters");
 	}

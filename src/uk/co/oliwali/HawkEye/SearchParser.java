@@ -1,19 +1,17 @@
 package uk.co.oliwali.HawkEye;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
+import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
-import com.sk89q.worldedit.bukkit.selections.Selection;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Class for parsing HawkEye arguments ready to be used by an instance of {@SearchQuery}
@@ -45,15 +43,15 @@ public class SearchParser {
 		parseLocations();
 	}
 
-	public SearchParser(CommandSender player, List<String> args) throws IllegalArgumentException {
+	public SearchParser(CommandSender player, String[] args) throws IllegalArgumentException {
 		this.player = player;
 
 		String lastParam = "";
 		boolean paramSet = false;
 		boolean worldedit = false;
 
-		for (int i = 0; i < args.size(); i++) {
-			String arg = args.get(i);
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
 			if (arg.isEmpty()) continue;
 
 			if (!paramSet) {
@@ -73,7 +71,7 @@ public class SearchParser {
 				paramSet = true;
 
 				if (arg.length() == 2) {
-					if (i == (args.size() - 1)) // No values specified
+					if (i == (args.length - 1)) // No values specified
 						throw new IllegalArgumentException("Invalid argument format: &7" + arg);
 					else // User put a space between the colon and value
 						continue;

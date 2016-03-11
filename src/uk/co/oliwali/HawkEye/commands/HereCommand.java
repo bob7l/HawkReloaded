@@ -1,7 +1,10 @@
 package uk.co.oliwali.HawkEye.commands;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
+import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.callbacks.SearchCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
@@ -22,16 +25,16 @@ public class HereCommand extends BaseCommand {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean execute(Player player, String[] args) {
 
 		//Create new parser
 		SearchParser parser = null;
 		try {
 
 			//Check for valid integer
-			if (args.size() != 0 && !Util.isInteger(args.get(0))) throw new IllegalArgumentException("Invalid integer supplied for radius!");
+			if (args.length != 0 && !Util.isInteger(args[0])) throw new IllegalArgumentException("Invalid integer supplied for radius!");
 			int integer;
-			if (args.size() > 0) integer = Integer.parseInt(args.get(0));
+			if (args.length > 0) integer = Integer.parseInt(args[0]);
 			else integer = Config.DefaultHereRadius;
 			if ((integer > Config.MaxRadius && Config.MaxRadius > 0) || integer < 0)
 				throw new IllegalArgumentException("Invalid radius supplied supplied!");
@@ -44,26 +47,26 @@ public class HereCommand extends BaseCommand {
 				if (type.canHere()) parser.actions.add(type);
 
 			//Check if players were supplied
-			if (args.size() > 1)
-				for (String p : args.get(1).split(",")) parser.players.add(p);
+			if (args.length > 1)
+				for (String p : args[1].split(",")) parser.players.add(p);
 
 			//Add in 'here' actions
 			for (DataType type : DataType.values())
 				if (type.canHere()) parser.actions.add(type);
 
 		} catch (IllegalArgumentException e) {
-			Util.sendMessage(sender, "&c" + e.getMessage());
+			Util.sendMessage(player, "&c" + e.getMessage());
 			return true;
 		}
 
 		//Run the search query
-		new SearchQuery(new SearchCallback(session), parser, SearchDir.DESC);
+		new SearchQuery(new SearchCallback(SessionManager.getSession(player)), parser, SearchDir.DESC);
 		return true;
 
 	}
 
 	@Override
-	public void moreHelp() {
+	public void moreHelp(CommandSender sender) {
 		Util.sendMessage(sender, "&cShows all changes in a radius around you");
 		Util.sendMessage(sender, "&cRadius should be an integer");
 	}

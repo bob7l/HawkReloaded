@@ -1,54 +1,20 @@
 package uk.co.oliwali.HawkEye;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.dthielke.herochat.Herochat;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import uk.co.oliwali.HawkEye.WorldEdit.WESessionFactory;
-import uk.co.oliwali.HawkEye.commands.BaseCommand;
-import uk.co.oliwali.HawkEye.commands.DeleteCommand;
-import uk.co.oliwali.HawkEye.commands.HelpCommand;
-import uk.co.oliwali.HawkEye.commands.HereCommand;
-import uk.co.oliwali.HawkEye.commands.InfoCommand;
-import uk.co.oliwali.HawkEye.commands.PageCommand;
-import uk.co.oliwali.HawkEye.commands.PreviewApplyCommand;
-import uk.co.oliwali.HawkEye.commands.PreviewCancelCommand;
-import uk.co.oliwali.HawkEye.commands.PreviewCommand;
-import uk.co.oliwali.HawkEye.commands.RebuildCommand;
-import uk.co.oliwali.HawkEye.commands.ReloadCommand;
-import uk.co.oliwali.HawkEye.commands.RollbackCommand;
-import uk.co.oliwali.HawkEye.commands.SearchCommand;
-import uk.co.oliwali.HawkEye.commands.ToolBindCommand;
-import uk.co.oliwali.HawkEye.commands.ToolCommand;
-import uk.co.oliwali.HawkEye.commands.ToolResetCommand;
-import uk.co.oliwali.HawkEye.commands.TptoCommand;
-import uk.co.oliwali.HawkEye.commands.UndoCommand;
-import uk.co.oliwali.HawkEye.commands.WriteLogCommand;
-import uk.co.oliwali.HawkEye.database.ConnectionManager;
 import uk.co.oliwali.HawkEye.database.DataManager;
-import uk.co.oliwali.HawkEye.listeners.MonitorBlockListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorEntityListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorFallingBlockListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorHeroChatListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorLiquidFlow;
-import uk.co.oliwali.HawkEye.listeners.MonitorPlayerListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorWorldEditListener;
-import uk.co.oliwali.HawkEye.listeners.MonitorWorldListener;
-import uk.co.oliwali.HawkEye.listeners.ToolListener;
+import uk.co.oliwali.HawkEye.listeners.*;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
-import com.dthielke.herochat.Herochat;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class HawkEye extends JavaPlugin {
 
@@ -67,7 +33,7 @@ public class HawkEye extends JavaPlugin {
 	public ToolListener toolListener = new ToolListener();
 	private DataManager dbmanager;
 	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
-	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
+
 	public static HashMap<String, HashMap<String,Integer>> InvSession = new HashMap<String, HashMap<String,Integer>>();
 	public static WorldEditPlugin worldEdit = null;
 	public static Herochat herochat = null;
@@ -79,20 +45,15 @@ public class HawkEye extends JavaPlugin {
 	public void onDisable() {
 
 		if (dbmanager != null) {
-			
-			dbmanager.run();
-			
-			if (!ConnectionManager.getConnections().isEmpty()) {
-				while (dbmanager.isInsertThreadBusy() || ConnectionManager.areConsOpen()) {
-					Util.debug("Not ready");
-					if (DataManager.getQueue().size() != 0) {
-						dbmanager.run();
-					}
-				}
+
+			try {
+				dbmanager.close();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 		}
 
-		DataManager.close();
 		Util.info("Version " + version + " disabled!");
 	}
 
@@ -150,7 +111,9 @@ public class HawkEye extends JavaPlugin {
         monitorLiquidFlow = new MonitorLiquidFlow(this);
         
 		registerListeners(pm);
-		registerCommands();
+
+		getCommand("hawk").setExecutor(new HawkCommand());
+
 		Util.info("Version " + version + " enabled!");
 	}
 
@@ -200,57 +163,6 @@ public class HawkEye extends JavaPlugin {
 				}, 2L);
 			}
 		}
-	}
-
-	/**
-	 * Registers commands for use by the command manager
-	 */
-	private void registerCommands() {
-
-		//Add commands
-		commands.add(new HelpCommand());
-		commands.add(new ToolBindCommand());
-		commands.add(new ToolResetCommand());
-		commands.add(new ToolCommand());
-		commands.add(new SearchCommand());
-		commands.add(new PageCommand());
-		commands.add(new TptoCommand());
-		commands.add(new HereCommand());
-		commands.add(new PreviewApplyCommand());
-		commands.add(new PreviewCancelCommand());
-		commands.add(new PreviewCommand());
-		commands.add(new RollbackCommand());
-		commands.add(new UndoCommand());
-		commands.add(new RebuildCommand());
-		commands.add(new DeleteCommand());
-		commands.add(new InfoCommand());
-		commands.add(new WriteLogCommand());
-		commands.add(new ReloadCommand());
-	}
-
-	/**
-	 * Command manager for HawkEye
-	 * @param sender - {@link CommandSender}
-	 * @param cmd - {@link Command}
-	 * @param commandLabel - String
-	 * @param args[] - String[]
-	 */
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
-		if (cmd.getName().equalsIgnoreCase("hawk")) {
-			if (args.length == 0)
-				args = new String[]{"help"};
-			outer:
-				for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
-					String[] cmds = command.name.split(" ");
-					for (int i = 0; i < cmds.length; i++)
-						if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) continue outer;
-					return command.run(this, sender, args, commandLabel);
-				}
-			commands.get(0).run(this, sender, args, commandLabel);
-			return true;
-		}
-		return false;
 	}
 
 	private void setupUpdater() {
