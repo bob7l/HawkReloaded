@@ -8,18 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -39,10 +30,6 @@ import uk.co.oliwali.HawkEye.util.Util;
  */
 public class MonitorPlayerListener extends HawkEyeListener {
 
-	public MonitorPlayerListener(HawkEye HawkEye) {
-		super(HawkEye);
-	}
-
 	@HawkEvent(dataType = DataType.CHAT)
 	 public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -60,7 +47,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		Location loc  = player.getLocation();
-		DataManager.addEntry(new DataEntry(player, DataType.JOIN, loc, Config.LogIpAddresses?player.getAddress().getAddress().getHostAddress().toString():""));
+		DataManager.addEntry(new DataEntry(player, DataType.JOIN, loc, Config.LogIpAddresses? player.getAddress().getAddress().getHostAddress() :""));
 	}
 
 	@HawkEvent(dataType = DataType.QUIT)
@@ -70,7 +57,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 
 		String ip = "";
 		try {
-			ip = player.getAddress().getAddress().getHostAddress().toString();
+			ip = player.getAddress().getAddress().getHostAddress();
 		} catch (Exception e) { }
 
 		DataManager.addEntry(new DataEntry(player, DataType.QUIT, loc, Config.LogIpAddresses?ip:""));

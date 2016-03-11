@@ -1,6 +1,8 @@
 package uk.co.oliwali.HawkEye;
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,6 +32,8 @@ public class SearchParser {
 	public String dateFrom = null;
 	public String dateTo = null;
 	public String[] filters = null;
+
+	private static WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
 
 	public SearchParser() { }
 
@@ -136,8 +140,8 @@ public class SearchParser {
 				// Radius
 				else if (lastParam.equals("r") && player instanceof Player) {
 					if (!Util.isInteger(values[0])) {
-						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit")) && HawkEye.worldEdit != null) {
-							Selection sel = HawkEye.worldEdit.getSelection((Player) player);
+						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit")) && worldEdit != null) {
+							Selection sel = worldEdit.getSelection((Player) player);
 							int lRadius = (int) Math.ceil(sel.getLength() / 2);
 							int wRadius = (int) Math.ceil(sel.getWidth() / 2);
 							int hRadius = (int) Math.ceil(sel.getHeight() / 2);

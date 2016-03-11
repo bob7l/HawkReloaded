@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
-import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.*;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -29,10 +28,6 @@ import java.util.Arrays;
  * @author oliverw92
  */
 public class MonitorEntityListener extends HawkEyeListener {
-
-    public MonitorEntityListener(HawkEye HawkEye) {
-        super(HawkEye);
-    }
 
     /**
      * Uses the lastAttacker field in the players {@link PlayerSession} to log the death and cause

@@ -25,10 +25,6 @@ public class MonitorFallingBlockListener extends HawkEyeListener {
 
 	private HashMap<Entity, String> blocks = new HashMap<Entity, String>();
 
-	public MonitorFallingBlockListener(HawkEye HawkEye) {
-		super(HawkEye);
-	}
-
 	@HawkEvent(dataType = DataType.FALLING_BLOCK)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Material type = event.getBlock().getType();

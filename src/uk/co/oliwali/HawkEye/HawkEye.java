@@ -1,10 +1,7 @@
 package uk.co.oliwali.HawkEye;
 
-import com.dthielke.herochat.Herochat;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.co.oliwali.HawkEye.WorldEdit.WESessionFactory;
@@ -21,22 +18,25 @@ public class HawkEye extends JavaPlugin {
 	public String name;
 	public String version;
 	public Config config;
+
 	public static Server server;
 	public static HawkEye instance;
-	public MonitorBlockListener monitorBlockListener = new MonitorBlockListener(this);
-	public MonitorEntityListener monitorEntityListener = new MonitorEntityListener(this);
-	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
-	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
-	public MonitorFallingBlockListener monitorFBListerner = new MonitorFallingBlockListener(this);
+
+	public MonitorBlockListener monitorBlockListener = new MonitorBlockListener();
+	public MonitorEntityListener monitorEntityListener = new MonitorEntityListener();
+	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener();
+	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener();
+	public MonitorFallingBlockListener monitorFBListerner = new MonitorFallingBlockListener();
 	public MonitorWorldEditListener monitorWorldEditListener = new MonitorWorldEditListener();
-	public MonitorLiquidFlow monitorLiquidFlow;
+	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener();
+
+	public MonitorLiquidFlow monitorLiquidFlow = new MonitorLiquidFlow();
+
 	public ToolListener toolListener = new ToolListener();
+
 	private DataManager dbmanager;
-	public MonitorHeroChatListener monitorHeroChatListener = new MonitorHeroChatListener(this);
 
 	public static HashMap<String, HashMap<String,Integer>> InvSession = new HashMap<String, HashMap<String,Integer>>();
-	public static WorldEditPlugin worldEdit = null;
-	public static Herochat herochat = null;
 
 	/**
 	 * Safely shuts down HawkEye
@@ -45,13 +45,11 @@ public class HawkEye extends JavaPlugin {
 	public void onDisable() {
 
 		if (dbmanager != null) {
-
 			try {
 				dbmanager.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
 
 		Util.info("Version " + version + " disabled!");
@@ -104,11 +102,6 @@ public class HawkEye extends JavaPlugin {
 			pm.disablePlugin(this);
 			return;
 		}
-
-		checkDependencies(pm);
-
-		//This must be created while the plugin is loading as the constructor is dependent
-        monitorLiquidFlow = new MonitorLiquidFlow(this);
         
 		registerListeners(pm);
 
@@ -117,15 +110,8 @@ public class HawkEye extends JavaPlugin {
 		Util.info("Version " + version + " enabled!");
 	}
 
-	/**
-	 * Checks if required plugins are loaded
-	 * @param pm PluginManager
-	 */
-	private void checkDependencies(PluginManager pm) {
-		Plugin we = pm.getPlugin("WorldEdit");
-		Plugin hc = pm.getPlugin("Herochat");
-		if (we != null) worldEdit = (WorldEditPlugin)we;
-		if (hc != null) herochat = (Herochat)hc;
+	private boolean hasDependency(String plugin) {
+		return Bukkit.getPluginManager().getPlugin(plugin) != null;
 	}
 
 	/**
@@ -133,6 +119,7 @@ public class HawkEye extends JavaPlugin {
 	 * @param pm PluginManager
 	 */
 	public void registerListeners(PluginManager pm) {
+
 		//Register events
 		monitorBlockListener.registerEvents();
 		monitorPlayerListener.registerEvents();
@@ -142,9 +129,11 @@ public class HawkEye extends JavaPlugin {
 		monitorLiquidFlow.registerEvents();
 		monitorLiquidFlow.startCacheCleaner();
 		pm.registerEvents(toolListener, this);
-		if (herochat != null) monitorHeroChatListener.registerEvents();
 
-		if (worldEdit != null)  {
+		if (hasDependency("Herochat"))
+			monitorHeroChatListener.registerEvents();
+
+		if (hasDependency("WorldEdit"))  {
 			if (DataType.SUPER_PICKAXE.isLogged()) pm.registerEvents(monitorWorldEditListener, this); //Yes we still need to log superpick!
 			
 			//This makes sure we OVERRIDE any other plugin that tried to register a EditSessionFactory!

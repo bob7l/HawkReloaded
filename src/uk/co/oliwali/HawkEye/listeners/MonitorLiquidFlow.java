@@ -1,9 +1,5 @@
 package uk.co.oliwali.HawkEye.listeners;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,12 +8,15 @@ import org.bukkit.block.BlockState;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.material.MaterialData;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class MonitorLiquidFlow extends HawkEyeListener {
 
@@ -26,10 +25,6 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	private int cacheRunTime = 10;
 	private int timerId = -1;
 
-	public MonitorLiquidFlow(HawkEye HawkEye) {
-		super(HawkEye);
-	}
-
 	/**
 	 * Clears the Player cache when it's been 10 seconds after a waterflow event
 	 * Every time the event fires, the timer resets to allow the water to be tracked
@@ -37,7 +32,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	public void startCacheCleaner() {
 		if (DataType.PLAYER_LAVA_FLOW.isLogged() || DataType.PLAYER_WATER_FLOW.isLogged()) {
 			Bukkit.getScheduler().cancelTask(timerId);
-			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HawkEye.instance, new Runnable() {
 				@Override
 				public void run() {
 					cacheRunTime--;

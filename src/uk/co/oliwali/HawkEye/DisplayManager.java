@@ -1,11 +1,10 @@
 package uk.co.oliwali.HawkEye;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
-
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.util.List;
 
 /**
  * Manages displaying of search results. Includes utilities for handling pages of results
@@ -53,8 +52,8 @@ public class DisplayManager {
 			sendLine(session.getSender(), "&cID:" + entry.getDataId() + " &7" + time + "&c" + entry.getPlayer() + " &7" + entry.getType().getConfigName());
 			sendLine(session.getSender(), "&cLoc: &7" + entry.getWorld() + "-" + entry.getX() + "," + entry.getY() + "," + entry.getZ() + " &cData: &7" + entry.getStringData());
 		}
+
 		Util.sendMessage(session.getSender(), "&8-----------------------------------------------------");
-		return;
 	}
 
 	/**

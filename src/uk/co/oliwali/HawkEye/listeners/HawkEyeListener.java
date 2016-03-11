@@ -1,29 +1,22 @@
 package uk.co.oliwali.HawkEye.listeners;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.PluginManager;
-
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.util.Util;
 import uk.co.oliwali.HawkEye.util.Util.DebugLevel;
 
+import java.lang.reflect.Method;
+
 public abstract class HawkEyeListener implements Listener {
 
-	public HawkEye plugin;
-
-	public HawkEyeListener(HawkEye HawkEye) {
-		plugin = HawkEye;
-	}
-
 	public final void registerEvents() {
-		PluginManager pm = plugin.getServer().getPluginManager();
+		PluginManager pm = HawkEye.instance.getServer().getPluginManager();
 
 		Method[] methods = this.getClass().getDeclaredMethods();
 
@@ -64,7 +57,7 @@ public abstract class HawkEyeListener implements Listener {
 
 			Util.debug("Registering listener for " + eventClass.getName());
 
-			pm.registerEvent(eventClass, this, he.priority(), executor, plugin, he.ignoreCancelled());
+			pm.registerEvent(eventClass, this, he.priority(), executor, HawkEye.instance, he.ignoreCancelled());
 		}
 	}
 
