@@ -8,9 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
 import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.ToolManager;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -44,11 +42,6 @@ public class ToolListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDisconnect(PlayerQuitEvent event) {
-		SessionManager.removeSession(event.getPlayer());
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onDisconnect(PlayerKickEvent event) {
 		SessionManager.removeSession(event.getPlayer());
 	}
 
