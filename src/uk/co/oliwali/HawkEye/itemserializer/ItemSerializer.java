@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.itemserializer.entries.*;
 import uk.co.oliwali.HawkEye.util.BlockUtil;
-import uk.co.oliwali.HawkEye.util.Util;
+import uk.co.oliwali.HawkEye.util.SerializeUtil;
 
 /**
  * @author bob7l
@@ -38,7 +38,7 @@ public class ItemSerializer {
     public ItemStack applyEntries(ItemStack item, String str) {
         for (SerializerEntry e : entries) {
 
-            String data = Util.findValue(Character.toString(e.getKey()), str);
+            String data = SerializeUtil.findValue(Character.toString(e.getKey()), str);
 
             if (data != null) {
                 item = e.applySerializedData(item, data);

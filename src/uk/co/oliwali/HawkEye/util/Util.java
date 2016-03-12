@@ -257,33 +257,4 @@ public class Util {
         return message;
     }
 
-    public static String findValue(String key, String str) {
-        if (!str.contains(key + '{')) {
-            return null;
-        }
-
-        StringBuilder value = new StringBuilder();
-
-        boolean escaped = false;
-        char escapeChar = '\\';
-        char endChar = '}';
-
-        String begin = key + '{';
-
-        str = str.substring(str.indexOf(begin) + (begin.length()));
-
-        for (char c : str.toCharArray()) {
-            if (c == escapeChar) {
-                escaped = true;
-            } else if (c == endChar && !escaped) {
-                return value.toString();
-            } else {
-                escaped = false;
-                value.append(c);
-            }
-        }
-
-        return null;
-    }
-
 }
