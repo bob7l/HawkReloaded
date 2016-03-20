@@ -30,7 +30,6 @@ public class LoreMetaEntry implements SerializerEntry {
 
     @Override
     public ItemStack applySerializedData(ItemStack item, String data) {
-        System.out.println(data);
         List<String> lore = SerializeUtil.unJoinData(data, '|');
 
         for (int i = 0; i < lore.size(); i++) {
