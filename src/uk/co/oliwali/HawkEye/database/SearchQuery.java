@@ -92,15 +92,19 @@ public class SearchQuery extends Thread {
 		//Match worlds from database list
 		Util.debug("Building worlds");
 		if (parser.worlds != null) {
+
 			List<Integer> wids = new ArrayList<>();
 			List<Integer> nwids = new ArrayList<>();
+
 			for (String world : parser.worlds) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbWorlds.entrySet()) {
-					if (entry.getKey().toLowerCase().contains(world.toLowerCase()))
+
+					if (entry.getKey().equalsIgnoreCase(world))
 						wids.add(entry.getValue());
-					else if (entry.getKey().toLowerCase().contains(world.replace("!", "").toLowerCase()))
+					else if (entry.getKey().equalsIgnoreCase(world.replace("!", "")))
 						nwids.add(entry.getValue());
 				}
+
 			}
 			//Include worlds
 			if (wids.size() > 0)
