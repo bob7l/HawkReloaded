@@ -9,6 +9,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -21,11 +22,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class DataManager implements Runnable, AutoCloseable {
 
-    private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<DataEntry>();
+    private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<>();
     private static ConnectionManager connectionManager;
 
-    public static final HashMap<String, Integer> dbPlayers = new HashMap<String, Integer>();
-    public static final HashMap<String, Integer> dbWorlds = new HashMap<String, Integer>();
+    public static final HashMap<String, Integer> dbPlayers = new HashMap<>();
+    public static final HashMap<String, Integer> dbWorlds = new HashMap<>();
 
     private static DeleteManager deleteManager = new DeleteManager();
 
@@ -109,14 +110,14 @@ public class DataManager implements Runnable, AutoCloseable {
      * @return
      */
     public static DataEntry getEntry(int id) {
-        try (Connection conn = getConnection()) {
-            try (ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id)) {
+        try (Connection conn = getConnection();
+             ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id)) {
 
-                if (res.next()) {
-                    DataType type = DataType.fromId(res.getInt(4));
-                    return (DataEntry) type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
-                }
+            if (res.next()) {
+                DataType type = DataType.fromId(res.getInt(4));
+                return (DataEntry) type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
             }
+
         } catch (Exception ex) {
             Util.severe("Unable to retrieve data entry from MySQL Server: " + ex);
         }
@@ -158,37 +159,35 @@ public class DataManager implements Runnable, AutoCloseable {
         return connectionManager.getConnection();
     }
 
-    /**
-     * Adds a player to the database
-     */
-    private boolean addPlayer(String name) {
-        Util.debug("Attempting to add player '" + name + "' to database");
-
-        try (Connection conn = getConnection()) {//Instead of ignoring a dup'd key, we update the entry. Ignore is a very bad idea!
-            conn.createStatement().execute("INSERT INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "') ON DUPLICATE KEY UPDATE player='" + name + "';");
-            conn.commit();
-        } catch (SQLException ex) {
-            Util.severe("Unable to add player to database: " + ex);
-            return false;
-        }
-        return updateDbLists();
-    }
 
     /**
-     * Adds a world to the database
+     * Adds an identifier to the database and updates the provided map
      */
-    private boolean addWorld(String name) {
-        Util.debug("Attempting to add world '" + name + "' to database");
+    private boolean addKey(String table, String column, Map<String, Integer> map, String value) {
+        Util.debug("Attempting to add " + column + " '" + value + "' to database");
 
-        try (Connection conn = getConnection()) {
-            conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
+        String sql = "INSERT INTO `" + table + "` (" + column + ") VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, value);
+
+            stmt.executeUpdate();
+
             conn.commit();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+
+                if (rs.next())
+                    map.put(value, rs.getInt(1));
+
+            }
         } catch (SQLException ex) {
-            Util.severe("Unable to add world to database: " + ex);
+            Util.severe("Unable to add " + column + " to database: " + ex);
             return false;
         }
-
-        return updateDbLists();
+        return true;
     }
 
     /**
@@ -197,20 +196,19 @@ public class DataManager implements Runnable, AutoCloseable {
      * @return true on success, false on failure
      */
     private boolean updateDbLists() {
-        try (Connection conn = getConnection()) {
-            try (Statement stmnt = conn.createStatement()) {
+        try (Connection conn = getConnection();
+             Statement stmnt = conn.createStatement()) {
 
-                try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;")) {
-                    while (res.next())
-                        dbPlayers.put(res.getString("player"), res.getInt("player_id"));
-                }
-
-                try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;")) {
-                    while (res.next())
-                        dbWorlds.put(res.getString("world"), res.getInt("world_id"));
-                }
-
+            try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;")) {
+                while (res.next())
+                    dbPlayers.put(res.getString("player"), res.getInt("player_id"));
             }
+
+            try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;")) {
+                while (res.next())
+                    dbWorlds.put(res.getString("world"), res.getInt("world_id"));
+            }
+
         } catch (SQLException ex) {
             Util.severe("Unable to update local data lists from database: " + ex);
             return false;
@@ -352,11 +350,11 @@ public class DataManager implements Runnable, AutoCloseable {
                 for (int i = 0; i < queue.size(); i++) {
                     DataEntry entry = queue.poll();
 
-                    if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
+                    if (!dbPlayers.containsKey(entry.getPlayer()) && !addKey(Config.DbPlayerTable, "player", dbPlayers, entry.getPlayer())) {
                         Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
                         continue;
                     }
-                    if (!dbWorlds.containsKey(entry.getWorld()) && !addWorld(entry.getWorld())) {
+                    if (!dbWorlds.containsKey(entry.getWorld()) && !addKey(Config.DbWorldTable, "world", dbWorlds, entry.getWorld())) {
                         Util.debug("World '" + entry.getWorld() + "' not found, skipping entry");
                         continue;
                     }
