@@ -86,7 +86,7 @@ public class MonitorEntityListener extends HawkEyeListener {
     @HawkEvent(dataType = DataType.EXPLOSION)
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity e = event.getEntity();
-        String s = "Environment";
+        String s = ENVIRONMENT;
 
         if (e != null) { //Nullcheck, the entity CAN be null!
             if (e instanceof TNTPrimed) {

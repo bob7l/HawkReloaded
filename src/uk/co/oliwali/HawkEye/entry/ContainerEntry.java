@@ -11,8 +11,10 @@ import java.sql.Timestamp;
  * Represents a container transaction as created in {@MonitorInventoryListener}
  * @author oliverw92
  */
+
+@Deprecated
 public class ContainerEntry extends DataEntry {
-	
+
 	public ContainerEntry(String player, Timestamp timestamp, int dataId, DataType type, String data, String world, int x, int y, int z) {
 		super(player, timestamp, dataId, type, data, world, x, y, z);
 	}

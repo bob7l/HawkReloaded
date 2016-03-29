@@ -4,6 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.block.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.entry.containerentries.ContainerEntry;
+import uk.co.oliwali.HawkEye.entry.containerentries.ContainerExtract;
 import uk.co.oliwali.HawkEye.itemserializer.ItemSerializer;
 
 import java.util.ArrayList;
@@ -15,8 +19,8 @@ public class InventoryUtil {
     /**
      * Gets the missing items in newInv
      *
-     * @param  oldInv The compressed inventory to check against
-     * @param  newInv The compressed inventory to check for changes
+     * @param oldInv The compressed inventory to check against
+     * @param newInv The compressed inventory to check for changes
      * @return Returns the missing items from newInv, and newly added items [missing, new]
      */
     public static List<ItemStack>[] getDifference(List<ItemStack> oldInv, List<ItemStack> newInv) {
@@ -117,12 +121,16 @@ public class InventoryUtil {
     }
 
     public static void handleHolderRemoval(String remover, BlockState state) {
-        //   InventoryHolder holder = (InventoryHolder) state;
-        //   if (InventoryUtil.isHolderValid(holder)) {
-        //     // String data = InventoryUtil.compareInvs(InventoryUtil.compressInventory((holder instanceof Chest ? ((Chest) state).getBlockInventory() : holder.getInventory()).getContents()), new HashMap<String, Integer>());
-        //  if (data != null)
-        //       DataManager.addEntry(new ContainerEntry(remover, InventoryUtil.getHolderLoc(holder), data));
-        // }
+        InventoryHolder holder = (InventoryHolder) state;
+
+        if (InventoryUtil.isHolderValid(holder)) {
+            ItemStack[] invContents = (holder instanceof Chest ? ((Chest) state).getBlockInventory() : holder.getInventory()).getContents();
+
+            if (invContents.length > 0) {
+                for (String str : serializeInventory(ContainerEntry.getSerializer(), compressInventory(invContents)))
+                    DataManager.addEntry(new ContainerExtract(remover, DataType.CONTAINER_EXTRACT, InventoryUtil.getHolderLoc(holder), str));
+            }
+        }
     }
 
     public static Location getHolderLoc(InventoryHolder holder) {
