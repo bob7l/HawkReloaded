@@ -11,7 +11,6 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public class HawkEye extends JavaPlugin {
 
@@ -35,8 +34,6 @@ public class HawkEye extends JavaPlugin {
 	public ToolListener toolListener = new ToolListener();
 
 	private DataManager dbmanager;
-
-	public static HashMap<String, HashMap<String,Integer>> InvSession = new HashMap<String, HashMap<String,Integer>>();
 
 	/**
 	 * Safely shuts down HawkEye

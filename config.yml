@@ -50,6 +50,8 @@ log:
     player-lava-flow: false
     frame-insert: false
     frame-extract: false
+    container-extract: false
+    container-insert: false
 general:
     max-lines: 0
     log-item-drops-on-death: false

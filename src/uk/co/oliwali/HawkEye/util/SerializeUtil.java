@@ -40,21 +40,22 @@ public class SerializeUtil {
         StringBuilder sb = new StringBuilder();
 
         boolean escaped = false;
-        boolean atEnd = false;
+        boolean inData = false;
 
         for (char c : line.toCharArray()) {
-            if (c == NEW_LINE && atEnd) {
+            if (c == NEW_LINE && !inData) {
                 lines.add(sb.toString());
                 sb = new StringBuilder();
             } else {
 
-                if (c == ESCAPER) {
-                    escaped = true;
-                } else if (c == END && !escaped) {
-                    atEnd = true;
-                } else if (atEnd)
-                    atEnd = false;
-                else if (escaped)
+                if (!escaped) {
+                    if (c == ESCAPER) {
+                        escaped = true;
+                    } else if (c == END) {
+                        inData = false;
+                    } else if (c == BEGIN)
+                        inData = true;
+                } else
                     escaped = false;
 
                 sb.append(c);
@@ -179,4 +180,11 @@ public class SerializeUtil {
         return null;
     }
 
+    public static void main(String[] args) {
+        String test = "34,43:3,41:2 n{name},32 l{lore}";
+
+        for (String s : unJoin(test)) {
+            System.out.println(s);
+        }
+    }
 }
