@@ -15,13 +15,15 @@ import java.lang.reflect.Method;
 
 public abstract class HawkEyeListener implements Listener {
 
+	//Default logging user for environment related actions
+	static final String ENVIRONMENT = "Environment";
+
 	public final void registerEvents() {
 		PluginManager pm = HawkEye.instance.getServer().getPluginManager();
 
 		Method[] methods = this.getClass().getDeclaredMethods();
 
-		for (int i = 0; i < methods.length; i++) {
-			final Method method = methods[i];
+		for (final Method method : methods) {
 			final HawkEvent he = method.getAnnotation(HawkEvent.class);
 			if (he == null) continue;
 

@@ -151,7 +151,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 				data.setData((byte)0);
 				from.setData(data);
 			}
-			DataManager.addEntry(new BlockChangeEntry("Environment", DataType.LAVA_FLOW, loc, to, from));
+			DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.LAVA_FLOW, loc, to, from));
 
 		}
 
@@ -162,7 +162,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (fluidBlocks.contains(to.getTypeId())) {
 				data.setData((byte)(from.getRawData() + 1));
 				from.setData(data);
-				DataManager.addEntry(new BlockChangeEntry("Environment", DataType.WATER_FLOW, loc, to, from));
+				DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, to, from));
 			}
 
 			//If we are flowing over lava, cobble or obsidian will form
@@ -170,7 +170,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
 				from.setTypeId(lower.getData().getData() == 0?49:4);
 				loc.setY(loc.getY() - 1);
-				DataManager.addEntry(new BlockChangeEntry("Environment", DataType.WATER_FLOW, loc, lower, from));
+				DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, lower, from));
 			}
 
 		}
