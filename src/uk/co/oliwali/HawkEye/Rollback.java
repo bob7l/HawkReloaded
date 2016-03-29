@@ -75,7 +75,7 @@ public class Rollback implements Runnable {
 				continue;
 
 			//If the world doesn't exist, skip this entry
-			World world = HawkEye.server.getWorld(entry.getWorld());
+			World world = Bukkit.getWorld(entry.getWorld());
 			if (world == null)
 				continue;
 

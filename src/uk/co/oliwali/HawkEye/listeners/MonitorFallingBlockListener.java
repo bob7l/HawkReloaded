@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,7 +31,7 @@ public class MonitorFallingBlockListener extends HawkEyeListener {
 		Material type = event.getBlock().getType();
 		if ((type.equals(Material.SAND) || type.equals(Material.GRAVEL) || type.equals(Material.ANVIL)) && event.getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
 			final BlockPlaceEvent finalEvent = event;
-			HawkEye.server.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
 				@Override
 				public void run() {
 					Location l = finalEvent.getBlock().getLocation();

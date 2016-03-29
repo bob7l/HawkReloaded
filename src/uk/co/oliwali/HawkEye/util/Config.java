@@ -1,12 +1,12 @@
 package uk.co.oliwali.HawkEye.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import uk.co.oliwali.HawkEye.HawkEye;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration manager for HawkEye.
@@ -67,7 +67,7 @@ public class Config {
 
 		config = plugin.getConfig().getRoot();
 		config.options().copyDefaults(true);
-		config.set("version", plugin.version);
+		config.set("version", HawkEye.version);
         plugin.saveConfig();
         plugin.reloadConfig();
         config = plugin.getConfig();

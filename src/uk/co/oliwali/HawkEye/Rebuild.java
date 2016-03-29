@@ -1,20 +1,19 @@
 package uk.co.oliwali.HawkEye;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Runnable class for performing a data rebuild.
@@ -72,7 +71,7 @@ public class Rebuild implements Runnable {
 				continue;
 
 			//If the world doesn't exist, skip this entry
-			World world = HawkEye.server.getWorld(entry.getWorld());
+			World world = Bukkit.getWorld(entry.getWorld());
 			if (world == null)
 				continue;
 

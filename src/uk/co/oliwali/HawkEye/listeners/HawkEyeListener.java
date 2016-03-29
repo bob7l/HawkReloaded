@@ -18,7 +18,7 @@ public abstract class HawkEyeListener implements Listener {
 	//Default logging user for environment related actions
 	static final String ENVIRONMENT = "Environment";
 
-	public final void registerEvents() {
+	public void registerEvents() {
 		PluginManager pm = HawkEye.instance.getServer().getPluginManager();
 
 		Method[] methods = this.getClass().getDeclaredMethods();

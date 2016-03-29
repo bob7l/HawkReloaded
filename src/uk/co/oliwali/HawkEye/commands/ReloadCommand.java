@@ -1,10 +1,10 @@
 package uk.co.oliwali.HawkEye.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
+import uk.co.oliwali.HawkEye.listeners.HawkEyeListener;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -31,9 +31,11 @@ public class ReloadCommand extends BaseCommand {
 
         Util.sendMessage(sender, "&8|  &7- &cConfig has been reloaded..");
 
-        HandlerList.unregisterAll(hawk); //Unregisters all listeners registered to hawkeye
+        for (HawkEyeListener listener : hawk.getLoggingListeners()) {
+            HandlerList.unregisterAll(listener);
+        }
 
-        hawk.registerListeners(Bukkit.getPluginManager());
+        hawk.registerListeners();
 
         Util.sendMessage(sender, "&8|  &7- &cListeners have been reloaded..");
 

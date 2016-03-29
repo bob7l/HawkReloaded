@@ -5,12 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.blocks.HawkBlock;
 import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
 import uk.co.oliwali.HawkEye.blocks.SignBlock;
@@ -25,7 +23,7 @@ import uk.co.oliwali.HawkEye.util.Config;
  * @author bob7l
  */
 
-public class MonitorWorldEditListener implements Listener {
+public class MonitorWorldEditListener extends HawkEyeListener {
 
 	private WorldEditPlugin we;
 
@@ -33,7 +31,7 @@ public class MonitorWorldEditListener implements Listener {
 		this.we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@HawkEvent(dataType = {DataType.SUPER_PICKAXE})
 	public void onWESuperPickaxe(PlayerInteractEvent event) {
 
 		if (event.getAction() == Action.LEFT_CLICK_BLOCK) {

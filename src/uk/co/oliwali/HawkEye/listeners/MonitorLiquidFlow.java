@@ -25,6 +25,12 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	private int cacheRunTime = 10;
 	private int timerId = -1;
 
+	public void registerEvents() {
+		super.registerEvents();
+
+		startCacheCleaner();
+	}
+
 	/**
 	 * Clears the Player cache when it's been 10 seconds after a waterflow event
 	 * Every time the event fires, the timer resets to allow the water to be tracked
