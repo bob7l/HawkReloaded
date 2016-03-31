@@ -26,6 +26,11 @@ permissions:
             hawkeye.rebuild: true
             hawkeye.delete: true
             hawkeye.search.*: true
+            hawkeye.writelog: true
+            hawkeye.undo: true
+            hawkeye.here: true
+            hawkeye.help: true
+            hawkeye.reload: true
     hawkeye.tool.*:
         description: Permission to use the HawkEye tool
         default: false
@@ -36,40 +41,56 @@ permissions:
         description: Permission to search all actions
         default: false
         children:
-            hawkeye.search.block-break: true
-            hawkeye.search.block-place: true
-            hawkeye.search.sign-place: true
-            hawkeye.search.chat: true
-            hawkeye.search.command: true
-            hawkeye.search.join: true
-            hawkeye.search.quit: true
-            hawkeye.search.teleport: true
             hawkeye.search.lava-bucket: true
             hawkeye.search.water-bucket: true
-            hawkeye.search.open-container: true
-            hawkeye.search.door-interact: true
+            hawkeye.search.item-place: true
             hawkeye.search.pvp-death: true
-            hawkeye.search.flint-steel: true
-            hawkeye.search.lever: true
-            hawkeye.search.button: true
-            hawkeye.search.other: true
-            hawkeye.search.explosion: true
-            hawkeye.search.block-burn: true
-            hawkeye.search.block-form: true
-            hawkeye.search.leaf-decay: true
             hawkeye.search.mob-death: true
             hawkeye.search.other-death: true
-            hawkeye.search.item-drop: true
+            hawkeye.search.command: true
+            hawkeye.search.chat: true
+            hawkeye.search.join: true
+            hawkeye.search.quit: true
+            hawkeye.search.door-interact: true
+            hawkeye.search.open-container: true
+            hawkeye.search.container-transaction: true
             hawkeye.search.item-pickup: true
+            hawkeye.search.item-drop: true
+            hawkeye.search.button: true
+            hawkeye.search.teleport: true
+            hawkeye.search.lever: true
+            hawkeye.search.sign-place: true
+            hawkeye.search.sign-break: true
+            hawkeye.search.item-break: true
+            hawkeye.search.flint-steel: true
+            hawkeye.search.block-place: true
+            hawkeye.search.block-break: true
+            hawkeye.search.block-burn: true
             hawkeye.search.block-fade: true
+            hawkeye.search.block-form: true
+            hawkeye.search.leaf-decay: true
+            hawkeye.search.mushroom-grow: true
+            hawkeye.search.tree-grow: true
             hawkeye.search.water-flow: true
             hawkeye.search.lava-flow: true
-            hawkeye.search.container-transaction: true
-            hawkeye.search.sign-break: true
-            hawkeye.search.painting-break: true
-            hawkeye.search.painting-place: true
+            hawkeye.search.explosion: true
             hawkeye.search.enderman-pickup: true
             hawkeye.search.enderman-place: true
-            hawkeye.search.tree-grow: true
-            hawkeye.search.mushroom-grow: true
             hawkeye.search.entity-kill: true
+            hawkeye.search.other: true
+            hawkeye.search.spawnmob-egg: true
+            hawkeye.search.herochat: true
+            hawkeye.search.entity-modify: true
+            hawkeye.search.block-inhabit: true
+            hawkeye.search.super-pickaxe: true
+            hawkeye.search.worldedit-place: true
+            hawkeye.search.worldedit-break: true
+            hawkeye.search.crop-trample: true
+            hawkeye.search.block-ignite: true
+            hawkeye.search.fallingblock-place: true
+            hawkeye.search.player-water-flow: true
+            hawkeye.search.player-lava-flow: true
+            hawkeye.search.frame-insert: true
+            hawkeye.search.frame-extract: true
+            hawkeye.search.container-extract: true
+            hawkeye.search.container-insert: true
