@@ -20,7 +20,7 @@ public class ConnectionManager implements AutoCloseable {
     public ConnectionManager() throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
 
-        Util.debug("Attempting to connecting to database at: " + Config.DbUrl);
+        Util.debug("Attempting to connecting to database...");
 
         HikariConfig config = new HikariConfig();
 
@@ -28,12 +28,12 @@ public class ConnectionManager implements AutoCloseable {
 
         config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
 
-        config.setJdbcUrl(Config.DbUrl);
         config.setUsername(Config.DbUser);
         config.setPassword(Config.DbPassword);
 
         config.addDataSourceProperty("databaseName", Config.DbDatabase);
-
+        config.addDataSourceProperty("port", Config.DbPort);
+        
         config.addDataSourceProperty("rewriteBatchedStatements", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "275");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

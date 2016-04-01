@@ -48,10 +48,10 @@ public class Config {
 	public static boolean LogDropper;
 	public static int LogDelay;
 	public static int MaxLog;
-	public static String DbUrl;
 	public static String DbUser;
 	public static String DbPassword;
 	public static String DbDatabase;
+	public static String DbPort;
 	public static String DbHawkEyeTable;
 	public static String DbPlayerTable;
 	public static String DbWorldTable;
@@ -101,7 +101,7 @@ public class Config {
 		LogDelay = config.getInt("general.log-delay");
 		DbUser = config.getString("mysql.username");
 		DbPassword = config.getString("mysql.password");
-		DbUrl = "jdbc:mysql://" + config.getString("mysql.hostname") + ":" + config.getInt("mysql.port") + "/" + config.getString("mysql.database");
+		DbPort = config.getString("mysql.port");
 		DbDatabase = config.getString("mysql.database");
 		DbHawkEyeTable = config.getString("mysql.hawkeye-table");
 		DbPlayerTable = config.getString("mysql.player-table");
