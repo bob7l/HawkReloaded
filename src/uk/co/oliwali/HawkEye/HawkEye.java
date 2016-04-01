@@ -86,6 +86,7 @@ public class HawkEye extends JavaPlugin {
         } catch (Exception e) {
             Util.severe("Error initiating HawkEye database connection, disabling plugin");
             pm.disablePlugin(this);
+            e.printStackTrace();
             return;
         }
 
