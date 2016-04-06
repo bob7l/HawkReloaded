@@ -142,13 +142,8 @@ public class BlockUtil {
 	public static boolean isAttached(Block base, Block attached) {
 		MaterialData bs = attached.getState().getData();
 
-		if (!(bs instanceof Attachable) || attached.getType() == Material.VINE) return true;
+		return !(bs instanceof Attachable) || attached.getType() == Material.VINE
+				|| attached.getRelative(((Attachable) bs).getAttachedFace()).equals(base);
 
-		Attachable at = (Attachable) bs;
-		
-		if (attached.getRelative(at.getAttachedFace()).equals(base))
-			return true;
-		
-		return false;
 	}
 }

@@ -65,24 +65,6 @@ public class Util {
                 Util.info("DEBUG: " + msg);
     }
 
-    public static ChatColor getLastColor(String s) {
-        int length = s.length();
-        ChatColor color = ChatColor.GRAY;
-
-        for (int i = length - 1; i > -1; i--) { //Search backwords, better for what we're doing!
-            char ch = s.charAt(i);
-            if (ch == '&') { //The symbol for colors!
-                color = ChatColor.getByChar(s.charAt(i + 1)); //If the char doesn't belong to a color, returns null
-                if (color != null) {
-                    return color;
-                } else {
-                    continue;
-                }
-            }
-        }
-        return color;
-    }
-
     /**
      * Send a message to a CommandSender (can be a player or console).
      * Has parsing built in for &a colours, as well as `n for new line
@@ -131,7 +113,7 @@ public class Util {
      * @return String
      */
     public static String join(Collection<?> s, String delimiter) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Iterator<?> iter = s.iterator();
         while (iter.hasNext()) {
             buffer.append(iter.next());
@@ -146,6 +128,7 @@ public class Util {
      *
      * @return
      */
+    @SafeVarargs
     public static <T> T[] concat(T[] first, T[]... rest) {
 
         //Read rest
@@ -192,21 +175,14 @@ public class Util {
     }
 
     /**
-     * Returns if the player has permission
+     * Returns if the sender has permission
      *
      * @param sender who is being checked
-     * @param perm   string
-     * @return true / false
+     * @param perm   The permission node, permissions will be prefixed with "hawkeye."
+     * @return Whether or not the sender has sufficient permissions
      */
-    public static boolean hasPerm(CommandSender sender, String perms) {
-        if (!(sender instanceof Player)) return true;
-        Player player = (Player) sender;
-
-        boolean check = (!(player.hasPermission("hawkeye." + perms)) && (!(perms.equals("help"))) ? false : true);
-        {
-            if ((player.isOp() && Config.OpPermissions)) check = true;
-            return check;
-        }
+    public static boolean hasPerm(CommandSender sender, String perm) {
+        return sender.isOp() && Config.OpPermissions || (!(!(sender.hasPermission("hawkeye." + perm)) && (!(perm.equals("help")))));
     }
 
     public enum DebugLevel {
@@ -218,16 +194,18 @@ public class Util {
     public static String getTime(Date d1) {
         if (!(Config.isSimpleTime)) return d1.toString();
 
-        String message = "";
+        StringBuilder dateStr = new StringBuilder();
+
         Date curdate = Calendar.getInstance().getTime();
 
         SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        Date d2 = null;
+        Date d2;
         try {
             d2 = form.parse(form.format(curdate));
         } catch (ParseException e1) {
             warning(e1.getMessage());
+            return d1.toString();
         }
 
         long diff = (d2.getTime() / 1000) - (d1.getTime() / 1000);
@@ -238,23 +216,23 @@ public class Util {
             int days = (seconds / 86400);
             seconds %= 86400;
 
-            message = message + days + "d ";
+            dateStr.append(days).append("d ");
         }
         if (seconds >= 3600) {
             int hours = seconds / 3600;
             seconds %= 3600;
 
-            message = message + hours + "h ";
+            dateStr.append(hours).append("h ");
         }
         if (seconds >= 60) {
             int min = seconds / 60;
-            seconds %= 60;
 
-            message = message + min + "m ";
+            dateStr.append(min).append("m ");
         } else {
-            message = message + seconds + "s ";
+            dateStr.append(seconds).append("s ");
         }
-        return message;
+
+        return dateStr.toString();
     }
 
 }
