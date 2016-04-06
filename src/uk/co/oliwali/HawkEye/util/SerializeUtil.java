@@ -180,11 +180,4 @@ public class SerializeUtil {
         return null;
     }
 
-    public static void main(String[] args) {
-        String test = "34,43:3,41:2 n{name},32 l{lore}";
-
-        for (String s : unJoin(test)) {
-            System.out.println(s);
-        }
-    }
 }
