@@ -258,7 +258,7 @@ public class SearchParser {
 	/**
 	 * Formats min and max locations if the radius is set
 	 */
-	public void parseLocations() {
+	private void parseLocations() {
 
 		if (!(player instanceof Player)) return;
 

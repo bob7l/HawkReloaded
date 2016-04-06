@@ -8,9 +8,6 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -25,8 +22,8 @@ public class DataManager implements Runnable, AutoCloseable {
     private static final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<>();
     private static ConnectionManager connectionManager;
 
-    public static final HashMap<String, Integer> dbPlayers = new HashMap<>();
-    public static final HashMap<String, Integer> dbWorlds = new HashMap<>();
+    private static final IdMapCache playerDb = new IdMapCache();
+    private static final IdMapCache worldDb = new IdMapCache();
 
     private static DeleteManager deleteManager = new DeleteManager();
 
@@ -125,29 +122,17 @@ public class DataManager implements Runnable, AutoCloseable {
     }
 
     /**
-     * Get a players name from the database player list
-     *
-     * @param id
-     * @return player name
+     * Get the player cache
      */
-    public static String getPlayer(int id) {
-        for (Entry<String, Integer> entry : dbPlayers.entrySet())
-            if (entry.getValue() == id)
-                return entry.getKey();
-        return null;
+    public static IdMapCache getPlayerDb() {
+        return playerDb;
     }
 
     /**
-     * Get a world name from the database world list
-     *
-     * @param id
-     * @return world name
+     * Get the world cache
      */
-    public static String getWorld(int id) {
-        for (Entry<String, Integer> entry : dbWorlds.entrySet())
-            if (entry.getValue() == id)
-                return entry.getKey();
-        return null;
+    public static IdMapCache getWorldDb() {
+        return worldDb;
     }
 
     /**
@@ -163,7 +148,7 @@ public class DataManager implements Runnable, AutoCloseable {
     /**
      * Adds an identifier to the database and updates the provided map
      */
-    private boolean addKey(String table, String column, Map<String, Integer> map, String value) {
+    private boolean addKey(String table, String column, IdMapCache cache, String value) {
         Util.debug("Attempting to add " + column + " '" + value + "' to database");
 
         String sql = "INSERT INTO `" + table + "` (" + column + ") VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");";
@@ -180,7 +165,7 @@ public class DataManager implements Runnable, AutoCloseable {
             try (ResultSet rs = stmt.getGeneratedKeys()) {
 
                 if (rs.next())
-                    map.put(value, rs.getInt(1));
+                    cache.put(rs.getInt(1), value);
 
             }
         } catch (SQLException ex) {
@@ -201,12 +186,12 @@ public class DataManager implements Runnable, AutoCloseable {
 
             try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;")) {
                 while (res.next())
-                    dbPlayers.put(res.getString("player"), res.getInt("player_id"));
+                    playerDb.put(res.getInt("player_id"), res.getString("player"));
             }
 
             try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;")) {
                 while (res.next())
-                    dbWorlds.put(res.getString("world"), res.getInt("world_id"));
+                    worldDb.put(res.getInt("world_id"), res.getString("world"));
             }
 
         } catch (SQLException ex) {
@@ -351,31 +336,35 @@ public class DataManager implements Runnable, AutoCloseable {
             for (int i = 0; i < queue.size(); i++) {
                 DataEntry entry = queue.poll();
 
-                if (!dbPlayers.containsKey(entry.getPlayer()) && !addKey(Config.DbPlayerTable, "player", dbPlayers, entry.getPlayer())) {
+                if (!playerDb.containsKey(entry.getPlayer()) && !addKey(Config.DbPlayerTable, "player", playerDb, entry.getPlayer())) {
                     Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
                     continue;
                 }
-                if (!dbWorlds.containsKey(entry.getWorld()) && !addKey(Config.DbWorldTable, "world", dbWorlds, entry.getWorld())) {
+                if (!worldDb.containsKey(entry.getWorld()) && !addKey(Config.DbWorldTable, "world", worldDb, entry.getWorld())) {
                     Util.debug("World '" + entry.getWorld() + "' not found, skipping entry");
                     continue;
                 }
 
+                Integer player = playerDb.get(entry.getPlayer());
+
                 //If player ID is unable to be found, continue
-                if (entry.getPlayer() == null || dbPlayers.get(entry.getPlayer()) == null) {
+                if (player == null) {
                     Util.debug("No player found, skipping entry");
                     continue;
                 }
 
                 stmnt.setTimestamp(1, entry.getTimestamp());
-                stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
+                stmnt.setInt(2, player);
                 stmnt.setInt(3, entry.getType().getId());
-                stmnt.setInt(4, dbWorlds.get(entry.getWorld()));
+                stmnt.setInt(4, worldDb.get(entry.getWorld()));
                 stmnt.setDouble(5, entry.getX());
                 stmnt.setDouble(6, entry.getY());
                 stmnt.setDouble(7, entry.getZ());
                 stmnt.setString(8, entry.getSqlData());
+
                 if (entry.getDataId() > 0) stmnt.setInt(9, entry.getDataId());
                 else stmnt.setInt(9, 0); //0 is better then setting it to null, like before
+
                 stmnt.addBatch();
 
                 if (i % 1000 == 0) stmnt.executeBatch(); //If the batchsize is divisible by 1000, execute!

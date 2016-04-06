@@ -1,6 +1,5 @@
 package uk.co.oliwali.HawkEye.database;
 
-import org.apache.commons.lang.StringUtils;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
@@ -62,22 +61,21 @@ public class SearchQuery extends Thread {
 
             for (String player : parser.players) {
 
-                boolean ignoredUser = player.contains("!");
-                boolean specificUser = player.contains("*");
+                boolean ignoredUser = player.startsWith("!");
 
-                player = player.replace("!", "").replace("*", "");
+                if (ignoredUser)
+                    player = player.substring(1);
 
-                for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
+                Integer id = DataManager.getPlayerDb().searchForId(player);
 
-                    if ((specificUser ? entry.getKey().equalsIgnoreCase(player) : StringUtils.containsIgnoreCase(entry.getKey(), player))) {
-
-                        if (ignoredUser)
-                            npids.add(entry.getValue());
-                        else
-                            pids.add(entry.getValue());
-                    }
+                if (id != null) {
+                    if (ignoredUser)
+                        npids.add(id);
+                    else
+                        pids.add(id);
                 }
             }
+
             //Include players
             if (pids.size() > 0)
                 args.add("player_id IN (" + Util.join(pids, ",") + ")");
@@ -98,15 +96,22 @@ public class SearchQuery extends Thread {
             List<Integer> nwids = new ArrayList<>();
 
             for (String world : parser.worlds) {
-                for (Map.Entry<String, Integer> entry : DataManager.dbWorlds.entrySet()) {
 
-                    if (entry.getKey().equalsIgnoreCase(world))
-                        wids.add(entry.getValue());
-                    else if (entry.getKey().equalsIgnoreCase(world.replace("!", "")))
-                        nwids.add(entry.getValue());
+                boolean ignoreWorld = world.startsWith("!");
+
+                if (ignoreWorld)
+                    world = world.substring(1);
+
+                Integer id = DataManager.getWorldDb().searchForId(world);
+
+                if (id != null) {
+                    if (ignoreWorld)
+                        nwids.add(id);
+                    else
+                        wids.add(id);
                 }
-
             }
+
             //Include worlds
             if (wids.size() > 0)
                 args.add("world_id IN (" + Util.join(wids, ",") + ")");
@@ -197,8 +202,8 @@ public class SearchQuery extends Thread {
                     Util.debug("Getting results");
 
                     //Results are cached to prevent constant massive hashmap lookups from DataManager
-                    HashMap<Integer, String> playerCache = new HashMap<>();
-                    HashMap<Integer, String> worldCache = new HashMap<>();
+                    Map<Integer, String> playerCache = new IdentityHashMap<>();
+                    Map<Integer, String> worldCache = new IdentityHashMap<>();
 
                     //Default to BLOCK_BREAK, it's the first and most likely to be used so why not
                     DataType type = DataType.BLOCK_BREAK;
@@ -219,12 +224,12 @@ public class SearchQuery extends Thread {
                         world = worldCache.get(res.getInt(5));
 
                         if (name == null) {
-                            name = DataManager.getPlayer(res.getInt(3));
+                            name = DataManager.getPlayerDb().get(res.getInt(3));
                             playerCache.put(res.getInt(3), name);
                         }
 
                         if (world == null) {
-                            world = DataManager.getWorld(res.getInt(5));
+                            world = DataManager.getWorldDb().get(res.getInt(5));
                             worldCache.put(res.getInt(5), world);
                         }
 

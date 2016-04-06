@@ -33,7 +33,7 @@ public class ConnectionManager implements AutoCloseable {
 
         config.addDataSourceProperty("databaseName", Config.DbDatabase);
         config.addDataSourceProperty("port", Config.DbPort);
-        
+
         config.addDataSourceProperty("rewriteBatchedStatements", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "275");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
