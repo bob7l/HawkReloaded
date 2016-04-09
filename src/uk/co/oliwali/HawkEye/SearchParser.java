@@ -93,7 +93,7 @@ public class SearchParser {
 				String[] values = arg.split(",");
 
 				// Players
-				if (lastParam.equals("p")) for (String p : values) players.add(p.toLowerCase());
+				if (lastParam.equals("p")) for (String p : values) players.add(p);
 				// Worlds
 				else if (lastParam.equals("w")) worlds = values;
 				// Filters
