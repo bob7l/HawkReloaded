@@ -31,6 +31,7 @@ public class ConnectionManager implements AutoCloseable {
         config.setUsername(Config.DbUser);
         config.setPassword(Config.DbPassword);
 
+        config.addDataSourceProperty("serverName", Config.DbHostname);
         config.addDataSourceProperty("databaseName", Config.DbDatabase);
         config.addDataSourceProperty("port", Config.DbPort);
 
