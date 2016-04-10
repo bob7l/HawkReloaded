@@ -1,5 +1,7 @@
 package uk.co.oliwali.HawkEye.database;
 
+import uk.co.oliwali.HawkEye.util.Util;
+
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class IdMapCache {
             return id;
 
         for (String str : valueMap.keySet()) {
-            if (str.contains(value)) {
+            if (Util.startsWithIgnoreCase(str, value)) {
                 return valueMap.get(str);
             }
         }

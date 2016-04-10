@@ -235,4 +235,8 @@ public class Util {
         return dateStr.toString();
     }
 
+    public static boolean startsWithIgnoreCase(String str, String prefix) {
+        return prefix.length() <= str.length() && str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
 }
