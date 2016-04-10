@@ -5,6 +5,7 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -127,9 +128,13 @@ public class SearchParser {
 					SessionManager.getSession(player).setEditSpeed(speed);
 				}
 				// Location
-				else if (lastParam.equals("l") && player instanceof Player) {
+				else if (lastParam.equals("l")) {
 					if (values[0].equalsIgnoreCase("here"))
-						loc = ((Player) player).getLocation().toVector();
+						if (player instanceof Entity) {
+							loc = ((Entity) player).getLocation().toVector();
+						} else {
+							throw new IllegalArgumentException("Invalid location: &7here");
+						}
 					else {
 						loc = new Vector();
 						loc.setX(Integer.parseInt(values[0]));
@@ -138,9 +143,9 @@ public class SearchParser {
 					}
 				}
 				// Radius
-				else if (lastParam.equals("r") && player instanceof Player) {
+				else if (lastParam.equals("r")) {
 					if (!Util.isInteger(values[0])) {
-						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit")) && worldEdit != null) {
+						if (player instanceof Player && (values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit")) && worldEdit != null) {
 							Selection sel = worldEdit.getSelection((Player) player);
 							int lRadius = (int) Math.ceil(sel.getLength() / 2);
 							int wRadius = (int) Math.ceil(sel.getWidth() / 2);
