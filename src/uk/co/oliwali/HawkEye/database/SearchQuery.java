@@ -188,8 +188,10 @@ public class SearchQuery extends Thread {
             //Execute query
 
             Util.debug("Preparing statement");
+            ListIterator<Object> objIter = binds.listIterator();
+
             for (int i = 0; i < binds.size(); i++)
-                stmnt.setObject(i + 1, binds.get(i));
+                stmnt.setObject(i + 1, objIter.next());
 
             Util.debug("Searching: " + stmnt.toString());
 
