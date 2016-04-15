@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -81,7 +80,7 @@ public enum DataType {
     private Constructor<?> entryConstructor;
 
     private static final Map<String, DataType> nameMapping = new HashMap<>();
-    private static final IdentityHashMap<Integer, DataType> idMapping = new IdentityHashMap<>();
+    private static final Map<Integer, DataType> idMapping = new HashMap<>();
 
     static {
         //Mapping to enable quick finding of DataTypes by name or id

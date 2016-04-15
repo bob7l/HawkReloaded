@@ -3,7 +3,6 @@ package uk.co.oliwali.HawkEye.database;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -14,21 +13,21 @@ import java.util.Map;
  */
 public class IdMapCache {
 
-    private final Map<Integer, String> idMap = new IdentityHashMap<>();
+    private final Map<Integer, String> idMap = new HashMap<>();
 
     private final Map<String, Integer> valueMap = new HashMap<>();
 
-    public void put(Integer id, String value) {
+    public void put(int id, String value) {
         idMap.put(id, value);
         valueMap.put(value, id);
     }
 
-    public void remove(Integer id, String value) {
+    public void remove(int id, String value) {
         idMap.remove(id);
         valueMap.remove(value);
     }
 
-    public String get(Integer id) {
+    public String get(int id) {
         return idMap.get(id);
     }
 
@@ -36,7 +35,7 @@ public class IdMapCache {
         return valueMap.get(value);
     }
 
-    public boolean containsKey(Integer id) {
+    public boolean containsKey(int id) {
         return idMap.containsKey(id);
     }
 
@@ -58,5 +57,4 @@ public class IdMapCache {
 
         return null;
     }
-
 }

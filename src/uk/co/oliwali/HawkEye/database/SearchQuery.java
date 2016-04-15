@@ -204,8 +204,8 @@ public class SearchQuery extends Thread {
                     Util.debug("Getting results");
 
                     //Results are cached to prevent constant massive hashmap lookups from DataManager
-                    Map<Integer, String> playerCache = new IdentityHashMap<>();
-                    Map<Integer, String> worldCache = new IdentityHashMap<>();
+                    Map<Integer, String> playerCache = new HashMap<>();
+                    Map<Integer, String> worldCache = new HashMap<>();
 
                     //Default to BLOCK_BREAK, it's the first and most likely to be used so why not
                     DataType type = DataType.BLOCK_BREAK;
