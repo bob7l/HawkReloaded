@@ -151,7 +151,7 @@ public class DataManager implements Runnable, AutoCloseable {
     private boolean addKey(String table, String column, IdMapCache cache, String value) {
         Util.debug("Attempting to add " + column + " '" + value + "' to database");
 
-        String sql = "INSERT INTO `" + table + "` (" + column + ") VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + value + ");";
+        String sql = "INSERT INTO `" + table + "` (" + column + ") VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
