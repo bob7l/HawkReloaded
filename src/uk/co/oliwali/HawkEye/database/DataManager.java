@@ -1,7 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
 import org.bukkit.Bukkit;
-import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -98,27 +97,6 @@ public class DataManager implements Runnable, AutoCloseable {
         if (Config.IgnoreWorlds.contains(entry.getWorld())) return;
 
         queue.add(entry);
-    }
-
-    /**
-     * Retrieves an entry from the database
-     *
-     * @param id id of entry to return
-     * @return
-     */
-    public static DataEntry getEntry(int id) {
-        try (Connection conn = getConnection();
-             ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id)) {
-
-            if (res.next()) {
-                DataType type = DataType.fromId(res.getInt(4));
-                return (DataEntry) type.getEntryConstructor().newInstance(res.getInt(3), res.getTimestamp(2), res.getInt(1), res.getInt(4), res.getString(9), res.getInt(5), res.getInt(6), res.getInt(7), res.getInt(8));
-            }
-
-        } catch (Exception ex) {
-            Util.severe("Unable to retrieve data entry from MySQL Server: " + ex);
-        }
-        return null;
     }
 
     /**
