@@ -1,10 +1,12 @@
 package uk.co.oliwali.HawkEye.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import uk.co.oliwali.HawkEye.HawkEye;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -152,9 +154,9 @@ public class Util {
     /**
      * Returns the distance between two {Location}s
      *
-     * @param from
-     * @param to
-     * @return double
+     * @param from The start location
+     * @param to   The end location
+     * @return     Distance between the two locations
      **/
     public static double distance(Location from, Location to) {
         return Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2) + Math.pow(from.getZ() - to.getZ(), 2));
@@ -191,6 +193,11 @@ public class Util {
         HIGH;
     }
 
+    /**
+     * Simplifies a Date to "1d 2h 5m" format to be displayed ingame
+     * @param d1 The date to be simplified
+     * @return   Simplified date
+     */
     public static String getTime(Date d1) {
         if (!(Config.isSimpleTime)) return d1.toString();
 
@@ -235,8 +242,22 @@ public class Util {
         return dateStr.toString();
     }
 
+    /**
+     * Checks whether or not a string starts with the specified prefix
+     * @param str    The String object to be checked
+     * @param prefix The prefix to check for
+     * @return       Whether or not the str starts with the prefix
+     */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         return prefix.length() <= str.length() && str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    /**
+     * Run a task on the main thread
+     * @param runnable The task to be executed at an appropriate time
+     */
+    public static void runLater(Runnable runnable) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, runnable, 0);
     }
 
 }
