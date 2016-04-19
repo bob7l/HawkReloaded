@@ -208,8 +208,7 @@ public class SearchQuery extends Thread {
                     Map<Integer, String> worldCache = new HashMap<>();
 
                     //Default to BLOCK_BREAK, it's the first and most likely to be used so why not
-                    DataType type = DataType.BLOCK_BREAK;
-                    DataEntry entry;
+                    DataType type;
 
                     String name;
                     String world;
@@ -217,9 +216,7 @@ public class SearchQuery extends Thread {
                     //Retrieve results
                     while (res.next()) {
 
-                        if (type.getId() != res.getInt(4)) {
-                            type = DataType.fromId(res.getInt(4));
-                        }
+                        type = DataType.fromId(res.getInt(4));
 
                         name = playerCache.get(res.getInt(3));
 
@@ -235,19 +232,18 @@ public class SearchQuery extends Thread {
                             worldCache.put(res.getInt(5), world);
                         }
 
-                        entry = (DataEntry) type.getEntryConstructor().newInstance(
-                                name,               //Username
-                                res.getTimestamp(2),//Timestamp of entry
-                                res.getInt(1),      //dataId
-                                type,               //Data-Type
-                                res.getString(9),   //Raw-Data
-                                world,              //World Name
-                                res.getInt(6),      //X
-                                res.getInt(7),      //Y
-                                res.getInt(8)       //Z
-                        );
-
-                        results.add(entry);
+                        results.add(
+                                (DataEntry) type.getEntryConstructor().newInstance(
+                                        name,               //Username
+                                        res.getTimestamp(2),//Timestamp of entry
+                                        res.getInt(1),      //dataId
+                                        type,               //Data-Type
+                                        res.getString(9),   //Raw-Data
+                                        world,              //World Name
+                                        res.getInt(6),      //X
+                                        res.getInt(7),      //Y
+                                        res.getInt(8)       //Z
+                                ));
                     }
                 }
             }

@@ -6,7 +6,6 @@ import uk.co.oliwali.HawkEye.entry.containerentries.ContainerInsert;
 
 import java.lang.reflect.Constructor;
 import java.sql.Timestamp;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,15 +79,20 @@ public enum DataType {
     private Constructor<?> entryConstructor;
 
     private static final Map<String, DataType> nameMapping = new HashMap<>();
-    private static final Map<Integer, DataType> idMapping = new HashMap<>();
+    private static final DataType[] idTable;
 
     static {
         //Mapping to enable quick finding of DataTypes by name or id
-        for (DataType type : EnumSet.allOf(DataType.class)) {
+
+        /*
+          Allocate array to the max DataType id + 1, this assumes the DataType enum at the end of the list
+          has the largest ID!
+        */
+        idTable = new DataType[values()[values().length - 1].id + 1];
+
+        for (DataType type : values()) {
             nameMapping.put(type.configName, type);
-        }
-        for (DataType type : EnumSet.allOf(DataType.class)) {
-            idMapping.put(type.id, type);
+            idTable[type.id] = type;
         }
     }
 
@@ -144,13 +148,13 @@ public enum DataType {
     }
 
     /**
-     * Get a matching DataType from the supplied  id
+     * Get the DataType from the supplied  id (Constant time)
      *
-     * @param id DataType id to search for
+     * @param id DataType id to get
      * @return {@link DataType}
      */
     public static DataType fromId(int id) {
-        return idMapping.get(id);
+        return idTable[id];
     }
 
     /**
