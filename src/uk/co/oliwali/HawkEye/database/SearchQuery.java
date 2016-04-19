@@ -4,7 +4,6 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
 import uk.co.oliwali.HawkEye.callbacks.DeleteCallback;
-import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -180,7 +179,7 @@ public class SearchQuery extends Thread {
         //Util.debug("Searching: " + sql);
 
         //Set up some stuff for the search
-        ArrayList<DataEntry> results = new ArrayList<DataEntry>();
+        List results = new ArrayList();
         int deleted = 0;
 
         try (Connection conn = DataManager.getConnection();
@@ -207,7 +206,6 @@ public class SearchQuery extends Thread {
                     Map<Integer, String> playerCache = new HashMap<>();
                     Map<Integer, String> worldCache = new HashMap<>();
 
-                    //Default to BLOCK_BREAK, it's the first and most likely to be used so why not
                     DataType type;
 
                     String name;
@@ -233,7 +231,7 @@ public class SearchQuery extends Thread {
                         }
 
                         results.add(
-                                (DataEntry) type.getEntryConstructor().newInstance(
+                                type.getEntryConstructor().newInstance(
                                         name,               //Username
                                         res.getTimestamp(2),//Timestamp of entry
                                         res.getInt(1),      //dataId
