@@ -124,10 +124,10 @@ public class InventoryUtil {
         InventoryHolder holder = (InventoryHolder) state;
 
         if (InventoryUtil.isHolderValid(holder)) {
-            ItemStack[] invContents = (holder instanceof Chest ? ((Chest) state).getBlockInventory() : holder.getInventory()).getContents();
+            List<ItemStack> invContents = compressInventory((holder instanceof Chest ? ((Chest) state).getBlockInventory() : holder.getInventory()).getContents());
 
-            if (invContents.length > 0) {
-                for (String str : serializeInventory(ContainerEntry.getSerializer(), compressInventory(invContents)))
+            if (!invContents.isEmpty()) {
+                for (String str : serializeInventory(ContainerEntry.getSerializer(), invContents))
                     DataManager.addEntry(new ContainerExtract(remover, DataType.CONTAINER_EXTRACT, InventoryUtil.getHolderLoc(holder), str));
             }
         }
