@@ -44,7 +44,7 @@ public enum DataType {
     BLOCK_FADE(25, BlockChangeEntry.class, "block-fade", true, true),
     LAVA_FLOW(26, BlockChangeEntry.class, "lava-flow", true, true),
     WATER_FLOW(27, BlockChangeEntry.class, "water-flow", true, true),
-    CONTAINER_TRANSACTION(28, ContainerEntry.class, "container-transaction", true, true),
+    //CONTAINER_TRANSACTION(28, ContainerEntry.class, "container-transaction", true, true), - Removed 4/20/2016, Replaced with CONTAINER_EXTRACT/INSERT
     SIGN_BREAK(29, SignEntry.class, "sign-break", true, true),
     ITEM_BREAK(30, HangingEntry.class, "item-break", true, true),
     ITEM_PLACE(31, HangingEntry.class, "item-place", true, true),
