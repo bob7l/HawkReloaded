@@ -4,6 +4,7 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.Callback;
 import uk.co.oliwali.HawkEye.callbacks.DeleteCallback;
+import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.exceptions.FailedSearchException;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -183,7 +184,7 @@ public class SearchQuery extends Thread {
         //Util.debug("Searching: " + sql);
 
         //Set up some stuff for the search
-        List results = new ArrayList();
+        List<DataEntry>  results = new ArrayList<>();
         int deleted = 0;
 
         try (Connection conn = DataManager.getConnection();

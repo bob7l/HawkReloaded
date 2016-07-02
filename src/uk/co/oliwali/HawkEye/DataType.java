@@ -75,8 +75,8 @@ public enum DataType {
     private String configName;
     private boolean canRollback;
     private boolean isLogged;
-    private Class<?> entryClass;
-    private Constructor<?> entryConstructor;
+    private Class<? extends DataEntry> entryClass;
+    private Constructor<? extends DataEntry> entryConstructor;
 
     private static final Map<String, DataType> nameMapping = new HashMap<>();
     private static final DataType[] idTable;
@@ -96,7 +96,7 @@ public enum DataType {
         }
     }
 
-    DataType(int id, Class<?> entryClass, String configName, boolean canHere, boolean canRollback) {
+    DataType(int id, Class<? extends DataEntry> entryClass, String configName, boolean canHere, boolean canRollback) {
         this.id = id;
         this.entryClass = entryClass;
         this.canHere = canHere;
@@ -176,7 +176,7 @@ public enum DataType {
         return canHere;
     }
 
-    public Constructor<?> getEntryConstructor() {
+    public Constructor<? extends DataEntry> getEntryConstructor() {
         return entryConstructor;
     }
 
