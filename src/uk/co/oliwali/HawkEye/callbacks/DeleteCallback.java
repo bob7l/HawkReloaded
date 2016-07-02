@@ -1,29 +1,26 @@
 package uk.co.oliwali.HawkEye.callbacks;
 
 import org.bukkit.command.CommandSender;
-
 import uk.co.oliwali.HawkEye.PlayerSession;
-import uk.co.oliwali.HawkEye.database.SearchQuery.SearchError;
 import uk.co.oliwali.HawkEye.util.Util;
 
-public class DeleteCallback extends BaseCallback {
+public class DeleteCallback implements Callback<Integer> {
 
-	private final CommandSender sender;
-	public int deleted;
+    private final CommandSender sender;
 
-	public DeleteCallback(PlayerSession session) {
-		sender = session.getSender();
-		Util.sendMessage(sender, "&cDeleting matching results...");
-	}
+    public DeleteCallback(PlayerSession session) {
+        sender = session.getSender();
+        Util.sendMessage(sender, "&cDeleting matching results...");
+    }
 
-	@Override
-	public void execute() {
-		Util.sendMessage(sender, "&c" + deleted + " entries removed from database.");
-	}
+    @Override
+    public void call(Integer deleted) {
+        Util.sendMessage(sender, "&c" + deleted + " entries removed from database.");
+    }
 
-	@Override
-	public void error(SearchError error, String message) {
-		Util.sendMessage(sender, message);
-	}
+    @Override
+    public void fail(Throwable throwable) {
+        Util.sendMessage(sender, throwable.getMessage());
+    }
 
 }

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
-import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
+import uk.co.oliwali.HawkEye.callbacks.QueryCallback;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
@@ -73,7 +73,7 @@ public class HawkEyeAPI {
      * @param parser   instance of {@SearchParser} to retrieve search information
      * @param dir      direction to list results as specified in {@SearchDir}
      */
-    public static void performSearch(BaseCallback callBack, SearchParser parser, SearchDir dir) {
+    public static void performSearch(QueryCallback callBack, SearchParser parser, SearchDir dir) {
         new SearchQuery(callBack, parser, dir);
     }
 

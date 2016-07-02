@@ -2,8 +2,9 @@ package uk.co.oliwali.HawkEye.database;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
-import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
+import uk.co.oliwali.HawkEye.callbacks.Callback;
 import uk.co.oliwali.HawkEye.callbacks.DeleteCallback;
+import uk.co.oliwali.HawkEye.exceptions.FailedSearchException;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
@@ -21,11 +22,14 @@ import java.util.*;
 public class SearchQuery extends Thread {
 
     private final SearchParser parser;
+
     private final SearchDir dir;
-    private final BaseCallback callBack;
+
+    private final Callback callBack;
+
     private final boolean delete;
 
-    public SearchQuery(BaseCallback callBack, SearchParser parser, SearchDir dir) {
+    public SearchQuery(Callback callBack, SearchParser parser, SearchDir dir) {
         this.callBack = callBack;
         this.parser = parser;
         this.dir = dir;
@@ -82,7 +86,7 @@ public class SearchQuery extends Thread {
             if (npids.size() > 0)
                 args.add("player_id NOT IN (" + Util.join(npids, ",") + ")");
             if (npids.size() + pids.size() < 1) {
-                callBack.error(SearchError.NO_PLAYERS, "No players found matching your specifications");
+                callBack.fail(new FailedSearchException("No players found matching your specifications"));
                 return;
             }
         }
@@ -118,7 +122,7 @@ public class SearchQuery extends Thread {
             if (nwids.size() > 0)
                 args.add("world_id NOT IN (" + Util.join(nwids, ",") + ")");
             if (nwids.size() + wids.size() < 1) {
-                callBack.error(SearchError.NO_WORLDS, "No worlds found matching your specifications");
+                callBack.fail(new FailedSearchException("No worlds found matching your specifications"));
                 return;
             }
         }
@@ -248,19 +252,13 @@ public class SearchQuery extends Thread {
         } catch (Exception ex) {
             Util.severe("Error executing MySQL query: " + ex);
             ex.printStackTrace();
-            callBack.error(SearchError.MYSQL_ERROR, "Error executing MySQL query: " + ex);
+            callBack.fail(new FailedSearchException("Error executing MySQL query: " + ex));
             return;
         }
 
         Util.debug(results.size() + " results found");
 
-        //Run callback
-        if (delete)
-            ((DeleteCallback) callBack).deleted = deleted;
-        else
-            callBack.results = results;
-
-        callBack.execute();
+        callBack.call(delete ? deleted : results);
 
         Util.debug("Search complete");
 
@@ -274,15 +272,6 @@ public class SearchQuery extends Thread {
     public enum SearchDir {
         ASC,
         DESC
-    }
-
-    /**
-     * Enumeration for query errors
-     */
-    public enum SearchError {
-        NO_PLAYERS,
-        NO_WORLDS,
-        MYSQL_ERROR
     }
 
 }

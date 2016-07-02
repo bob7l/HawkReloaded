@@ -1,32 +1,24 @@
 package uk.co.oliwali.HawkEye.callbacks;
 
-import org.bukkit.command.CommandSender;
-
 import uk.co.oliwali.HawkEye.LogManager;
 import uk.co.oliwali.HawkEye.PlayerSession;
-import uk.co.oliwali.HawkEye.database.SearchQuery.SearchError;
+import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Util;
 
-public class WriteLogCallback extends BaseCallback {
+import java.util.List;
 
-	private final PlayerSession session;
-	private final CommandSender sender;
+public class WriteLogCallback extends QueryCallback {
 
-	public WriteLogCallback(PlayerSession session) {
-		this.session = session;
-		sender = session.getSender();
-		Util.sendMessage(sender, "&cSearching for matching results...");
-	}
+    public WriteLogCallback(PlayerSession session) {
+        super(session);
+        Util.sendMessage(session.getSender(), "&cSearching for matching results...");
+    }
 
-	@Override
-	public void execute() {
-		session.setSearchResults(results);
-		LogManager.log(session);
-	}
+    @Override
+    public void call(List<DataEntry> dataEntries) {
+        session.setSearchResults(dataEntries);
 
-	@Override
-	public void error(SearchError error, String message) {
-		Util.sendMessage(sender, message);
-	}
+        LogManager.log(session);
+    }
 
 }
