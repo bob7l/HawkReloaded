@@ -188,7 +188,7 @@ public class SearchQuery extends Thread {
         int deleted = 0;
 
         try (Connection conn = DataManager.getConnection();
-             PreparedStatement stmnt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+             PreparedStatement stmnt = conn.prepareStatement(sql.toString())) {
             //Execute query
 
             Util.debug("Preparing statement");
