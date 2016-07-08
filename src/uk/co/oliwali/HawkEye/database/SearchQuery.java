@@ -202,6 +202,7 @@ public class SearchQuery extends Thread {
             if (delete) {
                 Util.debug("Deleting entries");
                 deleted = stmnt.executeUpdate();
+                conn.commit();
             } else {
                 try (ResultSet res = stmnt.executeQuery()) {
 
