@@ -5,13 +5,7 @@
 	//                 by oliverw92                  //
 	//    Maintained by HawkEye Reloaded Dev Team    //
 	///////////////////////////////////////////////////
-	
-	error_reporting(E_ALL);
-	session_start();
-	
-	//Include config, lang pack and MySQL connector
-	include("config.php");
-	include("langs/" . $hawkConfig["langFile"]);	
+	include("head.php");
 	
 	//Set up output array
 	$output = array(
@@ -19,9 +13,6 @@
 		"columns" => $lang["results"],
 		"data" => array()
 	);
-	
-	//Check if required functions are here
-	if (!function_exists("json_decode")) require('json.php');
 	
 	//If not logged in, throw an error
 	if (!isset($_SESSION["loggedIn"]) && $hawkConfig["password"] != "")
@@ -38,33 +29,33 @@
 	foreach ($data["loc"] as $key => $val)
 		$data["loc"][$key] = intval($val);
 	foreach ($data["keywords"] as $key => $val)
-		$data["keywords"][$key] = mysql_real_escape_string($val);
+		$data["keywords"][$key] = $mysqli->real_escape_string($val);
 	foreach ($data["exclude"] as $key => $val)
-		$data["exclude"][$key] = mysql_real_escape_string($val);
+		$data["exclude"][$key] = $mysqli->real_escape_string($val);
 
 	$data["block"] = intval($data["block"]);
 	$data["range"] = intval($data["range"]);
-	$data["dateFrom"] = mysql_real_escape_string($data["dateFrom"]);
-	$data["dateTo"] = mysql_real_escape_string($data["dateTo"]);
+	$data["dateFrom"] = $mysqli->real_escape_string($data["dateFrom"]);
+	$data["dateTo"] = $mysqli->real_escape_string($data["dateTo"]);
 		
 	//Get players
 	$players = array();
-	$res = mysql_query("SELECT * FROM `" . $hawkConfig["dbPlayerTable"] . "`");
+	$res = $mysqli->query("SELECT * FROM `" . $hawkConfig["dbPlayerTable"] . "`");
 	if (!$res)
-		return error(mysql_error());
-	if (mysql_num_rows($res) == 0)
+		return error($mysqli->error);
+	if ($res->num_rows == 0)
 		return error($lang["messages"]["noResults"]);
-	while ($player = mysql_fetch_object($res))
+	while ($player = $res->fetch_object())
 		$players[$player->player_id] = $player->player;
 	
 	//Get worlds
 	$worlds = array();
-	$res = mysql_query("SELECT * FROM `" . $hawkConfig["dbWorldTable"] . "`");
+	$res = $mysqli->query("SELECT * FROM `" . $hawkConfig["dbWorldTable"] . "`");
 	if (!$res)
-		return error(mysql_error());
-	if (mysql_num_rows($res) == 0)
+		return error($mysqli->error);
+	if ($res->num_rows == 0)
 		return error($lang["messages"]["noResults"]);
-	while ($world = mysql_fetch_object($res))
+	while ($world = $res->fetch_object())
 		$worlds[$world->world_id] = $world->world;
 	
 	$sql = "SELECT * FROM `" . $hawkConfig["dbTable"] . "` WHERE ";
@@ -147,9 +138,9 @@
 	restore_error_handler();
 		
 	//Run query
-	$res = mysql_query($sql);
+	$res = $mysqli->query($sql);
 	if (!$res)
-		return error(mysql_error());
+		return error($mysqli->error);
 	
 	$items = explode("\n", file_get_contents("items.txt"));
 	$itemhash = array();
@@ -161,7 +152,7 @@
 	$results = array();
 	
 	//Get results from MySQL
-	while ($entry = mysql_fetch_object($res))
+	while ($entry = $res->fetch_object())
 		array_push($results, $entry);
 		
 	foreach ($results as $key => $entry) {

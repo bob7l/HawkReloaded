@@ -77,5 +77,4 @@ function json_encode($in) {
     $out .= $in; 
   } 
   return "{$out}"; 
-}	
-?>
+}
