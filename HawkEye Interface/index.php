@@ -1,14 +1,5 @@
 <?php
-
-	function error($msg) {
-		die($msg);
-	}
-
-	session_start();
-
-	//Include config and lang pack
-	include("config.php");
-	include("langs/" . $hawkConfig["langFile"]);
+	include("head.php");
 
 	//Let's check forum authentication
 	if ($hawkConfig["forumAuth"])

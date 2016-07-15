@@ -1,15 +1,34 @@
-# Eclipse stuff
-.classpath
-.project
-.settings
+# Eclipse
+/.classpath
+/.project
+/.settings
+/*.jardesc
 
-# Build files
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# NetBeans
+/nbproject
+
+# vim
+.*.sw[a-p]
+
+# Maven
+/build.xml
 /target
+/dependency-reduced-pom.xml
+
+# various other potential build files
 /build
 /bin
 /dist
-manifest.mf
-build.xml
+/manifest.mf
 
-# Mac filesystem dust
+# Mac Filesystem Dust
 .DS_Store
+
+# Windows Filesystem Dust
+Thumbs.db
