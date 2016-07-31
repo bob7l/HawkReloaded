@@ -102,7 +102,7 @@ public enum DataType {
         this.canHere = canHere;
         this.configName = configName;
         this.canRollback = canRollback;
-        this.isLogged = HawkEye.instance.getConfig().getBoolean("log." + configName);
+        this.isLogged = HawkEye.getInstance().getConfig().getBoolean("log." + configName);
 
         try {
             this.entryConstructor = entryClass.getConstructor(String.class, Timestamp.class, int.class, DataType.class, String.class, String.class, int.class, int.class, int.class);
@@ -188,6 +188,6 @@ public enum DataType {
      * Reloads enum's isLogged values from disk
      */
     public void reload() {
-        this.isLogged = HawkEye.instance.getConfig().getBoolean("log." + configName);
+        this.isLogged = HawkEye.getInstance().getConfig().getBoolean("log." + configName);
     }
 }

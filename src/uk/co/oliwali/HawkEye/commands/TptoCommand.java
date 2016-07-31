@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -74,7 +75,9 @@ public class TptoCommand extends BaseCommand {
      * @return The location of the searched Entry
      */
     private Location searchForEntryLocation(int id) {
-        try (Connection conn = DataManager.getConnection();
+        DataManager dataManager = HawkEye.getInstance().getDbmanager();
+
+        try (Connection conn = dataManager.getConnectionManager().getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT world_id,x,y,z FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?")) {
 
             stmt.setInt(1, id);
@@ -82,7 +85,7 @@ public class TptoCommand extends BaseCommand {
             try (ResultSet res = stmt.executeQuery()) {
 
                 if (res.next()) {
-                    return new Location(Bukkit.getWorld(DataManager.getWorldDb().get(res.getInt(1))), res.getInt(2), res.getInt(3), res.getInt(4));
+                    return new Location(Bukkit.getWorld(dataManager.getWorldDb().get(res.getInt(1))), res.getInt(2), res.getInt(3), res.getInt(4));
                 }
 
             }

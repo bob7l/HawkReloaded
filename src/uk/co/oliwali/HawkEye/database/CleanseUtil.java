@@ -25,12 +25,16 @@ public class CleanseUtil implements Runnable {
 	private String date = null;
 	private String actions = "";
 
+	private ConnectionManager connectionManager;
+
 	/**
 	 * Initiates utility.
 	 * Throws exception if there are any errors processing the config time value
 	 * @throws Exception
 	 */
-	public CleanseUtil(HawkEye hawk) throws Exception {
+	public CleanseUtil(ConnectionManager connectionManager) throws Exception {
+
+		this.connectionManager = connectionManager;
 
 		//Check for invalid ages/periods
 		List<String> arr = Arrays.asList("0", "0s");
@@ -76,7 +80,7 @@ public class CleanseUtil implements Runnable {
 		//Start timer
 		Util.info("Starting database cleanse thread with a period of " + interval + " seconds");
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(HawkEye.instance, this, interval * 20L, interval * 20L);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(HawkEye.getInstance(), this, interval * 20L, interval * 20L);
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class CleanseUtil implements Runnable {
 
 		Util.info("Running cleanse utility for logs older than " + date);
 
-		try (Connection conn = DataManager.getConnection()) {
+		try (Connection conn = connectionManager.getConnection()) {
 			ageToDate();
 
 			try (PreparedStatement stmnt = conn.prepareStatement("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `timestamp` < '" + date + "'" + actions)) {

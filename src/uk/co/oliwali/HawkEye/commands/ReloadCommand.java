@@ -20,7 +20,7 @@ public class ReloadCommand extends BaseCommand {
     public boolean execute(CommandSender sender, String[] args) {
         Util.sendMessage(sender, "&c-----------&8[ &7Reload Process Started &8]&c-----------");
 
-        HawkEye hawk = HawkEye.instance;
+        HawkEye hawk = HawkEye.getInstance();
 
         hawk.reloadConfig();
         hawk.config = new Config(hawk);

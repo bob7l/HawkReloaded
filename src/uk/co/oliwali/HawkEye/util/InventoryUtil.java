@@ -5,7 +5,7 @@ import org.bukkit.block.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
-import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.entry.containerentries.ContainerEntry;
 import uk.co.oliwali.HawkEye.entry.containerentries.ContainerExtract;
 import uk.co.oliwali.HawkEye.itemserializer.ItemSerializer;
@@ -120,7 +120,7 @@ public class InventoryUtil {
         return lines;
     }
 
-    public static void handleHolderRemoval(String remover, BlockState state) {
+    public static void handleHolderRemoval(Consumer consumer, String remover, BlockState state) {
         InventoryHolder holder = (InventoryHolder) state;
 
         if (InventoryUtil.isHolderValid(holder)) {
@@ -128,7 +128,7 @@ public class InventoryUtil {
 
             if (!invContents.isEmpty()) {
                 for (String str : serializeInventory(ContainerEntry.getSerializer(), invContents))
-                    DataManager.addEntry(new ContainerExtract(remover, DataType.CONTAINER_EXTRACT, InventoryUtil.getHolderLoc(holder), str));
+                    consumer.addEntry(new ContainerExtract(remover, DataType.CONTAINER_EXTRACT, InventoryUtil.getHolderLoc(holder), str));
             }
         }
     }

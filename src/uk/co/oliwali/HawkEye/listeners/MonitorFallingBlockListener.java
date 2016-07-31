@@ -12,7 +12,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
-import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 
 import java.util.HashMap;
@@ -26,12 +26,16 @@ public class MonitorFallingBlockListener extends HawkEyeListener {
 
 	private HashMap<Entity, String> blocks = new HashMap<Entity, String>();
 
+	public MonitorFallingBlockListener(Consumer consumer) {
+		super(consumer);
+	}
+
 	@HawkEvent(dataType = DataType.FALLING_BLOCK)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Material type = event.getBlock().getType();
 		if ((type.equals(Material.SAND) || type.equals(Material.GRAVEL) || type.equals(Material.ANVIL)) && event.getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
 			final BlockPlaceEvent finalEvent = event;
-			Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, new Runnable() {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					Location l = finalEvent.getBlock().getLocation();
@@ -53,7 +57,7 @@ public class MonitorFallingBlockListener extends HawkEyeListener {
 			FallingBlock fb = (FallingBlock)en;
 			Block b = event.getBlock();
 			String data = "" + (fb.getBlockData() == 0?fb.getBlockId():fb.getBlockId() + ":" + fb.getBlockData());
-			DataManager.addEntry(new BlockChangeEntry(blocks.get(en), DataType.FALLING_BLOCK, b.getLocation(), event.getBlock().getState(), data));
+			consumer.addEntry(new BlockChangeEntry(blocks.get(en), DataType.FALLING_BLOCK, b.getLocation(), event.getBlock().getState(), data));
 		}
 	}
 }

@@ -257,7 +257,7 @@ public class Util {
      * @param runnable The task to be executed at an appropriate time
      */
     public static void runLater(Runnable runnable) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.instance, runnable, 0);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(HawkEye.getInstance(), runnable, 0);
     }
 
 }

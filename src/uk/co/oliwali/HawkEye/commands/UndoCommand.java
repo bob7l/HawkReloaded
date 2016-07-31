@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.Undo;
 import uk.co.oliwali.HawkEye.util.Util;
@@ -21,7 +22,7 @@ public class UndoCommand extends BaseCommand {
 
     @Override
     public boolean execute(Player sender, String[] args) {
-        new Undo(SessionManager.getSession(sender));
+        new Undo(HawkEye.getDbmanager(), SessionManager.getSession(sender));
         return true;
     }
 

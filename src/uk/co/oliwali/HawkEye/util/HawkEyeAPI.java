@@ -4,9 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.QueryCallback;
-import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
@@ -58,12 +58,13 @@ public class HawkEyeAPI {
 
     public static boolean addEntry(DataEntry entry) {
 
-        if (entry.getClass() != entry.getType().getEntryClass()) return false;
-        if (entry.getPlayer() == null) return false;
+        if (entry.getClass() != entry.getType().getEntryClass() ||
+                entry.getPlayer() == null)
+            return false;
 
-        DataManager.addEntry(entry);
+        HawkEye.getDbmanager().getConsumer().addEntry(entry);
+
         return true;
-
     }
 
     /**

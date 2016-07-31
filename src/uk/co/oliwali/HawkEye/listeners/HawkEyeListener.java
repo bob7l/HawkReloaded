@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.util.Util;
 import uk.co.oliwali.HawkEye.util.Util.DebugLevel;
 
@@ -16,10 +17,16 @@ import java.lang.reflect.Method;
 public abstract class HawkEyeListener implements Listener {
 
 	//Default logging user for environment related actions
-	static final String ENVIRONMENT = "Environment";
+	protected static final String ENVIRONMENT = "Environment";
+
+	protected Consumer consumer;
+
+	public HawkEyeListener(Consumer consumer) {
+		this.consumer = consumer;
+	}
 
 	public void registerEvents() {
-		PluginManager pm = HawkEye.instance.getServer().getPluginManager();
+		PluginManager pm = HawkEye.getInstance().getServer().getPluginManager();
 
 		Method[] methods = this.getClass().getDeclaredMethods();
 
@@ -59,7 +66,7 @@ public abstract class HawkEyeListener implements Listener {
 
 			Util.debug("Registering listener for " + eventClass.getName());
 
-			pm.registerEvent(eventClass, this, he.priority(), executor, HawkEye.instance, he.ignoreCancelled());
+			pm.registerEvent(eventClass, this, he.priority(), executor, HawkEye.getInstance(), he.ignoreCancelled());
 		}
 	}
 

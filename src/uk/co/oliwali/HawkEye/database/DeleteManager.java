@@ -13,6 +13,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class DeleteManager implements Runnable {
 
+    private ConnectionManager connectionManager;
+
+    public DeleteManager(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
     private LinkedBlockingQueue<DeleteQueue> deletions = new LinkedBlockingQueue<>();
 
     public void addDeleteQueue(DeleteQueue deleteQueue) {
@@ -44,7 +50,7 @@ public class DeleteManager implements Runnable {
     public void run() {
         if (!deletions.isEmpty()) {
 
-            try (Connection conn = DataManager.getConnection()) {
+            try (Connection conn = connectionManager.getConnection()) {
 
                 DeleteQueue deleteQueue = deletions.peek();
 

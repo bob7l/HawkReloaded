@@ -9,10 +9,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
-import uk.co.oliwali.HawkEye.blocks.HawkBlock;
-import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
-import uk.co.oliwali.HawkEye.blocks.SignBlock;
-import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.blocks.BlockHandlerContainer;
+import uk.co.oliwali.HawkEye.blocks.blockhandlers.BlockHandler;
+import uk.co.oliwali.HawkEye.blocks.blockhandlers.SignBlockHandler;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.entry.BlockEntry;
 import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -27,7 +27,11 @@ public class MonitorWorldEditListener extends HawkEyeListener {
 
 	private WorldEditPlugin we;
 
-	public MonitorWorldEditListener() {
+	private BlockHandlerContainer blockHandlerContainer;
+
+	public MonitorWorldEditListener(Consumer consumer, BlockHandlerContainer blockHandlerContainer) {
+		super(consumer);
+		this.blockHandlerContainer = blockHandlerContainer;
 		this.we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
 	}
 
@@ -43,16 +47,16 @@ public class MonitorWorldEditListener extends HawkEyeListener {
 
 				if (type == Material.AIR || Config.BlockFilter.contains(type.getId())) return;
 
-				HawkBlock hb = HawkBlockType.getHawkBlock(type.getId());
+				BlockHandler hb = blockHandlerContainer.getBlockHandler(type.getId());
 
 				block = hb.getCorrectBlock(block);
 
-				hb.logAttachedBlocks(block, player, DataType.SUPER_PICKAXE);
+				hb.logAttachedBlocks(consumer, block, player, DataType.SUPER_PICKAXE);
 
-				if (hb instanceof SignBlock && DataType.SIGN_BREAK.isLogged())
-					DataManager.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
+				if (hb instanceof SignBlockHandler && DataType.SIGN_BREAK.isLogged())
+					consumer.addEntry(new SignEntry(player, DataType.SIGN_BREAK, block));
 				
-				else DataManager.addEntry(new BlockEntry(player, DataType.SUPER_PICKAXE, block));
+				else consumer.addEntry(new BlockEntry(player, DataType.SUPER_PICKAXE, block));
 			}
 		}
 	}

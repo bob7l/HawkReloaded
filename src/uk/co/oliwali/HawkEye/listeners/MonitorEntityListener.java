@@ -13,7 +13,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
-import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.PlayerSession;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.entry.*;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.EntityUtil;
@@ -28,6 +29,10 @@ import java.util.Arrays;
  * @author oliverw92
  */
 public class MonitorEntityListener extends HawkEyeListener {
+
+    public MonitorEntityListener(Consumer consumer) {
+        super(consumer);
+    }
 
     /**
      * Uses the lastAttacker field in the players {@link PlayerSession} to log the death and cause
@@ -45,10 +50,10 @@ public class MonitorEntityListener extends HawkEyeListener {
                 Entity damager = ((EntityDamageByEntityEvent) (victim.getLastDamageCause())).getDamager();
                 if (damager instanceof Player) {
                     if (!DataType.PVP_DEATH.isLogged() && !Config.LogDeathDrops) return;
-                    DataManager.addEntry(new DataEntry(victim, DataType.PVP_DEATH, victim.getLocation(), Util.getEntityName(damager)));
+                    consumer.addEntry(new DataEntry(victim, DataType.PVP_DEATH, victim.getLocation(), Util.getEntityName(damager)));
                 } else {
                     if (!DataType.MOB_DEATH.isLogged() && !Config.LogDeathDrops) return;
-                    DataManager.addEntry(new DataEntry(victim, DataType.MOB_DEATH, victim.getLocation(), Util.getEntityName(damager)));
+                    consumer.addEntry(new DataEntry(victim, DataType.MOB_DEATH, victim.getLocation(), Util.getEntityName(damager)));
                 }
                 //Other death
             } else {
@@ -59,7 +64,7 @@ public class MonitorEntityListener extends HawkEyeListener {
                 for (int i = 0; i < words.length; i++)
                     words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1).toLowerCase();
                 cause = Util.join(Arrays.asList(words), " ");
-                DataManager.addEntry(new DataEntry(victim, DataType.OTHER_DEATH, victim.getLocation(), cause));
+                consumer.addEntry(new DataEntry(victim, DataType.OTHER_DEATH, victim.getLocation(), cause));
             }
 
             //Log item drops
@@ -70,7 +75,7 @@ public class MonitorEntityListener extends HawkEyeListener {
                         data = stack.getAmount() + "x " + stack.getTypeId() + ":" + stack.getData().getData();
                     else
                         data = stack.getAmount() + "x " + stack.getTypeId();
-                    DataManager.addEntry(new DataEntry(victim, DataType.ITEM_DROP, victim.getLocation(), data));
+                    consumer.addEntry(new DataEntry(victim, DataType.ITEM_DROP, victim.getLocation(), data));
                 }
             }
         } else if (DataType.ENTITY_KILL.isLogged()) { //Mob Death
@@ -78,7 +83,7 @@ public class MonitorEntityListener extends HawkEyeListener {
             Player killer = ((LivingEntity) entity).getKiller();
 
             if (killer != null) {
-                DataManager.addEntry(new EntityEntry(killer.getName(), DataType.ENTITY_KILL, entity.getLocation().getBlock().getLocation(), Util.getEntityName(entity)));
+                consumer.addEntry(new EntityEntry(killer.getName(), DataType.ENTITY_KILL, entity.getLocation().getBlock().getLocation(), Util.getEntityName(entity)));
             }
         }
     }
@@ -100,7 +105,7 @@ public class MonitorEntityListener extends HawkEyeListener {
         }
 
         for (Block b : event.blockList())
-            DataManager.addEntry(new BlockEntry(s, DataType.EXPLOSION, b));
+            consumer.addEntry(new BlockEntry(s, DataType.EXPLOSION, b));
     }
 
     @HawkEvent(dataType = DataType.ITEM_BREAK)
@@ -111,7 +116,7 @@ public class MonitorEntityListener extends HawkEyeListener {
         HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), event.getCause().name());
 
         if (he != null)
-            DataManager.addEntry(he);
+            consumer.addEntry(he);
     }
 
     @HawkEvent(dataType = DataType.ITEM_BREAK)
@@ -122,21 +127,21 @@ public class MonitorEntityListener extends HawkEyeListener {
         HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_BREAK, event.getEntity(), EntityUtil.entityToString(event.getRemover()));
 
         if (he != null)
-            DataManager.addEntry(he);
+            consumer.addEntry(he);
     }
 
     @HawkEvent(dataType = DataType.ENTITY_MODIFY)
     public void onEntityModifyBlock(EntityChangeBlockEvent event) {
         Entity en = event.getEntity();
         if (en instanceof Silverfish) return;
-        DataManager.addEntry(new BlockEntry(EntityUtil.entityToString(en), DataType.ENTITY_MODIFY, event.getBlock()));
+        consumer.addEntry(new BlockEntry(EntityUtil.entityToString(en), DataType.ENTITY_MODIFY, event.getBlock()));
     }
 
     @HawkEvent(dataType = DataType.BLOCK_INHABIT)
     public void onEntityBlockChange(EntityChangeBlockEvent event) {
         Entity en = event.getEntity();
         if (!(en instanceof Silverfish)) return;
-        DataManager.addEntry(new BlockEntry("SilverFish", DataType.BLOCK_INHABIT, event.getBlock()));
+        consumer.addEntry(new BlockEntry("SilverFish", DataType.BLOCK_INHABIT, event.getBlock()));
     }
 
     @HawkEvent(dataType = DataType.ITEM_PLACE)
@@ -144,7 +149,7 @@ public class MonitorEntityListener extends HawkEyeListener {
         HangingEntry he = EntityUtil.getHangingEntry(DataType.ITEM_PLACE, event.getEntity(), EntityUtil.entityToString(event.getPlayer()));
 
         if (he != null)
-            DataManager.addEntry(he);
+            consumer.addEntry(he);
     }
 
     @HawkEvent(dataType = DataType.FRAME_EXTRACT)
@@ -154,7 +159,7 @@ public class MonitorEntityListener extends HawkEyeListener {
             ItemFrame frame = (ItemFrame) event.getEntity();
 
             if (frame.getItem().getType() != Material.AIR) {
-                DataManager.addEntry(new ItemFrameModifyEntry(((HumanEntity)event.getDamager()).getName(), DataType.FRAME_EXTRACT, frame.getLocation(), frame.getItem()));
+                consumer.addEntry(new ItemFrameModifyEntry(((HumanEntity)event.getDamager()).getName(), DataType.FRAME_EXTRACT, frame.getLocation(), frame.getItem()));
             }
         }
     }
@@ -171,7 +176,7 @@ public class MonitorEntityListener extends HawkEyeListener {
 
                 item.setAmount(1);
 
-                DataManager.addEntry(new ItemFrameModifyEntry(p.getName(), DataType.FRAME_INSERT, frame.getLocation(), item));
+                consumer.addEntry(new ItemFrameModifyEntry(p.getName(), DataType.FRAME_INSERT, frame.getLocation(), item));
             }
         }
     }
@@ -186,8 +191,8 @@ public class MonitorEntityListener extends HawkEyeListener {
         // Enderman picking up block
         if (event.getTo() == Material.AIR && DataType.ENDERMAN_PICKUP.isLogged()) {
             if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
-                DataManager.addEntry(new SignEntry(ENVIRONMENT, DataType.SIGN_BREAK, event.getBlock()));
-            DataManager.addEntry(new BlockEntry(ENVIRONMENT, DataType.ENDERMAN_PICKUP, block));
+                consumer.addEntry(new SignEntry(ENVIRONMENT, DataType.SIGN_BREAK, event.getBlock()));
+            consumer.addEntry(new BlockEntry(ENVIRONMENT, DataType.ENDERMAN_PICKUP, block));
         } else if (DataType.ENDERMAN_PLACE.isLogged()) {
             // Enderman placing block
             Enderman enderman = (Enderman) event.getEntity();
@@ -200,7 +205,7 @@ public class MonitorEntityListener extends HawkEyeListener {
                 newState.setType(enderman.getCarriedMaterial().getItemType());
             }
 
-            DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.ENDERMAN_PLACE, block.getLocation(), block.getState(), newState));
+            consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.ENDERMAN_PLACE, block.getLocation(), block.getState(), newState));
         }
     }
 }

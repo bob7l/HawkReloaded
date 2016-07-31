@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.database.DeleteQueue;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
@@ -27,10 +28,13 @@ public class Undo implements Runnable {
     private int counter = 0;
     private RollbackType undoType = RollbackType.GLOBAL;
 
+    private DataManager dataManager;
+
     /**
      * @param session {@link PlayerSession} to retrieve undo results from
      */
-    public Undo(PlayerSession session) {
+    public Undo(DataManager dataManager, PlayerSession session) {
+        this.dataManager = dataManager;
 
         this.session = session;
         this.undoType = session.getRollbackType();
@@ -60,16 +64,17 @@ public class Undo implements Runnable {
 
         //Re-add deleted results back to the MySQL
         if (undoType == RollbackType.GLOBAL && Config.DeleteDataOnRollback) {
-            DeleteQueue dq = DataManager.getDeleteManager().getDeleteQueue(results.get(0).getDataId());
+            DeleteQueue dq = dataManager.getDeleteManager().getDeleteQueue(results.get(0).getDataId());
+            Consumer consumer = dataManager.getConsumer();
 
             if (dq != null) {
-                DataManager.getDeleteManager().removeDeleteQueue(dq);
+                dataManager.getDeleteManager().removeDeleteQueue(dq);
 
                 if (dq.getSize() < results.size()) { //true = deletions have been made and must be restored
-                    DataManager.getQueue().addAll(results);
+                    consumer.getQueue().addAll(results);
                 }
             } else {
-                DataManager.getQueue().addAll(results);
+                consumer.getQueue().addAll(results);
             }
         }
 

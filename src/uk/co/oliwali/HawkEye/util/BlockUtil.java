@@ -8,7 +8,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
-import uk.co.oliwali.HawkEye.blocks.HawkBlockType;
+import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
  * Contains utilities for manipulating blocks without losing data
@@ -112,8 +112,8 @@ public class BlockUtil {
 		if (!Util.isInteger(blockArr[0])) return;
 		int type = Integer.parseInt(blockArr[0]);
 		int data = (blockArr.length > 1) ? Integer.parseInt(blockArr[1]) : 0;
-		
-		HawkBlockType.getHawkBlock(type).Restore(block, type, data);
+
+		HawkEye.getBlockHandlerContainer().getBlockHandler(type).restore(block, type, data);
 	}
 
 	/**

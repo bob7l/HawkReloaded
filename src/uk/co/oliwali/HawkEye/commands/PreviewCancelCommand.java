@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.PlayerSession;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.SessionManager;
@@ -33,7 +34,7 @@ public class PreviewCancelCommand extends BaseCommand {
         }
 
         //Undo local changes to the player
-        new Undo(session);
+        new Undo(HawkEye.getDbmanager(), session);
 
         Util.sendMessage(sender, "&cPreview rollback cancelled");
         session.setInPreview(false);

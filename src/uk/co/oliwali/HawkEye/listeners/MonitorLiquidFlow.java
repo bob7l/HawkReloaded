@@ -11,7 +11,7 @@ import org.bukkit.material.MaterialData;
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEvent;
 import uk.co.oliwali.HawkEye.HawkEye;
-import uk.co.oliwali.HawkEye.database.DataManager;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 
 import java.util.Arrays;
@@ -25,6 +25,10 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	private int cacheRunTime = 10;
 	private int timerId = -1;
 
+	public MonitorLiquidFlow(Consumer consumer) {
+		super(consumer);
+	}
+
 	public void registerEvents() {
 		super.registerEvents();
 
@@ -35,10 +39,10 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	 * Clears the Player cache when it's been 10 seconds after a waterflow event
 	 * Every time the event fires, the timer resets to allow the water to be tracked
 	 */
-	public void startCacheCleaner() {
+	private void startCacheCleaner() {
 		if (DataType.PLAYER_LAVA_FLOW.isLogged() || DataType.PLAYER_WATER_FLOW.isLogged()) {
 			Bukkit.getScheduler().cancelTask(timerId);
-			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HawkEye.instance, new Runnable() {
+			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HawkEye.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					cacheRunTime--;
@@ -54,7 +58,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 	 * Resets cache timer and
 	 * adds the new location
 	 */
-	public void addToCache(Location l, String p) {
+	private void addToCache(Location l, String p) {
 		cacheRunTime = 10; //Reset cache timer
 		playerCache.put(l, p); //Add location to cache
 	}
@@ -103,7 +107,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 				data.setData((byte)0);
 				from.setData(data);
 			}
-			DataManager.addEntry(new BlockChangeEntry(player, DataType.PLAYER_LAVA_FLOW, loc, to, from));
+			consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_LAVA_FLOW, loc, to, from));
 			addToCache(loc, player);
 		}
 
@@ -114,7 +118,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (fluidBlocks.contains(to.getTypeId())) {
 				data.setData((byte)(from.getRawData() + 1));
 				from.setData(data);
-				DataManager.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, to, from));
+				consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, to, from));
 				addToCache(loc, player);
 			}
 			//If we are flowing over lava, cobble or obsidian will form
@@ -122,7 +126,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
 				from.setTypeId(lower.getData().getData() == 0?49:4);
 				loc.setY(loc.getY() - 1);
-				DataManager.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, lower, from));
+				consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, lower, from));
 				addToCache(loc, player);
 			}
 		}
@@ -157,7 +161,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 				data.setData((byte)0);
 				from.setData(data);
 			}
-			DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.LAVA_FLOW, loc, to, from));
+			consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.LAVA_FLOW, loc, to, from));
 
 		}
 
@@ -168,7 +172,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (fluidBlocks.contains(to.getTypeId())) {
 				data.setData((byte)(from.getRawData() + 1));
 				from.setData(data);
-				DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, to, from));
+				consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, to, from));
 			}
 
 			//If we are flowing over lava, cobble or obsidian will form
@@ -176,7 +180,7 @@ public class MonitorLiquidFlow extends HawkEyeListener {
 			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
 				from.setTypeId(lower.getData().getData() == 0?49:4);
 				loc.setY(loc.getY() - 1);
-				DataManager.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, lower, from));
+				consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, lower, from));
 			}
 
 		}

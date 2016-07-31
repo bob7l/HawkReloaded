@@ -1,6 +1,7 @@
 package uk.co.oliwali.HawkEye.database;
 
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.Callback;
 import uk.co.oliwali.HawkEye.callbacks.DeleteCallback;
@@ -30,13 +31,20 @@ public class SearchQuery extends Thread {
 
     private final boolean delete;
 
-    public SearchQuery(Callback callBack, SearchParser parser, SearchDir dir) {
+    private DataManager dataManager;
+
+    public SearchQuery(DataManager dataManager, Callback callBack, SearchParser parser, SearchDir dir) {
+        this.dataManager = dataManager;
         this.callBack = callBack;
         this.parser = parser;
         this.dir = dir;
         this.delete = (callBack instanceof DeleteCallback);
         //Start thread
         this.start();
+    }
+
+    public SearchQuery(Callback callBack, SearchParser parser, SearchDir dir) {
+        this(HawkEye.getDbmanager(), callBack, parser, dir);
     }
 
     /**
@@ -70,7 +78,7 @@ public class SearchQuery extends Thread {
                 if (ignoredUser)
                     player = player.substring(1);
 
-                Integer id = DataManager.getPlayerDb().searchForId(player);
+                Integer id = dataManager.getPlayerDb().searchForId(player);
 
                 if (id != null) {
                     if (ignoredUser)
@@ -106,7 +114,7 @@ public class SearchQuery extends Thread {
                 if (ignoreWorld)
                     world = world.substring(1);
 
-                Integer id = DataManager.getWorldDb().searchForId(world);
+                Integer id = dataManager.getWorldDb().searchForId(world);
 
                 if (id != null) {
                     if (ignoreWorld)
@@ -187,7 +195,7 @@ public class SearchQuery extends Thread {
         List<DataEntry>  results = new ArrayList<>();
         int deleted = 0;
 
-        try (Connection conn = DataManager.getConnection();
+        try (Connection conn = dataManager.getConnectionManager().getConnection();
              PreparedStatement stmnt = conn.prepareStatement(sql.toString())) {
             //Execute query
 
@@ -227,12 +235,12 @@ public class SearchQuery extends Thread {
                         world = worldCache.get(res.getInt(5));
 
                         if (name == null) {
-                            name = DataManager.getPlayerDb().get(res.getInt(3));
+                            name = dataManager.getPlayerDb().get(res.getInt(3));
                             playerCache.put(res.getInt(3), name);
                         }
 
                         if (world == null) {
-                            world = DataManager.getWorldDb().get(res.getInt(5));
+                            world = dataManager.getWorldDb().get(res.getInt(5));
                             worldCache.put(res.getInt(5), world);
                         }
 

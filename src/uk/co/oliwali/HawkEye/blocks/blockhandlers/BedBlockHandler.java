@@ -1,15 +1,15 @@
-package uk.co.oliwali.HawkEye.blocks;
+package uk.co.oliwali.HawkEye.blocks.blockhandlers;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-
 import uk.co.oliwali.HawkEye.DataType;
+import uk.co.oliwali.HawkEye.database.Consumer;
 
-public class BedBlock implements HawkBlock {
+public class BedBlockHandler implements BlockHandler {
 
 	@Override
-	public void Restore(Block b, int id, int data) {
+	public void restore(Block b, int id, int data) {
 		if (data > 7) return;
 		
 		int beddata = 0;
@@ -39,9 +39,7 @@ public class BedBlock implements HawkBlock {
 	}
 
 	@Override
-	public void logAttachedBlocks(Block b, Player p, DataType type) {
-		return;
-	}
+	public void logAttachedBlocks(Consumer consumer, Block b, Player p, DataType type) { }
 
 	@Override
 	public Block getCorrectBlock(Block b) {

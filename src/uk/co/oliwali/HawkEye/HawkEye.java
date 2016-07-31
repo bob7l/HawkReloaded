@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.co.oliwali.HawkEye.WorldEdit.WESessionFactory;
+import uk.co.oliwali.HawkEye.blocks.BlockHandlerContainer;
+import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.*;
 import uk.co.oliwali.HawkEye.util.Config;
@@ -19,11 +21,13 @@ public class HawkEye extends JavaPlugin {
 
     public Config config;
 
-    public static HawkEye instance;
+    private static HawkEye instance;
 
     private List<HawkEyeListener> loggingListeners = new ArrayList<>();
 
-    private DataManager dbmanager;
+    private static DataManager dbmanager;
+
+    private static BlockHandlerContainer blockHandlerContainer;
 
     /**
      * Safely shuts down HawkEye
@@ -81,8 +85,7 @@ public class HawkEye extends JavaPlugin {
 
         //Initiate database connection
         try {
-            this.dbmanager = new DataManager(this);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, dbmanager, Config.LogDelay * 20, Config.LogDelay * 20);
+            dbmanager = new DataManager();
         } catch (Exception e) {
             Util.severe("Error initiating HawkEye database connection, disabling plugin");
             pm.disablePlugin(this);
@@ -92,17 +95,21 @@ public class HawkEye extends JavaPlugin {
 
         pm.registerEvents(new ToolListener(), this);
 
-        loggingListeners.add(new MonitorBlockListener());
-        loggingListeners.add(new MonitorEntityListener());
-        loggingListeners.add(new MonitorFallingBlockListener());
-        loggingListeners.add(new MonitorLiquidFlow());
-        loggingListeners.add(new MonitorPlayerListener());
-        loggingListeners.add(new MonitorWorldListener());
+        Consumer consumer = dbmanager.getConsumer();
+
+        blockHandlerContainer = new BlockHandlerContainer();
+
+        loggingListeners.add(new MonitorBlockListener(consumer, blockHandlerContainer));
+        loggingListeners.add(new MonitorEntityListener(consumer));
+        loggingListeners.add(new MonitorFallingBlockListener(consumer));
+        loggingListeners.add(new MonitorLiquidFlow(consumer));
+        loggingListeners.add(new MonitorPlayerListener(consumer, blockHandlerContainer));
+        loggingListeners.add(new MonitorWorldListener(consumer));
 
         if (hasDependency("WorldEdit"))
-            loggingListeners.add(new MonitorWorldEditListener());
+            loggingListeners.add(new MonitorWorldEditListener(consumer, blockHandlerContainer));
         if (hasDependency("Herochat"))
-            loggingListeners.add(new MonitorHeroChatListener());
+            loggingListeners.add(new MonitorHeroChatListener(consumer));
 
         registerListeners();
 
@@ -131,7 +138,7 @@ public class HawkEye extends JavaPlugin {
                 public void run() {
                     try {
                         Class.forName("com.sk89q.worldedit.extent.logging.AbstractLoggingExtent");
-                        new WESessionFactory();
+                        new WESessionFactory(dbmanager.getConsumer());
                     } catch (ClassNotFoundException ex) {
                         Util.warning("[!] Failed to initialize WorldEdit logging [!]");
                         Util.warning("[!] Please upgrade WorldEdit to 6.0+       [!]");
@@ -151,4 +158,15 @@ public class HawkEye extends JavaPlugin {
         return loggingListeners;
     }
 
+    public static HawkEye getInstance() {
+        return instance;
+    }
+
+    public static DataManager getDbmanager() {
+        return dbmanager;
+    }
+
+    public static BlockHandlerContainer getBlockHandlerContainer() {
+        return blockHandlerContainer;
+    }
 }

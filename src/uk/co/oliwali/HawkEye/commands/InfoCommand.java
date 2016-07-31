@@ -25,9 +25,11 @@ public class InfoCommand extends BaseCommand {
         for (DataType type : DataType.values())
             if (type.isLogged()) acs.add(type.getConfigName());
 
+        DataManager dataManager = HawkEye.getDbmanager();
+
         Util.sendMessage(sender, "&c---------------------&8[ &7HawkEye &8]&c---------------------");
-        Util.sendMessage(sender, "&8  - &cQueue-load: &7" + DataManager.getQueue().size());
-        Util.sendMessage(sender, "&8  - &cVersion: &7" + HawkEye.instance.getDescription().getVersion());
+        Util.sendMessage(sender, "&8  - &cQueue-load: &7" + dataManager.getConsumer().getQueue().size());
+        Util.sendMessage(sender, "&8  - &cVersion: &7" + HawkEye.getInstance().getDescription().getVersion());
         Util.sendMessage(sender, "&8  - &cLogged: &7" + Util.join(acs, " "));
         Util.sendMessage(sender, "&c----------------------------------------------------");
 

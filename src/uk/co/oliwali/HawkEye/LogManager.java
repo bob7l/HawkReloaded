@@ -1,5 +1,10 @@
 package uk.co.oliwali.HawkEye;
 
+import org.bukkit.command.CommandSender;
+import uk.co.oliwali.HawkEye.entry.DataEntry;
+import uk.co.oliwali.HawkEye.util.Config;
+import uk.co.oliwali.HawkEye.util.Util;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,12 +12,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-
-import org.bukkit.command.CommandSender;
-
-import uk.co.oliwali.HawkEye.entry.DataEntry;
-import uk.co.oliwali.HawkEye.util.Config;
-import uk.co.oliwali.HawkEye.util.Util;
 
 public class LogManager {
 
@@ -35,7 +34,7 @@ public class LogManager {
 		BufferedWriter writer = null;
 		int i = 0;
 		try {
-			writer = new BufferedWriter(new FileWriter(new File(HawkEye.instance.getDataFolder(), name)));
+			writer = new BufferedWriter(new FileWriter(new File(HawkEye.getInstance().getDataFolder(), name)));
 			writer.write("|------(Log By " + sender.getName() + ")------|"+"\n");
 			for (DataEntry e : results) {
 				writer.write("ID:" + e.getDataId() + ", " + e.getTimestamp() + ", " + e.getPlayer() + ", " + e.getType().getConfigName()+"\n");
