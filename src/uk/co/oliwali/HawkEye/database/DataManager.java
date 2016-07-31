@@ -16,9 +16,9 @@ import java.sql.*;
 
 public class DataManager implements AutoCloseable {
 
-    private final IdMapCache playerDb = new IdMapCache();
+    private final IdMapCache playerCache = new IdMapCache();
 
-    private final IdMapCache worldDb = new IdMapCache();
+    private final IdMapCache worldCache = new IdMapCache();
 
     private DeleteManager deleteManager;
 
@@ -75,15 +75,15 @@ public class DataManager implements AutoCloseable {
     /**
      * Get the player cache
      */
-    public IdMapCache getPlayerDb() {
-        return playerDb;
+    public IdMapCache getPlayerCache() {
+        return playerCache;
     }
 
     /**
      * Get the world cache
      */
-    public IdMapCache getWorldDb() {
-        return worldDb;
+    public IdMapCache getWorldCache() {
+        return worldCache;
     }
 
 
@@ -128,12 +128,12 @@ public class DataManager implements AutoCloseable {
 
             try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;")) {
                 while (res.next())
-                    playerDb.put(res.getInt("player_id"), res.getString("player"));
+                    playerCache.put(res.getInt("player_id"), res.getString("player"));
             }
 
             try (ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;")) {
                 while (res.next())
-                    worldDb.put(res.getInt("world_id"), res.getString("world"));
+                    worldCache.put(res.getInt("world_id"), res.getString("world"));
             }
 
         } catch (SQLException ex) {

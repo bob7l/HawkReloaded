@@ -30,8 +30,8 @@ public class Consumer implements Runnable, Closeable {
         this.dataManager = dataManager;
 
         this.connectionManager = dataManager.getConnectionManager();
-        this.playerDb = dataManager.getPlayerDb();
-        this.worldDb = dataManager.getWorldDb();
+        this.playerDb = dataManager.getPlayerCache();
+        this.worldDb = dataManager.getWorldCache();
     }
 
     /**

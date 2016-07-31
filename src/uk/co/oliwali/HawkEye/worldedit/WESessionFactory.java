@@ -1,4 +1,4 @@
-package uk.co.oliwali.HawkEye.WorldEdit;
+package uk.co.oliwali.HawkEye.worldedit;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;

@@ -1,4 +1,4 @@
-package uk.co.oliwali.HawkEye.WorldEdit;
+package uk.co.oliwali.HawkEye.worldedit;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;

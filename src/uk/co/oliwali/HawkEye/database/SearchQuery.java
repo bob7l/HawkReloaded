@@ -78,7 +78,7 @@ public class SearchQuery extends Thread {
                 if (ignoredUser)
                     player = player.substring(1);
 
-                Integer id = dataManager.getPlayerDb().searchForId(player);
+                Integer id = dataManager.getPlayerCache().searchForId(player);
 
                 if (id != null) {
                     if (ignoredUser)
@@ -114,7 +114,7 @@ public class SearchQuery extends Thread {
                 if (ignoreWorld)
                     world = world.substring(1);
 
-                Integer id = dataManager.getWorldDb().searchForId(world);
+                Integer id = dataManager.getWorldCache().searchForId(world);
 
                 if (id != null) {
                     if (ignoreWorld)
@@ -235,12 +235,12 @@ public class SearchQuery extends Thread {
                         world = worldCache.get(res.getInt(5));
 
                         if (name == null) {
-                            name = dataManager.getPlayerDb().get(res.getInt(3));
+                            name = dataManager.getPlayerCache().get(res.getInt(3));
                             playerCache.put(res.getInt(3), name);
                         }
 
                         if (world == null) {
-                            world = dataManager.getWorldDb().get(res.getInt(5));
+                            world = dataManager.getWorldCache().get(res.getInt(5));
                             worldCache.put(res.getInt(5), world);
                         }
 

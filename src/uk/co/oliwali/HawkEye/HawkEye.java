@@ -3,13 +3,13 @@ package uk.co.oliwali.HawkEye;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import uk.co.oliwali.HawkEye.WorldEdit.WESessionFactory;
 import uk.co.oliwali.HawkEye.blocks.BlockHandlerContainer;
 import uk.co.oliwali.HawkEye.database.Consumer;
 import uk.co.oliwali.HawkEye.database.DataManager;
 import uk.co.oliwali.HawkEye.listeners.*;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
+import uk.co.oliwali.HawkEye.worldedit.WESessionFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;

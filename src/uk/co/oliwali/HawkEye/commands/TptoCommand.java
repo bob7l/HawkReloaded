@@ -75,7 +75,7 @@ public class TptoCommand extends BaseCommand {
      * @return The location of the searched Entry
      */
     private Location searchForEntryLocation(int id) {
-        DataManager dataManager = HawkEye.getInstance().getDbmanager();
+        DataManager dataManager = HawkEye.getDbmanager();
 
         try (Connection conn = dataManager.getConnectionManager().getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT world_id,x,y,z FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = ?")) {
@@ -85,7 +85,7 @@ public class TptoCommand extends BaseCommand {
             try (ResultSet res = stmt.executeQuery()) {
 
                 if (res.next()) {
-                    return new Location(Bukkit.getWorld(dataManager.getWorldDb().get(res.getInt(1))), res.getInt(2), res.getInt(3), res.getInt(4));
+                    return new Location(Bukkit.getWorld(dataManager.getWorldCache().get(res.getInt(1))), res.getInt(2), res.getInt(3), res.getInt(4));
                 }
 
             }
