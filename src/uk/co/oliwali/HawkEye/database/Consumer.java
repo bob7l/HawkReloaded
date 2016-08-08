@@ -97,7 +97,7 @@ public class Consumer implements Runnable, Closeable {
                 stmnt.setTimestamp(1, entry.getTimestamp());
                 stmnt.setInt(2, playerId);
                 stmnt.setInt(3, entry.getType().getId());
-                stmnt.setInt(4, worldDb.get(entry.getWorld()));
+                stmnt.setInt(4, worldId);
                 stmnt.setDouble(5, entry.getX());
                 stmnt.setDouble(6, entry.getY());
                 stmnt.setDouble(7, entry.getZ());
