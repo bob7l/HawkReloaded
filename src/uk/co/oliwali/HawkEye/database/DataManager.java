@@ -201,7 +201,7 @@ public class DataManager implements AutoCloseable {
                     "`action` TINYINT(3) UNSIGNED NOT NULL," +
                     "`world_id` TINYINT(3) UNSIGNED NOT NULL," +
                     "`x` int(11) NOT NULL," +
-                    "`y` int(11) NOT NULL," +
+                    "`y` SMALLINT(6) NOT NULL," +
                     "`z` int(11) NOT NULL," +
                     "`data` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL," +
                     "PRIMARY KEY (`data_id`)," +
