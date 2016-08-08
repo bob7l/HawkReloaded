@@ -57,6 +57,7 @@ public class Config {
 	public static String DbWorldTable;
 	public static String DbHostname;
 	public static int PoolSize;
+	public static boolean populateCachesOnBoot;
 
 	private static Configuration config;
 
@@ -115,6 +116,8 @@ public class Config {
 		logDispenser = config.getBoolean("containertransaction-filter.dispenser");
 		LogHopper = config.getBoolean("containertransaction-filter.hopper");
 		LogDropper = config.getBoolean("containertransaction-filter.dropper");
+		populateCachesOnBoot = config.getBoolean("general.populate-cache-onboot");
+
 		try {
 			DebugLevel = Util.DebugLevel.valueOf(config.getString("general.debug-level").toUpperCase());
 		} catch (Exception ex) {

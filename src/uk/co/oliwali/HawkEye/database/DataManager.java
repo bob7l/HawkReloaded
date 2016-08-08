@@ -37,11 +37,10 @@ public class DataManager implements AutoCloseable {
         connectionManager = new ConnectionManager();
 
         //Check tables and update player/world lists
-        if (!checkTables())
-            throw new Exception();
+        createTables();
 
-        if (!updateDbLists())
-            throw new Exception();
+        if (Config.populateCachesOnBoot)
+            populateCaches();
 
         consumer = new Consumer(this);
 
@@ -88,41 +87,9 @@ public class DataManager implements AutoCloseable {
 
 
     /**
-     * Adds an identifier to the database and updates the provided map
+     * Populates world and player local caches
      */
-    public boolean addKey(String table, String column, IdMapCache cache, String value) {
-        Util.debug("Attempting to add " + column + " '" + value + "' to database");
-
-        String sql = "INSERT INTO `" + table + "` (" + column + ") VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");";
-
-        try (Connection conn = connectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            stmt.setString(1, value);
-
-            stmt.executeUpdate();
-
-            conn.commit();
-
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-
-                if (rs.next())
-                    cache.put(rs.getInt(1), value);
-
-            }
-        } catch (SQLException ex) {
-            Util.severe("Unable to add " + column + " to database");
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Updates world and player local lists
-     *
-     * @return true on success, false on failure
-     */
-    private boolean updateDbLists() {
+    private void populateCaches() throws Exception {
         try (Connection conn = connectionManager.getConnection();
              Statement stmnt = conn.createStatement()) {
 
@@ -135,12 +102,7 @@ public class DataManager implements AutoCloseable {
                 while (res.next())
                     worldCache.put(res.getInt("world_id"), res.getString("world"));
             }
-
-        } catch (SQLException ex) {
-            Util.severe("Unable to update local data lists from database: " + ex);
-            return false;
         }
-        return true;
     }
 
     /**
@@ -158,11 +120,62 @@ public class DataManager implements AutoCloseable {
     }
 
     /**
+     * Gets or creates an ID for the provided value
+     *
+     * @return The ID for the value, or -1 if the method failed
+     */
+    public int getKeyId(IdMapCache cache, String table, String idColumn, String column, String value) {
+        Integer id = cache.get(value);
+
+        if (id == null) {
+            try (Connection conn = connectionManager.getConnection();
+                 PreparedStatement stmnt = conn.prepareStatement("SELECT " + idColumn + " FROM " + table + " WHERE " + column + "=?")) {
+
+                stmnt.setString(1, value);
+
+                try (ResultSet rs = stmnt.executeQuery()) {
+
+                    if (rs.next()) {
+                        id = rs.getInt(1);
+
+                        cache.put(id, value);
+
+                    } else {
+
+                        try (PreparedStatement stmnt2 = conn.prepareStatement("INSERT INTO " + Config.DbPlayerTable + " (" + column + ") " +
+                                "VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");", Statement.RETURN_GENERATED_KEYS)) {
+
+                            stmnt2.setString(1, value);
+
+                            stmnt2.executeUpdate();
+
+                            conn.commit();
+
+                            try (ResultSet rs2 = stmnt2.getGeneratedKeys()) {
+
+                                if (rs2.next()) {
+                                    id = rs2.getInt(1);
+
+                                    cache.put(id, value);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return (id == null ? -1 : id);
+    }
+
+    /**
      * Checks that all tables are up to date and exist
      *
      * @return true on success, false on failure
      */
-    private boolean checkTables() {
+    private void createTables() throws Exception {
 
         try (Connection conn = connectionManager.getConnection();
              Statement stmnt = conn.createStatement()) {
@@ -251,13 +264,7 @@ public class DataManager implements AutoCloseable {
             }
 
             conn.commit();
-
-        } catch (SQLException ex) {
-            Util.severe("Error checking HawkEye tables: " + ex);
-            return false;
         }
-
-        return true;
     }
 
     /**

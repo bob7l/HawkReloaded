@@ -8,11 +8,20 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author bob7l
  */
 public class Consumer implements Runnable, Closeable {
+
+    private final String PLAYER_NAME_COLUMN = "player";
+
+    private final String WORLD_NAME_COLUMN = "world";
+
+    private final String PLAYER_ID_COLUMN = "player_id";
+
+    private final String WORLD_ID_COLUMN = "world_id";
 
     private final LinkedBlockingQueue<DataEntry> queue = new LinkedBlockingQueue<>();
 
@@ -24,7 +33,7 @@ public class Consumer implements Runnable, Closeable {
 
     private ConnectionManager connectionManager;
 
-    private volatile boolean busy = false;
+    private AtomicBoolean busy = new AtomicBoolean(false);
 
     public Consumer(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -54,14 +63,12 @@ public class Consumer implements Runnable, Closeable {
     }
 
     public boolean isBusy() {
-        return busy;
+        return busy.get();
     }
 
     @Override
     public void run() {
-        if (busy || queue.isEmpty()) return;
-
-        busy = true;
+        if (queue.isEmpty() || busy.compareAndSet(false, true)) return;
 
         if (queue.size() > 70000)
             Util.info("HawkEye consumer can't keep up! Current Queue: " + queue.size());
@@ -70,36 +77,32 @@ public class Consumer implements Runnable, Closeable {
              PreparedStatement stmnt = conn.prepareStatement("INSERT IGNORE into `" + Config.DbHawkEyeTable + "` (timestamp, player_id, action, world_id, x, y, z, data, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
             for (int i = 0; i < queue.size(); i++) {
+
                 DataEntry entry = queue.poll();
 
-                if (!playerDb.containsKey(entry.getPlayer()) && !dataManager.addKey(Config.DbPlayerTable, "player", playerDb, entry.getPlayer())) {
+                int playerId = dataManager.getKeyId(playerDb, Config.DbPlayerTable, PLAYER_ID_COLUMN, PLAYER_NAME_COLUMN, entry.getPlayer());
+
+                int worldId = dataManager.getKeyId(worldDb, Config.DbWorldTable, WORLD_ID_COLUMN, WORLD_NAME_COLUMN, entry.getWorld());
+
+                if (playerId < 0) {
                     Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
                     continue;
                 }
-                if (!worldDb.containsKey(entry.getWorld()) && !dataManager.addKey(Config.DbWorldTable, "world", worldDb, entry.getWorld())) {
+
+                if (worldId < 0) {
                     Util.debug("World '" + entry.getWorld() + "' not found, skipping entry");
                     continue;
                 }
 
-                Integer player = playerDb.get(entry.getPlayer());
-
-                //If player ID is unable to be found, continue
-                if (player == null) {
-                    Util.debug("No player found, skipping entry");
-                    continue;
-                }
-
                 stmnt.setTimestamp(1, entry.getTimestamp());
-                stmnt.setInt(2, player);
+                stmnt.setInt(2, playerId);
                 stmnt.setInt(3, entry.getType().getId());
                 stmnt.setInt(4, worldDb.get(entry.getWorld()));
                 stmnt.setDouble(5, entry.getX());
                 stmnt.setDouble(6, entry.getY());
                 stmnt.setDouble(7, entry.getZ());
                 stmnt.setString(8, entry.getSqlData());
-
-                if (entry.getDataId() > 0) stmnt.setInt(9, entry.getDataId());
-                else stmnt.setInt(9, 0); //0 is better then setting it to null, like before
+                stmnt.setInt(9, entry.getDataId());
 
                 stmnt.addBatch();
 
@@ -114,14 +117,16 @@ public class Consumer implements Runnable, Closeable {
             Util.warning(ex.getMessage());
             ex.printStackTrace();
         } finally {
-            busy = false;
+            busy.set(false);
         }
     }
 
     @Override
     public void close() {
         while (!queue.isEmpty()) {
-            busy = false;
+
+            busy.compareAndSet(true, false);
+
             run();
         }
     }
