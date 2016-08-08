@@ -8,8 +8,8 @@ import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
-import uk.co.oliwali.HawkEye.database.SearchQuery;
-import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
+import uk.co.oliwali.HawkEye.database.userqueries.Query.SearchDir;
+import uk.co.oliwali.HawkEye.database.userqueries.SearchQuery;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**

@@ -7,8 +7,8 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.QueryCallback;
-import uk.co.oliwali.HawkEye.database.SearchQuery;
-import uk.co.oliwali.HawkEye.database.SearchQuery.SearchDir;
+import uk.co.oliwali.HawkEye.database.userqueries.Query.SearchDir;
+import uk.co.oliwali.HawkEye.database.userqueries.SearchQuery;
 import uk.co.oliwali.HawkEye.entry.DataEntry;
 
 /**
