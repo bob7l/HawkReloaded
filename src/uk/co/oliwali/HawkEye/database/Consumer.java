@@ -124,9 +124,6 @@ public class Consumer implements Runnable, Closeable {
     @Override
     public void close() {
         while (!queue.isEmpty()) {
-
-            busy.compareAndSet(true, false);
-
             run();
         }
     }
