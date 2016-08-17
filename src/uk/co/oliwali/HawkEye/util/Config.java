@@ -116,7 +116,7 @@ public class Config {
 		logDispenser = config.getBoolean("containertransaction-filter.dispenser");
 		LogHopper = config.getBoolean("containertransaction-filter.hopper");
 		LogDropper = config.getBoolean("containertransaction-filter.dropper");
-		populateCachesOnBoot = config.getBoolean("general.populate-cache-onboot");
+		populateCachesOnBoot = config.getBoolean("general.populate-caches-onboot");
 
 		try {
 			DebugLevel = Util.DebugLevel.valueOf(config.getString("general.debug-level").toUpperCase());
