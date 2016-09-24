@@ -142,7 +142,7 @@ public class DataManager implements AutoCloseable {
 
                     } else {
 
-                        try (PreparedStatement stmnt2 = conn.prepareStatement("INSERT INTO " + Config.DbPlayerTable + " (" + column + ") " +
+                        try (PreparedStatement stmnt2 = conn.prepareStatement("INSERT INTO " + table + " (" + column + ") " +
                                 "VALUES (?) ON DUPLICATE KEY UPDATE " + column + "=VALUES(" + column + ");", Statement.RETURN_GENERATED_KEYS)) {
 
                             stmnt2.setString(1, value);
