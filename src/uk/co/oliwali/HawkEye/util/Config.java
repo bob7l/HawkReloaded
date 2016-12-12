@@ -4,9 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import uk.co.oliwali.HawkEye.HawkEye;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Configuration manager for HawkEye.
@@ -15,9 +13,9 @@ import java.util.List;
  */
 public class Config {
 
-	public static List<String> CommandFilter = new ArrayList<String>();
-	public static List<String> IgnoreWorlds = new ArrayList<String>();
-	public static List<Integer> BlockFilter = new ArrayList<Integer>();
+	public static Set<String> CommandFilter = new HashSet<>();
+	public static Set<String> IgnoreWorlds = new HashSet<String>();
+	public static Set<Integer> BlockFilter = new HashSet<Integer>();
 	public static List<String> CleanseActions = new ArrayList<String>();
 	public static int MaxLines = 0;
 	public static int MaxRadius;
@@ -75,9 +73,9 @@ public class Config {
         config = plugin.getConfig();
 
 		//Load values
-		CommandFilter = config.getStringList("command-filter");
-		BlockFilter = config.getIntegerList("block-filter");
-		IgnoreWorlds = config.getStringList("ignore-worlds");
+		CommandFilter = new HashSet<>(config.getStringList("command-filter"));
+		BlockFilter = new HashSet<>(config.getIntegerList("block-filter"));
+		IgnoreWorlds = new HashSet<>(config.getStringList("ignore-worlds"));
 		CleanseActions = Arrays.asList(config.getString("general.cleanse-actions").split(","));
 		MaxLines = config.getInt("general.max-lines");
 		MaxRadius = config.getInt("general.max-radius");

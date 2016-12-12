@@ -16,174 +16,175 @@ import uk.co.oliwali.HawkEye.entry.BlockChangeEntry;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MonitorLiquidFlow extends HawkEyeListener {
 
-	private List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
-	private HashMap<Location, String> playerCache = new HashMap<Location, String>(10);
-	private int cacheRunTime = 10;
-	private int timerId = -1;
+    private Set<Integer> fluidBlocks = new HashSet<>(Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94));
+    private HashMap<Location, String> playerCache = new HashMap<Location, String>(10);
+    private int cacheRunTime = 10;
+    private int timerId = -1;
 
-	public MonitorLiquidFlow(Consumer consumer) {
-		super(consumer);
-	}
+    public MonitorLiquidFlow(Consumer consumer) {
+        super(consumer);
+    }
 
-	public void registerEvents() {
-		super.registerEvents();
+    public void registerEvents() {
+        super.registerEvents();
 
-		startCacheCleaner();
-	}
+        startCacheCleaner();
+    }
 
-	/**
-	 * Clears the Player cache when it's been 10 seconds after a waterflow event
-	 * Every time the event fires, the timer resets to allow the water to be tracked
-	 */
-	private void startCacheCleaner() {
-		if (DataType.PLAYER_LAVA_FLOW.isLogged() || DataType.PLAYER_WATER_FLOW.isLogged()) {
-			Bukkit.getScheduler().cancelTask(timerId);
-			timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HawkEye.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					cacheRunTime--;
-					if (cacheRunTime == 0) {
-						playerCache.clear();
-					}
-				}
-			}, 20L, 20L);
-		}
-	}
+    /**
+     * Clears the Player cache when it's been 10 seconds after a waterflow event
+     * Every time the event fires, the timer resets to allow the water to be tracked
+     */
+    private void startCacheCleaner() {
+        if (DataType.PLAYER_LAVA_FLOW.isLogged() || DataType.PLAYER_WATER_FLOW.isLogged()) {
+            Bukkit.getScheduler().cancelTask(timerId);
+            timerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HawkEye.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    cacheRunTime--;
+                    if (cacheRunTime == 0) {
+                        playerCache.clear();
+                    }
+                }
+            }, 20L, 20L);
+        }
+    }
 
-	/**
-	 * Resets cache timer and
-	 * adds the new location
-	 */
-	private void addToCache(Location l, String p) {
-		cacheRunTime = 10; //Reset cache timer
-		playerCache.put(l, p); //Add location to cache
-	}
+    /**
+     * Resets cache timer and
+     * adds the new location
+     */
+    private void addToCache(Location l, String p) {
+        cacheRunTime = 10; //Reset cache timer
+        playerCache.put(l, p); //Add location to cache
+    }
 
-	@HawkEvent(dataType = {DataType.PLAYER_LAVA_FLOW, DataType.PLAYER_WATER_FLOW})
-	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
-		Material bucket = event.getBucket();
-		Location loc = event.getBlockClicked().getRelative(event.getBlockFace()).getLocation();
+    @HawkEvent(dataType = {DataType.PLAYER_LAVA_FLOW, DataType.PLAYER_WATER_FLOW})
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+        Material bucket = event.getBucket();
+        Location loc = event.getBlockClicked().getRelative(event.getBlockFace()).getLocation();
 
-		if ((bucket == Material.WATER_BUCKET && DataType.PLAYER_WATER_FLOW.isLogged()) || (bucket == Material.LAVA_BUCKET && DataType.PLAYER_LAVA_FLOW.isLogged())) {
-			playerCache.put(loc, event.getPlayer().getName());
-		}
-	}
+        if ((bucket == Material.WATER_BUCKET && DataType.PLAYER_WATER_FLOW.isLogged()) || (bucket == Material.LAVA_BUCKET && DataType.PLAYER_LAVA_FLOW.isLogged())) {
+            playerCache.put(loc, event.getPlayer().getName());
+        }
+    }
 
-	@HawkEvent(dataType = {DataType.PLAYER_LAVA_FLOW, DataType.PLAYER_WATER_FLOW})
-	public void onPlayerBlockFromTo(BlockFromToEvent event) {
+    @HawkEvent(dataType = {DataType.PLAYER_LAVA_FLOW, DataType.PLAYER_WATER_FLOW})
+    public void onPlayerBlockFromTo(BlockFromToEvent event) {
 
-		//Only interested in liquids flowing
-		if (!event.getBlock().isLiquid()) return;
+        //Only interested in liquids flowing
+        if (!event.getBlock().isLiquid()) return;
 
-		Location loc = event.getToBlock().getLocation();
-		BlockState from = event.getBlock().getState();
-		BlockState to = event.getToBlock().getState();
+        Location loc = event.getToBlock().getLocation();
+        BlockState from = event.getBlock().getState();
+        BlockState to = event.getToBlock().getState();
 
-		if (from.getType() == to.getType()) return;
+        if (from.getType() == to.getType()) return;
 
-		Location fromloc = from.getLocation();
+        Location fromloc = from.getLocation();
 
-		String player = playerCache.get(fromloc);
+        String player = playerCache.get(fromloc);
 
-		if (player == null) return; //This is basically what containsKey does, but is 10x faster :)
+        if (player == null) return; //This is basically what containsKey does, but is 10x faster :)
 
-		MaterialData data = from.getData();
-		//Lava
-		if (from.getTypeId() == 10 || from.getTypeId() == 11) {
+        MaterialData data = from.getData();
+        //Lava
+        if (from.getTypeId() == 10 || from.getTypeId() == 11) {
 
-			//Flowing into a normal block
-			if (fluidBlocks.contains(to.getTypeId())) {
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-			}
+            //Flowing into a normal block
+            if (fluidBlocks.contains(to.getTypeId())) {
+                data.setData((byte) (from.getRawData() + 1));
+                from.setData(data);
+            }
 
-			//Flowing into water
-			else if (to.getTypeId() == 8 || to.getTypeId() == 9) {
-				from.setTypeId(event.getFace() == BlockFace.DOWN?10:4);
-				data.setData((byte)0);
-				from.setData(data);
-			}
-			consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_LAVA_FLOW, loc, to, from));
-			addToCache(loc, player);
-		}
+            //Flowing into water
+            else if (to.getTypeId() == 8 || to.getTypeId() == 9) {
+                from.setTypeId(event.getFace() == BlockFace.DOWN ? 10 : 4);
+                data.setData((byte) 0);
+                from.setData(data);
+            }
+            consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_LAVA_FLOW, loc, to, from));
+            addToCache(loc, player);
+        }
 
-		//Water
-		else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
+        //Water
+        else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
 
-			//Normal block
-			if (fluidBlocks.contains(to.getTypeId())) {
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-				consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, to, from));
-				addToCache(loc, player);
-			}
-			//If we are flowing over lava, cobble or obsidian will form
-			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
-				from.setTypeId(lower.getData().getData() == 0?49:4);
-				loc.setY(loc.getY() - 1);
-				consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, lower, from));
-				addToCache(loc, player);
-			}
-		}
-	}
+            //Normal block
+            if (fluidBlocks.contains(to.getTypeId())) {
+                data.setData((byte) (from.getRawData() + 1));
+                from.setData(data);
+                consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, to, from));
+                addToCache(loc, player);
+            }
+            //If we are flowing over lava, cobble or obsidian will form
+            BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
+            if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
+                from.setTypeId(lower.getData().getData() == 0 ? 49 : 4);
+                loc.setY(loc.getY() - 1);
+                consumer.addEntry(new BlockChangeEntry(player, DataType.PLAYER_WATER_FLOW, loc, lower, from));
+                addToCache(loc, player);
+            }
+        }
+    }
 
-	@HawkEvent(dataType = {DataType.LAVA_FLOW, DataType.WATER_FLOW})
-	public void onBlockFromTo(BlockFromToEvent event) {
+    @HawkEvent(dataType = {DataType.LAVA_FLOW, DataType.WATER_FLOW})
+    public void onBlockFromTo(BlockFromToEvent event) {
 
-		//Only interested in liquids flowing
-		if (!event.getBlock().isLiquid()) return;
+        //Only interested in liquids flowing
+        if (!event.getBlock().isLiquid()) return;
 
-		Location loc = event.getToBlock().getLocation();
-		BlockState from = event.getBlock().getState();
-		BlockState to = event.getToBlock().getState();
+        Location loc = event.getToBlock().getLocation();
+        BlockState from = event.getBlock().getState();
+        BlockState to = event.getToBlock().getState();
 
-		if (from.getType() == to.getType()) return;
+        if (from.getType() == to.getType()) return;
 
-		MaterialData data = from.getData();
+        MaterialData data = from.getData();
 
-		//Lava
-		if (from.getTypeId() == 10 || from.getTypeId() == 11) {
+        //Lava
+        if (from.getTypeId() == 10 || from.getTypeId() == 11) {
 
-			//Flowing into a normal block
-			if (fluidBlocks.contains(to.getTypeId())) {
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-			}
+            //Flowing into a normal block
+            if (fluidBlocks.contains(to.getTypeId())) {
+                data.setData((byte) (from.getRawData() + 1));
+                from.setData(data);
+            }
 
-			//Flowing into water
-			else if (to.getTypeId() == 8 || to.getTypeId() == 9) {
-				from.setTypeId(event.getFace() == BlockFace.DOWN?10:4);
-				data.setData((byte)0);
-				from.setData(data);
-			}
-			consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.LAVA_FLOW, loc, to, from));
+            //Flowing into water
+            else if (to.getTypeId() == 8 || to.getTypeId() == 9) {
+                from.setTypeId(event.getFace() == BlockFace.DOWN ? 10 : 4);
+                data.setData((byte) 0);
+                from.setData(data);
+            }
+            consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.LAVA_FLOW, loc, to, from));
 
-		}
+        }
 
-		//Water
-		else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
+        //Water
+        else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
 
-			//Normal block
-			if (fluidBlocks.contains(to.getTypeId())) {
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-				consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, to, from));
-			}
+            //Normal block
+            if (fluidBlocks.contains(to.getTypeId())) {
+                data.setData((byte) (from.getRawData() + 1));
+                from.setData(data);
+                consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, to, from));
+            }
 
-			//If we are flowing over lava, cobble or obsidian will form
-			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
-				from.setTypeId(lower.getData().getData() == 0?49:4);
-				loc.setY(loc.getY() - 1);
-				consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, lower, from));
-			}
+            //If we are flowing over lava, cobble or obsidian will form
+            BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
+            if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
+                from.setTypeId(lower.getData().getData() == 0 ? 49 : 4);
+                loc.setY(loc.getY() - 1);
+                consumer.addEntry(new BlockChangeEntry(ENVIRONMENT, DataType.WATER_FLOW, loc, lower, from));
+            }
 
-		}
+        }
 
-	}
+    }
 }
