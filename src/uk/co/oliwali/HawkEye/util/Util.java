@@ -199,7 +199,7 @@ public class Util {
      * @return   Simplified date
      */
     public static String getTime(Date d1) {
-        if (!(Config.isSimpleTime)) return d1.toString();
+        if (!(Config.isSimpleTime)) return d1.toString() + " ";
 
         StringBuilder dateStr = new StringBuilder();
 
