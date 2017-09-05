@@ -237,6 +237,45 @@
 					$changeString = $changeString . ":" . $item[1];	//If item has a damage value other than 0, add it to changeString
 				$fdata = $changeString;
 				break;
+			case 51:
+			case 52:
+				$changeString = "";
+				foreach (explode(",", $fdata) as $change) {
+					$change = trim($change);
+					if (change == "") break;
+					$itemMeta = explode(" ", $change);
+					$itemMaterial = explode(":", array_shift($itemMeta));
+					$itemMaterial[0] = trim(getBlockName($itemMaterial[0]));
+					$itemMaterial = implode(":", array_filter($itemMaterial));
+					for ($i = 0; $i < count($itemMeta); $i++) {
+						$matches = array();
+						if (preg_match('/([a-z])\{([^\}]+)\}/', $itemMeta[$i], $matches)) {
+							$metaType = $matches[1];
+							$metaValue = $matches[2];
+							switch ($metaType) {
+								case 'c':
+									$itemMeta[$i] = 'x'.$metaValue;
+									break;
+								case 'e':
+									$itemMeta[$i] = 'enchant{'.$metaValue.'}';
+									break;
+							}
+						}
+					}
+					$itemMeta = implode(' ', array_filter($itemMeta));
+					$itemDesc = trim($itemMaterial.' '.$itemMeta);
+					if ($changeString != '') {
+						$changeString = $changeString.', ';
+					}
+					$changeString = $changeString.$itemDesc;
+				}
+				if ($action == 51) {
+					$changeString = '<span style="color: green">'.$changeString.'</span>';
+				} else {
+					$changeString = '<span style="color: red">'.$changeString.'</span>';
+				}
+				$fdata = $changeString;
+				break;
 		}
 		
 		$action = str_replace(array_reverse(array_keys($lang["actions"])), array_reverse($lang["actions"]), $action);
