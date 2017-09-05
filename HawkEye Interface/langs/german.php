@@ -78,7 +78,7 @@
 									   "35" => "Pilzwuchs",
 									   "36" => "Mob Kill",
 									   "37" => "Spawn Egg",
-									   "38" => "HeroChat",	
+									   "38" => "HeroChat",
 									   "39" => "Entity geaendern",
 									   "40" => "Block-Bewohner geaendert",
 									   "41" => "Super-Pickaxe",

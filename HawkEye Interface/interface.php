@@ -180,7 +180,7 @@
 			case 43:
 				$arr = explode("-", $fdata);
 				if (getBlockName($arr[0]) == "AIR") {
-				    $fdata = getBlockName($arr[1]);
+					$fdata = getBlockName($arr[1]);
 				 } else {
 					$fdata = getBlockName($arr[0]) . " replaced by " . getBlockName($arr[1]);
 				}
@@ -200,15 +200,15 @@
 						if ($change == "") break;
 						$item = explode("~", $change);
 						$itemblock = substr($item[0], 1);
-						
-                                               if (strpos($itemblock,"-") !== false) {
-                                                        $itemblock = explode("-", $itemblock);
-                                                        $change = $item[1] . "x " . getBlockName($itemblock[0]);
-                                                }
-                                                else {
-                                                        $change = $item[1] . "x " . getBlockName($itemblock);
-                                                }
-                                                
+
+						if (strpos($itemblock,"-") !== false) {
+							$itemblock = explode("-", $itemblock);
+							$change = $item[1] . "x " . getBlockName($itemblock[0]);
+						}
+						else {
+							$change = $item[1] . "x " . getBlockName($itemblock);
+						}
+
 						if (substr($item[0], 0, 1) == "-") $changeString = $changeString.", ".'<span style="color: red">'.$change.'</span>';
 						else  $changeString = $changeString.", ".'<span style="color: green">'.$change.'</span>';
 					
@@ -300,7 +300,7 @@
 
 		$i = $itemhash[$parts[0]];
 		if ($string == "00")
-		    return "AIR";
+			return "AIR";
 		else if (count($parts) == 2)
 			return $i . ":" . $parts[1];
 		else
