@@ -51,7 +51,7 @@
 50,Torch
 51,Fire
 52,Monster Spawner
-53,Wooden Stairs
+53,Oak Wooden Stairs
 54,Chest
 55,Redstone Wire
 56,Diamond Ore
@@ -101,7 +101,7 @@
 100,Huge Red Mushroom
 101,Iron Bars
 102,Glass Pane
-103,Melon
+103,Melon Block
 104,Pumpkin Stem
 105,Melon Stem
 106,Vines
@@ -158,10 +158,100 @@
 157,Activator Rail
 158,Dropper
 159,Stained Clay
+160,Stained Glass Pane
+161,Leaves
+162,Wood
+163,Acacia Wooden Stairs
+164,Dark Oak Wooden Stairs
+165,Slime Block
+166,Barrier
+167,Iron Trapdoor
+168,Prismarine
+169,Sea Lantern
 170,Hay Block
 171,Carpet
 172,Hardened Clay
 173,Block of Coal
+174,Packed Ice
+175,Sunflower
+176,Free-standing Banner
+177,Wall-mounted Banner
+178,Inverted Daylight Sensor
+179,Red Sandstone
+180,Red Sandstone Stairs
+181,Double Red Sandstone Slab
+182,Red Sandstone Slab
+183,Spruce Fence Gate
+184,Birch Fence Gate
+185,Jungle Fence Gate
+186,Dark Oak Fence Gate
+187,Acacia Fence Gate
+188,Spruce Fence
+189,Birch Fence
+190,Jungle Fence
+191,Dark Oak Fence
+192,Acacia Fence
+193,Spruce Door Block
+194,Birch Door Block
+195,Jungle Door Block
+196,Acacia Door Block
+197,Dark Oak Door Block
+198,End Rod
+199,Chorus Plant
+200,Chorus Flower
+201,Purpur Block
+202,Purpur Pillar
+203,Purpur Stairs
+204,Purpur Double Slab
+205,Purpur Slab
+206,End Stone Bricks
+207,Beetroot Block
+208,Grass Path
+209,End Gateway
+210,Repeating Command Block
+211,Chain Command Block
+212,Frosted Ice
+213,Magma Block
+214,Nether Wart Block
+215,Red Nether Brick
+216,Bone Block
+217,Structure Void
+218,Observer
+219,White Shulker Box
+220,Orange Shulker Box
+221,Magenta Shulker Box
+222,Light Blue Shulker Box
+223,Yellow Shulker Box
+224,Lime Shulker Box
+225,Pink Shulker Box
+226,Gray Shulker Box
+227,Light Gray Shulker Box
+228,Cyan Shulker Box
+229,Purple Shulker Box
+230,Blue Shulker Box
+231,Brown Shulker Box
+232,Green Shulker Box
+233,Red Shulker Box
+234,Black Shulker Box
+235,White Glazed Terracotta
+236,Orange Glazed Terracotta
+237,Magenta Glazed Terracotta
+238,Light Blue Glazed Terracotta
+239,Yellow Glazed Terracotta
+240,Lime Glazed Terracotta
+241,Pink Glazed Terracotta
+242,Gray Glazed Terracotta
+243,Light Gray Glazed Terracotta
+244,Cyan Glazed Terracotta
+245,Purple Glazed Terracotta
+246,Blue Glazed Terracotta
+247,Brown Glazed Terracotta
+248,Green Glazed Terracotta
+249,Red Glazed Terracotta
+250,Black Glazed Terracotta
+251,Concrete
+252,Concrete Powder
+255,Structure Block
 256,Iron Shovel
 257,Iron Pickaxe
 258,Iron Axe
@@ -315,11 +405,48 @@
 406,Nether Quartz
 407,Minecart with TNT
 408,Minecart with Hopper
+409,Prismarine Shard
+410,Prismarine Crystals
+411,Raw Rabbit
+412,Cooked Rabbit
+413,Rabbit Stew
+414,Rabbit's Foot
+415,Rabbit Hide
+416,Armor Stand
 417,Iron Horse Armor
 418,Gold Horse Armor
 419,Diamond Horse Armor
 420,Lead
 421,Name Tag
+422,Minecart with Command Block
+423,Raw Mutton
+424,Cooked Mutton
+425,Banner
+427,Spruce Door
+428,Birch Door
+429,Jungle Door
+430,Acacia Door
+431,Dark Oak Door
+432,Chorus Fruit
+433,Popped Chorus Fruit
+434,Beetroot
+435,Beetroot Seeds
+436,Beetroot Soup
+437,Dragon's Breath
+438,Splash Potion
+439,Spectral Arrow
+440,Tipped Arrow
+441,Lingering Potion
+442,Shield
+443,Elytra
+444,Spruce Boat
+445,Birch Boat
+446,Jungle Boat
+447,Acacia Boat
+448,Dark Oak Boat
+449,Totem of Undying
+450,Shulker Shell
+452,Iron Nugget
 2256,13 Disc
 2257,Cat Disc
 2258,Blocks Disc
@@ -331,3 +458,4 @@
 2264,Strad Disc
 2265,Ward Disc
 2266,11 Disc
+2267,Wait Disc
